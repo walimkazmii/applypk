@@ -229,6 +229,7 @@
       <div id="loginFields" style="display:none;">
         <div class="field"><label for="li-email" data-i18n="email">Email</label><input id="li-email" type="email" /></div>
         <div class="field"><label for="li-pass" data-i18n="password">Password</label><input id="li-pass" type="password" /></div>
+        <div style="text-align:right;margin:-6px 0 14px;"><a id="forgotLink" style="font-size:13px;font-weight:600;color:var(--green);cursor:pointer;" data-i18n="forgot">Forgot password?</a></div>
       </div>
 
       <div class="err" id="authErr"></div>
@@ -377,7 +378,11 @@
       errNoAccount:"No account found with that email. Please create one.",
       errBadCreds:"Incorrect email or password. Please try again.",
       errDisabled:"This account has been disabled. Please contact support.",
-      errTooMany:"Too many attempts. Please wait and try again."
+      errTooMany:"Too many attempts. Please wait and try again.",
+      forgot:"Forgot password?",
+      errResetEmail:"Enter your email above first, then tap 'Forgot password?'.",
+      resetSent:"Password reset email sent. Check your inbox (and spam folder).",
+      errPdfBig:"PDFs must be under 650 KB. Please compress it, or upload a photo/scan (JPG/PNG) instead."
     },
     ur: {
       applyTo:"درخواست دیں", heroSub:"ایک پروفائل۔ ہر اہم سرکاری یونیورسٹی۔", startApp:"اپنی درخواست شروع کریں",
@@ -415,7 +420,11 @@
       errNoAccount:"اس ای میل سے کوئی اکاؤنٹ نہیں ملا۔",
       errBadCreds:"ای میل یا پاس ورڈ غلط ہے۔",
       errDisabled:"یہ اکاؤنٹ بند کر دیا گیا ہے۔",
-      errTooMany:"بہت زیادہ کوششیں۔ تھوڑی دیر بعد کوشش کریں۔"
+      errTooMany:"بہت زیادہ کوششیں۔ تھوڑی دیر بعد کوشش کریں۔",
+      forgot:"پاس ورڈ بھول گئے؟",
+      errResetEmail:"پہلے اوپر اپنی ای میل درج کریں، پھر 'پاس ورڈ بھول گئے؟' دبائیں۔",
+      resetSent:"پاس ورڈ ری سیٹ ای میل بھیج دی گئی ہے۔ اپنا اِن باکس (اور اسپام) چیک کریں۔",
+      errPdfBig:"PDF کا سائز 650 KB سے کم ہونا چاہیے۔ فائل چھوٹی کریں یا تصویر (JPG/PNG) اپلوڈ کریں۔"
     }
   };
 
@@ -490,6 +499,8 @@
 
   function readFile(file,cb,errCb){
     if(file.size > 5*1024*1024){ errCb && errCb(t("errFileBig")); return; }
+    // PDFs aren't compressed, and the database caps records at ~1 MB (base64 adds ~33%)
+    if(file.type.indexOf("image")!==0 && file.size > 650*1024){ errCb && errCb(t("errPdfBig")); return; }
     var r=new FileReader();
     r.onload=function(e){
       if(file.type.indexOf("image")!==0){ cb(e.target.result,file.name); return; }
@@ -545,9 +556,13 @@
       var cur=getCur(d.id);
       var row=document.createElement("div");
       row.className="doc-row"+(cur?" done":"");
-      row.innerHTML='<span class="di">'+(cur?tickSVG:fileSVG)+'</span>'+
-        '<div class="doc-txt"><div class="n">'+t(d.key)+'</div><div class="m">'+
-        (cur ? (cur.name||"") : (t("docNone")+" · "+t("docFmt"))) + '</div></div>';
+      var di=document.createElement("span"); di.className="di"; di.innerHTML=(cur?tickSVG:fileSVG); // static SVGs only
+      var txt=document.createElement("div"); txt.className="doc-txt";
+      var nEl=document.createElement("div"); nEl.className="n"; nEl.textContent=t(d.key);
+      var mEl=document.createElement("div"); mEl.className="m";
+      mEl.textContent = cur ? (cur.name||"") : (t("docNone")+" · "+t("docFmt"));  // textContent: filename can never run as HTML
+      txt.appendChild(nEl); txt.appendChild(mEl);
+      row.appendChild(di); row.appendChild(txt);
       var btn=document.createElement("button");
       btn.type="button"; btn.className="doc-btn"; btn.textContent = cur ? t("docReplace") : t("docUpload");
       var input=document.createElement("input");
@@ -555,7 +570,10 @@
       btn.onclick=function(){ input.click(); };
       input.onchange=function(){
         var f=input.files&&input.files[0]; if(!f) return;
-        readFile(f, function(data,name){ onPick(d.id,{data:data,name:name}); }, function(m){ alert(m); });
+        readFile(f, function(data,name){
+          name = String(name||"file").slice(0,120);   // cap length; rendered via textContent so HTML is inert
+          onPick(d.id,{data:data,name:name});
+        }, function(m){ alert(m); });
       };
       row.appendChild(btn); row.appendChild(input);
       container.appendChild(row);
@@ -674,8 +692,18 @@
     if(!keepView) show("auth");
   }
 
-  authSubmit.onclick=function(){
+  document.getElementById("forgotLink").onclick=function(){
     authErr.textContent="";
+    if(!READY){ authErr.textContent=t("fbDown"); return; }
+    var em=val("li-email");
+    if(!em || !isEmail(em)){ authErr.textContent=t("errResetEmail"); return; }
+    auth.sendPasswordResetEmail(em)
+      .then(function(){ authErr.style.color="var(--ok)"; authErr.textContent=t("resetSent"); setTimeout(function(){ authErr.style.color=""; },4000); })
+      .catch(function(err){ authErr.style.color=""; authErr.textContent=fbMsg(err); });
+  };
+
+  authSubmit.onclick=function(){
+    authErr.textContent=""; authErr.style.color="";
     if(!READY){ authErr.textContent=t("fbDown"); return; }
 
     if(mode==="signup"){
@@ -690,6 +718,7 @@
       busy(authSubmit,true,t("busyCreating"));
       auth.createUserWithEmailAndPassword(email,pass)
         .then(function(cred){
+          try { cred.user.sendEmailVerification(); } catch(e){}  // non-blocking: verify link lands in their inbox
           var uid=cred.user.uid;
           var profile={ uid:uid, name:name, email:email, cnic:cnic, onboarded:false, photo:null,
                         dob:"", resAddr:"", postAddr:"", sameAddr:false, docs:docNames(),

@@ -88,6 +88,14 @@
   .card .foot a { color:var(--green); font-weight:600; cursor:pointer; }
   .err { color:#b91c1c; font-size:13px; margin-bottom:12px; }
   .warn-box { background:#FEF2F2; border:1px solid #FECACA; color:#991B1B; border-radius:var(--r-sm); padding:12px 14px; font-size:13.5px; margin-bottom:16px; }
+  .pw-meter { margin:-8px 0 16px; }
+  .pw-bars { display:flex; gap:5px; margin-bottom:6px; }
+  .pw-bars i { height:5px; flex:1; border-radius:999px; background:var(--line); transition:background .2s; }
+  .pw-meter.s1 .pw-bars i:nth-child(-n+1),
+  .pw-meter.s2 .pw-bars i:nth-child(-n+2),
+  .pw-meter.s3 .pw-bars i:nth-child(-n+3),
+  .pw-meter.s4 .pw-bars i:nth-child(-n+4){ background:var(--pw,#DC2626); }
+  .pw-label { font-size:12px; font-weight:600; color:var(--slate); }
 
   .docs-head { margin:26px 0 12px; padding-top:20px; border-top:1px solid var(--line); }
   .docs-head .t { font-size:14px; font-weight:700; color:var(--ink); }
@@ -168,6 +176,19 @@
   .pill-status { font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; white-space:nowrap; }
   .pill-status.draft { color:#92400E; background:#FEF3C7; border:1px solid #FDE68A; }
   .pill-status.submitted { color:var(--ok); background:#ECFDF5; border:1px solid #A7F3D0; }
+  .hub { margin-top:14px; }
+  .hub-tabs { display:flex; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--line); margin-bottom:20px; }
+  .hub-tab { font-size:13.5px; font-weight:600; color:var(--slate); background:none; border:0; border-bottom:2px solid transparent; padding:10px 4px; margin-bottom:-1px; cursor:pointer; font-family:inherit; }
+  .hub-tab:hover { color:var(--ink); }
+  .hub-tab.active { color:var(--green); border-bottom-color:var(--green); }
+  .hub-panel { display:none; }
+  .hub-panel.active { display:block; }
+  .hub-item { display:flex; align-items:flex-start; gap:12px; border:1px solid var(--line-strong); border-radius:var(--r); padding:14px 16px; margin-bottom:12px; background:#fff; }
+  .hub-item .hi-mk { width:36px; height:36px; flex:none; border:1px solid var(--line-strong); border-radius:var(--r-sm); display:grid; place-items:center; font-size:10px; font-weight:700; color:#fff; overflow:hidden; }
+  .hub-item .hi-body { min-width:0; flex:1; }
+  .hub-item .hi-t { font-size:14px; font-weight:600; }
+  .hub-item .hi-s { font-size:12.5px; color:var(--slate); margin-top:3px; white-space:pre-wrap; }
+  .hub-empty { text-align:center; color:var(--slate); font-size:13.5px; border:1px dashed var(--line-strong); border-radius:var(--r); padding:34px 20px; }
   @media (max-width:640px){ .af-grid, .af-gate .gbody .af-grid { grid-template-columns:1fr; } }
 
   footer { border-top:1px solid var(--line); background:var(--paper); }
@@ -236,6 +257,7 @@
         <div class="field"><label for="su-email" data-i18n="email">Email</label><input id="su-email" type="email" /></div>
         <div class="field"><label for="su-cnic" data-i18n="cnic">CNIC / Passport number</label><input id="su-cnic" type="text" data-ph="cnicPh" /></div>
         <div class="field"><label for="su-pass" data-i18n="password">Password</label><input id="su-pass" type="password" data-ph="passPh" /></div>
+        <div class="pw-meter" id="pwMeter" style="display:none;"><div class="pw-bars"><i></i><i></i><i></i><i></i></div><div class="pw-label" id="pwLabel"></div></div>
 
         <div class="docs-head">
           <div class="t" data-i18n="docsTitle">Supporting documents</div>
@@ -329,6 +351,22 @@
           <button class="btn" id="pfSave" style="flex:0 0 auto;" data-i18n="saveChanges">Save changes</button>
           <span class="saved-note" id="pfSaved" data-i18n="saved">✓ Saved</span>
         </div>
+
+        <div class="docs-head" style="margin-top:30px;"><div class="t" data-i18n="hubTitle">Your portfolio</div><div class="s" data-i18n="hubSub">Everything from your applications, gathered in one place.</div></div>
+        <div class="hub">
+          <div class="hub-tabs">
+            <button class="hub-tab active" data-tab="unis" data-i18n="tabUnis">My Universities</button>
+            <button class="hub-tab" data-tab="essays" data-i18n="tabEssays">My Essays</button>
+            <button class="hub-tab" data-tab="cocurr" data-i18n="tabCocurr">My Co-Curriculars</button>
+            <button class="hub-tab" data-tab="accom" data-i18n="tabAccom">Accommodation Applications</button>
+            <button class="hub-tab" data-tab="resume" data-i18n="tabResume">My Resume</button>
+          </div>
+          <div class="hub-panel active" id="hub-unis"></div>
+          <div class="hub-panel" id="hub-essays"></div>
+          <div class="hub-panel" id="hub-cocurr"></div>
+          <div class="hub-panel" id="hub-accom"></div>
+          <div class="hub-panel" id="hub-resume"></div>
+        </div>
       </div></div>
     </div>
   </section>
@@ -343,13 +381,13 @@
       <div class="app-empty" id="appEmpty" data-i18n="comingSoon">This application form is coming soon.</div>
       <div id="appFormWrap" style="display:none;">
         <div class="af-banner" id="afBanner"><span>✓</span><span id="afBannerText"></span></div>
-        <p class="af-note">Fields marked <span class="req">*</span> are required. Your name, CNIC, photo, date of birth and addresses are taken from your Apply.pk profile automatically.</p>
+        <p class="af-note" id="afNote" data-i18n="afNote">Fields marked * are required. Your name, CNIC, photo, date of birth and addresses are taken from your Apply.pk profile automatically.</p>
         <div id="afSections"></div>
         <div class="err" id="afErr"></div>
         <div class="af-actions">
-          <button class="btn btn-line" id="afSaveDraft">Save draft</button>
-          <button class="btn" id="afSubmit">Submit application</button>
-          <span class="saved-note" id="afSaved">✓ Saved</span>
+          <button class="btn btn-line" id="afSaveDraft" data-i18n="saveApp">Save application</button>
+          <button class="btn" id="afSubmit" data-i18n="submitApp">Submit application</button>
+          <span class="saved-note" id="afSaved" data-i18n="saved">✓ Saved</span>
         </div>
       </div>
     </div>
@@ -411,7 +449,18 @@
       forgot:"Forgot password?",
       errResetEmail:"Enter your email above first, then tap 'Forgot password?'.",
       resetSent:"Password reset email sent. Check your inbox (and spam folder).",
-      errPdfBig:"PDFs must be under 650 KB. Please compress it, or upload a photo/scan (JPG/PNG) instead."
+      errPdfBig:"PDFs must be under 650 KB. Please compress it, or upload a photo/scan (JPG/PNG) instead.",
+      pw0:"Very weak", pw1:"Weak", pw2:"Fair", pw3:"Good", pw4:"Strong",
+      verifyTitle:"Verify your email", verifyLede:"We've sent a verification link to your email. Please open it, then log in.",
+      verifyBanner:"Please verify your email before continuing. Check your inbox (and spam).",
+      verifyResend:"Resend verification email", verifySent:"Verification email sent again.",
+      verifyNeeded:"Please verify your email first. We just sent you a new link.",
+      hubTitle:"Your portfolio", hubSub:"Everything from your applications, gathered in one place.",
+      tabUnis:"My Universities", tabEssays:"My Essays", tabCocurr:"My Co-Curriculars", tabAccom:"Accommodation Applications", tabResume:"My Resume",
+      hubNoUnis:"You haven't started any applications yet.", hubNoEssays:"No essays or written statements yet. They'll appear here as you fill in applications.",
+      hubNoCocurr:"No co-curricular entries yet.", hubNoAccom:"No accommodation requests yet.", hubNoResume:"No documents uploaded yet.",
+      saveApp:"Save application", submitApp:"Submit application",
+      afNote:"Fields marked * are required. Your name, CNIC, photo, date of birth and addresses are taken from your Apply.pk profile automatically."
     },
     ur: {
       applyTo:"درخواست دیں", heroSub:"ایک پروفائل۔ ہر اہم سرکاری یونیورسٹی۔", startApp:"اپنی درخواست شروع کریں",
@@ -453,7 +502,18 @@
       forgot:"پاس ورڈ بھول گئے؟",
       errResetEmail:"پہلے اوپر اپنی ای میل درج کریں، پھر 'پاس ورڈ بھول گئے؟' دبائیں۔",
       resetSent:"پاس ورڈ ری سیٹ ای میل بھیج دی گئی ہے۔ اپنا اِن باکس (اور اسپام) چیک کریں۔",
-      errPdfBig:"PDF کا سائز 650 KB سے کم ہونا چاہیے۔ فائل چھوٹی کریں یا تصویر (JPG/PNG) اپلوڈ کریں۔"
+      errPdfBig:"PDF کا سائز 650 KB سے کم ہونا چاہیے۔ فائل چھوٹی کریں یا تصویر (JPG/PNG) اپلوڈ کریں۔",
+      pw0:"بہت کمزور", pw1:"کمزور", pw2:"مناسب", pw3:"اچھا", pw4:"مضبوط",
+      verifyTitle:"اپنی ای میل کی تصدیق کریں", verifyLede:"ہم نے آپ کی ای میل پر تصدیقی لنک بھیجا ہے۔ اسے کھولیں، پھر لاگ اِن کریں۔",
+      verifyBanner:"جاری رکھنے سے پہلے اپنی ای میل کی تصدیق کریں۔ اپنا اِن باکس (اور اسپام) چیک کریں۔",
+      verifyResend:"تصدیقی ای میل دوبارہ بھیجیں", verifySent:"تصدیقی ای میل دوبارہ بھیج دی گئی ہے۔",
+      verifyNeeded:"پہلے اپنی ای میل کی تصدیق کریں۔ ہم نے ابھی نیا لنک بھیجا ہے۔",
+      hubTitle:"آپ کا پورٹ فولیو", hubSub:"آپ کی تمام درخواستوں کا مواد ایک جگہ۔",
+      tabUnis:"میری یونیورسٹیاں", tabEssays:"میرے مضامین", tabCocurr:"ہم نصابی سرگرمیاں", tabAccom:"رہائش کی درخواستیں", tabResume:"میرا ریزیومے",
+      hubNoUnis:"آپ نے ابھی کوئی درخواست شروع نہیں کی۔", hubNoEssays:"ابھی کوئی مضمون یا تحریری بیان نہیں۔ درخواستیں پُر کرنے پر یہاں ظاہر ہوں گے۔",
+      hubNoCocurr:"ابھی کوئی ہم نصابی اندراج نہیں۔", hubNoAccom:"ابھی رہائش کی کوئی درخواست نہیں۔", hubNoResume:"ابھی کوئی دستاویز اپلوڈ نہیں ہوئی۔",
+      saveApp:"درخواست محفوظ کریں", submitApp:"درخواست جمع کروائیں",
+      afNote:"* والے خانے لازمی ہیں۔ آپ کا نام، شناختی کارڈ، تصویر، تاریخِ پیدائش اور پتے آپ کے Apply.pk پروفائل سے خودکار طور پر لیے جاتے ہیں۔"
     }
   };
 
@@ -701,7 +761,30 @@
   var signupFields=document.getElementById("signupFields"), loginFields=document.getElementById("loginFields");
   var authSubmit=document.getElementById("authSubmit"), authSwitch=document.getElementById("authSwitch"), authErr=document.getElementById("authErr");
 
+  function showVerifyNotice(email){
+    authErr.textContent=""; authErr.style.color="";
+    document.getElementById("signupFields").style.display="none";
+    document.getElementById("loginFields").style.display="none";
+    document.getElementById("pwMeter").style.display="none";
+    authTitle.textContent=t("verifyTitle");
+    authLede.textContent=t("verifyLede");
+    authSubmit.textContent=t("login");
+    authSubmit.onclick=function(){ location.reload(); };
+    authSwitch.innerHTML='<a id="resendV">'+t("verifyResend")+'</a>';
+    document.getElementById("resendV").onclick=function(){
+      // sign in briefly to resend, then out again
+      var pw=prompt("Confirm your password to resend the link:");
+      if(!pw) return;
+      auth.signInWithEmailAndPassword(email,pw).then(function(c){
+        return c.user.sendEmailVerification().then(function(){ return auth.signOut(); });
+      }).then(function(){ authErr.style.color="var(--ok)"; authErr.textContent=t("verifySent"); })
+      .catch(function(err){ authErr.style.color=""; authErr.textContent=fbMsg(err); });
+    };
+    show("auth");
+  }
+
   function openAuth(which,keepView){
+    authSubmit.onclick=authSubmitHandler;  // restore default handler (verify notice overrides it)
     mode=which; authErr.textContent="";
     document.getElementById("fbWarn").style.display = READY ? "none" : "block";
     if(which==="signup"){
@@ -731,7 +814,32 @@
       .catch(function(err){ authErr.style.color=""; authErr.textContent=fbMsg(err); });
   };
 
-  authSubmit.onclick=function(){
+  (function(){
+    var pass=document.getElementById("su-pass"), meter=document.getElementById("pwMeter"), label=document.getElementById("pwLabel");
+    function score(v){
+      var s=0;
+      if(v.length>=8) s++;
+      if(v.length>=12) s++;
+      if(/[a-z]/.test(v) && /[A-Z]/.test(v)) s++;
+      if(/\d/.test(v)) s++;
+      if(/[^A-Za-z0-9]/.test(v)) s++;
+      if(v.length<6) s=Math.min(s,1);
+      return Math.min(s,4);
+    }
+    var COLORS=["#DC2626","#DC2626","#F59E0B","#3B82F6","#059669"];
+    pass.addEventListener("input", function(){
+      var v=pass.value;
+      if(!v){ meter.style.display="none"; return; }
+      meter.style.display="";
+      var sc=score(v);
+      meter.className="pw-meter s"+sc;
+      meter.style.setProperty("--pw", COLORS[sc]);
+      label.textContent = t("pw"+sc);
+      label.style.color = COLORS[sc];
+    });
+  })();
+
+  function authSubmitHandler(){
     authErr.textContent=""; authErr.style.color="";
     if(!READY){ authErr.textContent=t("fbDown"); return; }
 
@@ -745,20 +853,21 @@
       if(pass.length<6){ authErr.textContent=t("errPass"); return; }
 
       busy(authSubmit,true,t("busyCreating"));
+      var newUid=null;
       auth.createUserWithEmailAndPassword(email,pass)
         .then(function(cred){
-          try { cred.user.sendEmailVerification(); } catch(e){}  // non-blocking: verify link lands in their inbox
-          var uid=cred.user.uid;
-          var profile={ uid:uid, name:name, email:email, cnic:cnic, onboarded:false, photo:null,
+          newUid=cred.user.uid;
+          var profile={ uid:newUid, name:name, email:email, cnic:cnic, onboarded:false, photo:null,
                         dob:"", resAddr:"", postAddr:"", sameAddr:false, docs:docNames(),
                         createdAt: firebase.firestore.FieldValue.serverTimestamp() };
-          return userDoc(uid).set(profile).then(function(){ return uploadPendingDocs(uid); }).then(function(){ return profile; });
+          return userDoc(newUid).set(profile).then(function(){ return uploadPendingDocs(newUid); });
         })
-        .then(function(profile){
-          busy(authSubmit,false);
-          state.user=profile; pendingDocs={};
-          renderNav(); startOnboarding();
+        .then(function(){ return auth.currentUser.sendEmailVerification(); })
+        .then(function(){
+          busy(authSubmit,false); pendingDocs={};
+          return auth.signOut();            // require a verified login before entering
         })
+        .then(function(){ showVerifyNotice(email); })
         .catch(function(err){ busy(authSubmit,false); authErr.textContent=fbMsg(err); });
 
     } else {
@@ -766,19 +875,31 @@
       if(!em||!pw){ authErr.textContent=t("errCreds"); return; }
       busy(authSubmit,true,t("busyLogin"));
       auth.signInWithEmailAndPassword(em,pw)
-        .then(function(cred){ return userDoc(cred.user.uid).get(); })
-        .then(function(snap){
-          busy(authSubmit,false);
-          var u=auth.currentUser;
-          state.user = snap.exists ? snap.data()
-            : { uid:u.uid, name:(u.email||"").split("@")[0], email:u.email, cnic:"", onboarded:false, photo:null, dob:"", resAddr:"", postAddr:"", sameAddr:false, docs:{} };
-          state.user.uid=u.uid;
-          renderNav();
-          if(state.user.onboarded){ renderDashboard(); show("dashboard"); } else startOnboarding();
+        .then(function(cred){
+          if(!cred.user.emailVerified){
+            var e=cred.user;
+            return e.sendEmailVerification().catch(function(){}).then(function(){
+              return auth.signOut();
+            }).then(function(){
+              busy(authSubmit,false);
+              authErr.style.color=""; authErr.textContent=t("verifyNeeded");
+              throw "unverified";
+            });
+          }
+          return userDoc(cred.user.uid).get().then(function(snap){
+            busy(authSubmit,false);
+            var u=auth.currentUser;
+            state.user = snap.exists ? snap.data()
+              : { uid:u.uid, name:(u.email||"").split("@")[0], email:u.email, cnic:"", onboarded:false, photo:null, dob:"", resAddr:"", postAddr:"", sameAddr:false, docs:{} };
+            state.user.uid=u.uid;
+            renderNav();
+            if(state.user.onboarded){ renderDashboard(); show("dashboard"); } else startOnboarding();
+          });
         })
-        .catch(function(err){ busy(authSubmit,false); authErr.textContent=fbMsg(err); });
+        .catch(function(err){ if(err==="unverified") return; busy(authSubmit,false); authErr.textContent=fbMsg(err); });
     }
-  };
+  }
+  authSubmit.onclick=authSubmitHandler;
 
   var stepNum=document.getElementById("stepNum"), progFill=document.getElementById("progFill");
   var obStep1=document.getElementById("ob-step1"), obStep2=document.getElementById("ob-step2");
@@ -883,6 +1004,36 @@
      Question set mirrors PU's official online admission form
      (bio-data fields excluded — taken from the Apply.pk profile).
      ============================================================ */
+  var PU_UR = {
+    // sections
+    "Family & Guardian":"خاندان اور سرپرست", "Personal":"ذاتی", "Contact":"رابطہ",
+    "Facilities & University Record":"سہولیات اور یونیورسٹی ریکارڈ", "Disability (if applicable)":"معذوری (اگر ہو)",
+    "Declarations":"اعلانات",
+    // fields
+    "Father Name":"والد کا نام", "Father CNIC (XXXXX-XXXXXXX-X)":"والد کا شناختی کارڈ (XXXXX-XXXXXXX-X)",
+    "Father / Guardian Occupation":"والد / سرپرست کا پیشہ", "Family Monthly Income (PKR)":"خاندان کی ماہانہ آمدنی (روپے)",
+    "My guardian is someone other than my father":"میرا سرپرست میرے والد کے علاوہ کوئی اور ہے",
+    "Guardian Name":"سرپرست کا نام", "Guardian Relationship":"سرپرست سے رشتہ", "Guardian Address":"سرپرست کا پتہ",
+    "Gender":"جنس", "Religion":"مذہب", "Hafiz-e-Quran":"حافظِ قرآن", "Blood Group":"بلڈ گروپ",
+    "Marital Status":"ازدواجی حیثیت", "Nationality":"قومیت", "Province":"صوبہ", "Domicile District":"ڈومیسائل ضلع",
+    "Mobile No.":"موبائل نمبر", "Guardian Contact No.":"سرپرست کا رابطہ نمبر",
+    "Hostel Required":"ہاسٹل درکار ہے", "NCC Training":"این سی سی تربیت", "PU Registration No. (if any)":"پی یو رجسٹریشن نمبر (اگر ہو)",
+    "I have previously been admitted at Punjab University":"میں پہلے پنجاب یونیورسٹی میں داخل ہو چکا/چکی ہوں",
+    "Admitted Department":"داخل شدہ شعبہ", "Admitted Program":"داخل شدہ پروگرام", "Admitted Session":"داخل شدہ سیشن", "Admitted Roll No.":"داخل شدہ رول نمبر",
+    "I have a disability":"مجھے معذوری ہے", "Disability Type":"معذوری کی قسم", "Supportive Device":"معاون آلہ",
+    "Issuing Authority of Disability":"معذوری جاری کرنے والا ادارہ", "Certificate Reference No.":"سرٹیفکیٹ حوالہ نمبر",
+    "Certificate Issuance Date":"سرٹیفکیٹ جاری ہونے کی تاریخ", "CNIC Front (photo/scan)":"شناختی کارڈ (سامنے) تصویر/اسکین",
+    "Disability Certificate (photo/scan)":"معذوری سرٹیفکیٹ تصویر/اسکین",
+    "I have professional research work to declare":"میرے پاس پیشہ ورانہ تحقیقی کام ہے",
+    "Professional Research Work Details (max 500 characters)":"پیشہ ورانہ تحقیقی کام کی تفصیل (زیادہ سے زیادہ 500 حروف)",
+    "I have special needs to declare":"میری خصوصی ضروریات ہیں",
+    "Special Needs Details (max 500 characters)":"خصوصی ضروریات کی تفصیل (زیادہ سے زیادہ 500 حروف)",
+    "I have been expelled / removed from an institution":"مجھے کسی ادارے سے خارج/نکالا گیا ہے",
+    "Expelled / Removed Details (max 250 characters)":"اخراج کی تفصیل (زیادہ سے زیادہ 250 حروف)",
+    "I have been convicted":"مجھے سزا ہوئی ہے", "Convicted Details (max 250 characters)":"سزا کی تفصیل (زیادہ سے زیادہ 250 حروف)"
+  };
+  function puT(txt){ return (lang==="ur" && PU_UR[txt]) ? PU_UR[txt] : txt; }
+
   var PU_NATIONALITIES = ["Pakistani", "Afghan", "Albanian", "Algerian", "American Samoan", "Andorran", "Angolan", "Anguillan", "Antarctic", "Antiguan or Barbudan", "Argentine", "Armenian", "Aruban", "Australian", "Austrian", "Azerbaijani, Azeri", "Ã…land Island", "Bahamian", "Bahraini", "Bangladeshi", "Barbadian", "Belarusian", "Belgian", "Belizean", "Beninese, Beninois", "Bermudian, Bermudan", "Bhutanese", "Bolivian", "Bonaire", "Bosnian or Herzegovinian", "Motswana, Botswanan", "Bouvet Island", "Brazilian", "BIOT", "Bruneian", "Bulgarian", "BurkinabÃ©", "Burundian", "Cabo Verdean", "Cambodian", "Cameroonian", "Canadian", "Caymanian", "Ivorian", "Central African", "Chadian", "Chilean", "Chinese", "Christmas Island", "Cocos Island", "Colombian", "Comoran, Comorian", "Congolese", "Congolese", "Cook Island", "Costa Rican", "Croatian", "Cuban", "CuraÃ§aoan", "Cypriot", "Czech", "Danish", "Djiboutian", "Dominican", "Dominican", "Ecuadorian", "Egyptian", "Salvadoran", "Equatorial Guinean, Equatoguinean", "Eritrean", "Estonian", "Ethiopian", "Falkland Island", "Faroese", "Fijian", "Finnish", "French", "French Guianese", "French Polynesian", "French Southern Territories", "Gabonese", "Gambian", "Georgian", "German", "Ghanaian", "Gibraltar", "Greek, Hellenic", "Greenlandic", "Grenadian", "Guadeloupe", "Guamanian, Guambat", "Guatemalan", "Channel Island", "Guinean", "Bissau-Guinean", "Guyanese", "Haitian", "Heard Island or McDonald Islands", "Honduran", "Hong Kong, Hong Kongese", "Hungarian, Magyar", "Icelandic", "Indian", "Indonesian", "Iranian, Persian", "Iraqi", "Irish", "Manx", "Israeli", "Italian", "Jamaican", "Japanese", "Channel Island", "Jordanian", "Kazakhstani, Kazakh", "Kenyan", "I-Kiribati", "Kuwaiti", "Kyrgyzstani, Kyrgyz, Kirgiz, Kirghiz", "Lao, Laotian", "Latvian", "Lebanese", "Basotho", "Liberian", "Libyan", "Liechtenstein", "Lithuanian", "Luxembourg, Luxembourgish", "Macanese, Chinese", "Macedonian", "Malagasy", "Malawian", "Malaysian", "Maldivian", "Malian, Malinese", "Maltese", "Marshallese", "Martiniquais, Martinican", "Mauritanian", "Mauritian", "Mahoran", "Mexican", "Micronesian", "Moldovan", "MonÃ©gasque, Monacan", "Mongolian", "Montenegrin", "Montserratian", "Moroccan", "Mozambican", "Burmese", "Namibian", "Nauruan", "Nepali, Nepalese", "Dutch, Netherlandic", "New Caledonian", "New Zealand, NZ", "Nicaraguan", "Nigerien", "Nigerian", "Niuean", "Norfolk Island", "North Korean", "Northern Marianan", "Norwegian", "Omani", "Palauan", "Palestinian", "Panamanian", "Papua New Guinean, Papuan", "Paraguayan", "Peruvian", "Philippine, Filipino", "Pitcairn Island", "Polish", "Portuguese", "Puerto Rican", "Qatari", "RÃ©unionese, RÃ©unionnais", "Romanian", "Russian", "Rwandan", "BarthÃ©lemois", "Saint Helenian", "Kittitian or Nevisian", "Saint Lucian", "Saint-Martinoise", "Saint-Pierrais or Miquelonnais", "Saint Vincentian, Vincentian", "Samoan", "Sammarinese", "SÃ£o TomÃ©an", "Saudi, Saudi Arabian", "Senegalese", "Serbian", "Seychellois", "Sierra Leonean", "Singaporean", "Sint Maarten", "Slovak", "Slovenian, Slovene", "Solomon Island", "Somali, Somalian", "South African", "South Georgia or South Sandwich Islands", "South Korean", "South Sudanese", "Spanish", "Sri Lankan", "Sudanese", "Surinamese", "Svalbard", "Swazi", "Swedish", "Swiss", "Syrian", "Chinese, Taiwanese", "Tajikistani", "Tanzanian", "Thai", "Timorese", "Togolese", "Tokelauan", "Tongan", "Trinidadian or Tobagonian", "Tunisian", "Turkish", "Turkmen", "Turks and Caicos Island", "Tuvaluan", "Ugandan", "Ukrainian", "Emirati, Emirian, Emiri", "British, UK", "American", "American", "Uruguayan", "Uzbekistani, Uzbek", "Ni-Vanuatu, Vanuatuan", "Vatican", "Venezuelan", "Vietnamese", "British Virgin Island", "U.S. Virgin Island", "Wallis and Futuna, Wallisian or Futunan", "Sahrawi, Sahrawian, Sahraouian", "Yemeni", "Zambian", "Zimbabwean"];
   var PU_FORM = [
     { title:"Family & Guardian", fields:[
@@ -954,7 +1105,7 @@
     var wrap=document.createElement("div");
     wrap.className="field"+(f.full?" full":"");
     var lab=document.createElement("label");
-    lab.htmlFor="pu_"+f.id; lab.textContent=f.label+" ";
+    lab.htmlFor="pu_"+f.id; lab.textContent=puT(f.label)+" ";
     if(f.req||f.greq){ var st=document.createElement("span"); st.className="req"; st.textContent="*"; lab.appendChild(st); }
     wrap.appendChild(lab);
     var el;
@@ -980,7 +1131,7 @@
     row.className="doc-row full"; row.id="row_pu_"+f.id;
     var di=document.createElement("span"); di.className="di"; di.innerHTML=fileSVG;
     var txt=document.createElement("div"); txt.className="doc-txt";
-    var nEl=document.createElement("div"); nEl.className="n"; nEl.textContent=f.label;
+    var nEl=document.createElement("div"); nEl.className="n"; nEl.textContent=puT(f.label);
     var mEl=document.createElement("div"); mEl.className="m"; mEl.textContent=t("docNone")+" · "+t("docFmt");
     txt.appendChild(nEl); txt.appendChild(mEl);
     var btn=document.createElement("button"); btn.type="button"; btn.className="doc-btn"; btn.textContent=t("docUpload");
@@ -1012,7 +1163,7 @@
     host.innerHTML="";
     PU_FORM.forEach(function(sec){
       var box=document.createElement("div"); box.className="af-section";
-      var h=document.createElement("div"); h.className="af-title"; h.textContent=sec.title;
+      var h=document.createElement("div"); h.className="af-title"; h.textContent=puT(sec.title);
       box.appendChild(h);
       var grid=document.createElement("div"); grid.className="af-grid";
       sec.fields.forEach(function(f){
@@ -1020,7 +1171,7 @@
           var gate=document.createElement("div"); gate.className="af-gate"; gate.id="gate_pu_"+f.id;
           var lab=document.createElement("label"); lab.className="check";
           var cb=document.createElement("input"); cb.type="checkbox"; cb.id="pu_"+f.id;
-          var sp=document.createElement("span"); sp.textContent=f.label;
+          var sp=document.createElement("span"); sp.textContent=puT(f.label);
           lab.appendChild(cb); lab.appendChild(sp); gate.appendChild(lab);
           var body=document.createElement("div"); body.className="gbody";
           var g2=document.createElement("div"); g2.className="af-grid";
@@ -1148,7 +1299,7 @@
     var em=document.getElementById("pf-email"); em.disabled=true; em.style.background="#F3F4F6";
     document.getElementById("pfErr").textContent="";
     document.getElementById("pfSaved").classList.remove("show");
-    renderDocs(); renderNav();
+    renderDocs(); loadHub(); renderNav();
   }
   try { document.getElementById("pf-dob").max=new Date().toISOString().split("T")[0]; } catch(e){}
   pfSame.onchange=function(){ pfPostWrap.style.display = pfSame.checked ? "none" : ""; };
@@ -1186,6 +1337,82 @@
     .catch(function(e2){ busy(btn,false); err.textContent=fbMsg(e2); });
   };
 
+  /* ============================================================
+     PROFILE HUB — aggregates content from every application.
+     Which application field maps to which tab:
+       essays  -> answers ending in "Details" / statement fields
+       cocurr  -> research work declarations
+       accom   -> hostel answers
+       resume  -> uploaded documents (results, CNIC, etc.)
+     ============================================================ */
+  function hubItem(mkText, mkColor, title, sub){
+    var it=document.createElement("div"); it.className="hub-item";
+    var mk=document.createElement("span"); mk.className="hi-mk"; mk.style.background=mkColor||"#334155"; mk.textContent=mkText||"";
+    var body=document.createElement("div"); body.className="hi-body";
+    var tt=document.createElement("div"); tt.className="hi-t"; tt.textContent=title;
+    body.appendChild(tt);
+    if(sub){ var ss=document.createElement("div"); ss.className="hi-s"; ss.textContent=sub; body.appendChild(ss); }
+    it.appendChild(mk); it.appendChild(body);
+    return it;
+  }
+  function hubEmpty(panel, msg){
+    var e=document.createElement("div"); e.className="hub-empty"; e.textContent=msg; panel.appendChild(e);
+  }
+  function uniBySlug(slug){ for(var i=0;i<UNIS.length;i++){ if(UNIS[i].slug===slug) return UNIS[i]; } return null; }
+
+  function loadHub(){
+    var pUni=document.getElementById("hub-unis"), pEss=document.getElementById("hub-essays"),
+        pCo=document.getElementById("hub-cocurr"), pAc=document.getElementById("hub-accom"), pRe=document.getElementById("hub-resume");
+    [pUni,pEss,pCo,pAc,pRe].forEach(function(x){ x.innerHTML=""; });
+
+    // Resume tab = uploaded documents from the profile
+    var docLabels={ olevel:t("docOlevel"), fsc:t("docFsc"), minority:t("docMinority"),
+                    pu_cnic_front:"CNIC Front (Punjab University)", pu_discert:"Disability Certificate (Punjab University)" };
+    if(READY && state.user && state.user.uid){
+      userDoc(state.user.uid).collection("documents").get().then(function(qs){
+        if(qs.empty){ hubEmpty(pRe, t("hubNoResume")); return; }
+        qs.forEach(function(dS){
+          pRe.appendChild(hubItem("PDF","#0E7490", docLabels[dS.id]||dS.id, dS.data().name||""));
+        });
+      }).catch(function(){ hubEmpty(pRe, t("hubNoResume")); });
+
+      userDoc(state.user.uid).collection("applications").get().then(function(qs){
+        var anyUni=false, anyEss=false, anyCo=false, anyAc=false;
+        qs.forEach(function(aS){
+          var d=aS.data(), uni=uniBySlug(aS.id), col=(uni?uni.col:"#334155"), ab=(uni?uni.ab:"?");
+          var status=(d.status==="submitted")?"Submitted":(d.status==="draft"?"Draft":"Started");
+          // My Universities
+          pUni.appendChild(hubItem(ab,col,(d.university||aS.id),status)); anyUni=true;
+          var a=d.answers||{};
+          // My Essays (long declaration/statement answers)
+          ["researchDetails","specialDetails","expelledDetails","convictedDetails"].forEach(function(k){
+            if(a[k]){ pEss.appendChild(hubItem(ab,col,(d.university||"")+" — "+k.replace("Details",""), a[k])); anyEss=true; }
+          });
+          // My Co-Curriculars (research work)
+          if(a.researchGate && a.researchDetails){ pCo.appendChild(hubItem(ab,col,(d.university||"")+" — Research work", a.researchDetails)); anyCo=true; }
+          // Accommodation (hostel)
+          if(a.hostel){ pAc.appendChild(hubItem(ab,col,(d.university||"")+" — Hostel", "Hostel required: "+a.hostel)); anyAc=true; }
+        });
+        if(!anyUni) hubEmpty(pUni, t("hubNoUnis"));
+        if(!anyEss) hubEmpty(pEss, t("hubNoEssays"));
+        if(!anyCo) hubEmpty(pCo, t("hubNoCocurr"));
+        if(!anyAc) hubEmpty(pAc, t("hubNoAccom"));
+      }).catch(function(){
+        hubEmpty(pUni,t("hubNoUnis")); hubEmpty(pEss,t("hubNoEssays"));
+        hubEmpty(pCo,t("hubNoCocurr")); hubEmpty(pAc,t("hubNoAccom"));
+      });
+    }
+  }
+
+  document.querySelectorAll(".hub-tab").forEach(function(tab){
+    tab.onclick=function(){
+      document.querySelectorAll(".hub-tab").forEach(function(x){ x.classList.remove("active"); });
+      document.querySelectorAll(".hub-panel").forEach(function(x){ x.classList.remove("active"); });
+      tab.classList.add("active");
+      document.getElementById("hub-"+tab.getAttribute("data-tab")).classList.add("active");
+    };
+  });
+
   document.querySelectorAll("[data-go]").forEach(function(el){
     el.addEventListener("click", function(){
       var g=el.getAttribute("data-go");
@@ -1210,6 +1437,14 @@
     renderNav(); renderDocs();
     openAuth(mode, true);
     if(current==="dashboard") renderDashboard();
+    if(current==="application" && currentAppUni && currentAppUni.slug==="pu"){
+      var existing=null;
+      // rebuild with current on-screen answers preserved
+      var snapAnswers={}; 
+      try { snapAnswers=collectPuAnswers().answers; } catch(e){}
+      buildPuForm({ answers:snapAnswers });
+    }
+    if(current==="profile") loadHub();
   }
   document.getElementById("langBtn").onclick=function(){ lang=(lang==="en")?"ur":"en"; applyLang(); };
 
@@ -1241,6 +1476,7 @@
   if(READY){
     auth.onAuthStateChanged(function(u){
       if(!u){ state={user:null}; renderNav(); return; }
+      if(!u.emailVerified){ state={user:null}; renderNav(); return; }  // unverified: treat as logged out
       userDoc(u.uid).get().then(function(snap){
         state.user = snap.exists ? snap.data()
           : { uid:u.uid, name:(u.email||"").split("@")[0], email:u.email, cnic:"", onboarded:false, photo:null, dob:"", resAddr:"", postAddr:"", sameAddr:false, docs:{} };

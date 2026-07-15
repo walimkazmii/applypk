@@ -151,6 +151,24 @@
   .app-uni-head h2 { font-family:var(--font-serif); font-size:1.5rem; font-weight:700; }
   .app-uni-head .c { font-size:13px; color:var(--slate); margin-top:2px; }
   .app-empty { border:1px dashed var(--line-strong); border-radius:var(--r); padding:56px 24px; text-align:center; color:var(--slate); font-size:14.5px; }
+  .af-note { font-size:13px; color:var(--slate); margin-bottom:18px; }
+  .af-section { background:#fff; border:1px solid var(--line-strong); border-radius:var(--r); padding:24px 22px; margin-bottom:18px; }
+  .af-section > .af-title { font-family:var(--font-serif); font-size:1.08rem; font-weight:700; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--line); }
+  .af-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px 16px; }
+  .af-grid .field { margin-bottom:0; }
+  .af-grid .full { grid-column:1 / -1; }
+  .af-gate { grid-column:1 / -1; }
+  .af-gate .gbody { display:none; margin-top:12px; padding:14px; background:var(--paper); border:1px solid var(--line); border-radius:var(--r-sm); }
+  .af-gate.on .gbody { display:block; }
+  .af-gate .gbody .af-grid { grid-template-columns:1fr 1fr; }
+  .req { color:#b91c1c; }
+  .af-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:4px; }
+  .af-banner { display:none; align-items:center; gap:10px; background:#ECFDF5; border:1px solid #A7F3D0; color:var(--ok); border-radius:var(--r); padding:13px 16px; font-size:14px; font-weight:600; margin-bottom:18px; }
+  .af-banner.show { display:flex; }
+  .pill-status { font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+  .pill-status.draft { color:#92400E; background:#FEF3C7; border:1px solid #FDE68A; }
+  .pill-status.submitted { color:var(--ok); background:#ECFDF5; border:1px solid #A7F3D0; }
+  @media (max-width:640px){ .af-grid, .af-gate .gbody .af-grid { grid-template-columns:1fr; } }
 
   footer { border-top:1px solid var(--line); background:var(--paper); }
   .gov { padding:30px 0 22px; text-align:center; }
@@ -322,7 +340,18 @@
         <span class="uni-mk" id="appUniMk"></span>
         <div><h2 id="appUniName"></h2><div class="c" id="appUniCity"></div></div>
       </div>
-      <div class="app-empty" data-i18n="comingSoon">This application form is coming soon.</div>
+      <div class="app-empty" id="appEmpty" data-i18n="comingSoon">This application form is coming soon.</div>
+      <div id="appFormWrap" style="display:none;">
+        <div class="af-banner" id="afBanner"><span>✓</span><span id="afBannerText"></span></div>
+        <p class="af-note">Fields marked <span class="req">*</span> are required. Your name, CNIC, photo, date of birth and addresses are taken from your Apply.pk profile automatically.</p>
+        <div id="afSections"></div>
+        <div class="err" id="afErr"></div>
+        <div class="af-actions">
+          <button class="btn btn-line" id="afSaveDraft">Save draft</button>
+          <button class="btn" id="afSubmit">Submit application</button>
+          <span class="saved-note" id="afSaved">✓ Saved</span>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -829,22 +858,283 @@
       var btn=document.createElement("button"); btn.className="btn btn-sm"; btn.textContent=t("apply");
       btn.onclick=function(){ openApplication(idx); };
       row.appendChild(mk); row.appendChild(info); row.appendChild(sp); row.appendChild(btn);
+      row.dataset.slug=uni.slug;
       uniList.appendChild(row);
       attachLogo(mk, uni.slug);
     });
+    // annotate rows with saved application statuses
+    if(READY && state.user && state.user.uid){
+      userDoc(state.user.uid).collection("applications").get().then(function(qs){
+        qs.forEach(function(docSnap){
+          var st=(docSnap.data().status||"");
+          if(st!=="draft" && st!=="submitted") return;
+          var row=uniList.querySelector('[data-slug="'+docSnap.id+'"]');
+          if(!row) return;
+          var pill=document.createElement("span");
+          pill.className="pill-status "+st;
+          pill.textContent = st==="submitted" ? "Submitted" : "Draft";
+          row.insertBefore(pill, row.lastChild);
+        });
+      }).catch(function(){});
+    }
   }
+  /* ============================================================
+     PUNJAB UNIVERSITY APPLICATION FORM
+     Question set mirrors PU's official online admission form
+     (bio-data fields excluded — taken from the Apply.pk profile).
+     ============================================================ */
+  var PU_NATIONALITIES = ["Pakistani", "Afghan", "Albanian", "Algerian", "American Samoan", "Andorran", "Angolan", "Anguillan", "Antarctic", "Antiguan or Barbudan", "Argentine", "Armenian", "Aruban", "Australian", "Austrian", "Azerbaijani, Azeri", "Ã…land Island", "Bahamian", "Bahraini", "Bangladeshi", "Barbadian", "Belarusian", "Belgian", "Belizean", "Beninese, Beninois", "Bermudian, Bermudan", "Bhutanese", "Bolivian", "Bonaire", "Bosnian or Herzegovinian", "Motswana, Botswanan", "Bouvet Island", "Brazilian", "BIOT", "Bruneian", "Bulgarian", "BurkinabÃ©", "Burundian", "Cabo Verdean", "Cambodian", "Cameroonian", "Canadian", "Caymanian", "Ivorian", "Central African", "Chadian", "Chilean", "Chinese", "Christmas Island", "Cocos Island", "Colombian", "Comoran, Comorian", "Congolese", "Congolese", "Cook Island", "Costa Rican", "Croatian", "Cuban", "CuraÃ§aoan", "Cypriot", "Czech", "Danish", "Djiboutian", "Dominican", "Dominican", "Ecuadorian", "Egyptian", "Salvadoran", "Equatorial Guinean, Equatoguinean", "Eritrean", "Estonian", "Ethiopian", "Falkland Island", "Faroese", "Fijian", "Finnish", "French", "French Guianese", "French Polynesian", "French Southern Territories", "Gabonese", "Gambian", "Georgian", "German", "Ghanaian", "Gibraltar", "Greek, Hellenic", "Greenlandic", "Grenadian", "Guadeloupe", "Guamanian, Guambat", "Guatemalan", "Channel Island", "Guinean", "Bissau-Guinean", "Guyanese", "Haitian", "Heard Island or McDonald Islands", "Honduran", "Hong Kong, Hong Kongese", "Hungarian, Magyar", "Icelandic", "Indian", "Indonesian", "Iranian, Persian", "Iraqi", "Irish", "Manx", "Israeli", "Italian", "Jamaican", "Japanese", "Channel Island", "Jordanian", "Kazakhstani, Kazakh", "Kenyan", "I-Kiribati", "Kuwaiti", "Kyrgyzstani, Kyrgyz, Kirgiz, Kirghiz", "Lao, Laotian", "Latvian", "Lebanese", "Basotho", "Liberian", "Libyan", "Liechtenstein", "Lithuanian", "Luxembourg, Luxembourgish", "Macanese, Chinese", "Macedonian", "Malagasy", "Malawian", "Malaysian", "Maldivian", "Malian, Malinese", "Maltese", "Marshallese", "Martiniquais, Martinican", "Mauritanian", "Mauritian", "Mahoran", "Mexican", "Micronesian", "Moldovan", "MonÃ©gasque, Monacan", "Mongolian", "Montenegrin", "Montserratian", "Moroccan", "Mozambican", "Burmese", "Namibian", "Nauruan", "Nepali, Nepalese", "Dutch, Netherlandic", "New Caledonian", "New Zealand, NZ", "Nicaraguan", "Nigerien", "Nigerian", "Niuean", "Norfolk Island", "North Korean", "Northern Marianan", "Norwegian", "Omani", "Palauan", "Palestinian", "Panamanian", "Papua New Guinean, Papuan", "Paraguayan", "Peruvian", "Philippine, Filipino", "Pitcairn Island", "Polish", "Portuguese", "Puerto Rican", "Qatari", "RÃ©unionese, RÃ©unionnais", "Romanian", "Russian", "Rwandan", "BarthÃ©lemois", "Saint Helenian", "Kittitian or Nevisian", "Saint Lucian", "Saint-Martinoise", "Saint-Pierrais or Miquelonnais", "Saint Vincentian, Vincentian", "Samoan", "Sammarinese", "SÃ£o TomÃ©an", "Saudi, Saudi Arabian", "Senegalese", "Serbian", "Seychellois", "Sierra Leonean", "Singaporean", "Sint Maarten", "Slovak", "Slovenian, Slovene", "Solomon Island", "Somali, Somalian", "South African", "South Georgia or South Sandwich Islands", "South Korean", "South Sudanese", "Spanish", "Sri Lankan", "Sudanese", "Surinamese", "Svalbard", "Swazi", "Swedish", "Swiss", "Syrian", "Chinese, Taiwanese", "Tajikistani", "Tanzanian", "Thai", "Timorese", "Togolese", "Tokelauan", "Tongan", "Trinidadian or Tobagonian", "Tunisian", "Turkish", "Turkmen", "Turks and Caicos Island", "Tuvaluan", "Ugandan", "Ukrainian", "Emirati, Emirian, Emiri", "British, UK", "American", "American", "Uruguayan", "Uzbekistani, Uzbek", "Ni-Vanuatu, Vanuatuan", "Vatican", "Venezuelan", "Vietnamese", "British Virgin Island", "U.S. Virgin Island", "Wallis and Futuna, Wallisian or Futunan", "Sahrawi, Sahrawian, Sahraouian", "Yemeni", "Zambian", "Zimbabwean"];
+  var PU_FORM = [
+    { title:"Family & Guardian", fields:[
+      { id:"fatherName",  label:"Father Name", type:"text", req:true },
+      { id:"fatherCnic",  label:"Father CNIC (XXXXX-XXXXXXX-X)", type:"text" },
+      { id:"fatherOcc",   label:"Father / Guardian Occupation", type:"text" },
+      { id:"familyIncome",label:"Family Monthly Income (PKR)", type:"text", req:true },
+      { id:"guardianGate", label:"My guardian is someone other than my father", type:"gate", fields:[
+        { id:"guardianName", label:"Guardian Name", type:"text" },
+        { id:"guardianRel",  label:"Guardian Relationship", type:"text" },
+        { id:"guardianAddr", label:"Guardian Address", type:"text", full:true }
+      ]}
+    ]},
+    { title:"Personal", fields:[
+      { id:"gender",     label:"Gender", type:"select", opts:["Male","Female","Cross Gender"], req:true },
+      { id:"religion",   label:"Religion", type:"select", opts:["Islam", "Christianity", "Sikhism", "Chinese traditional religion", "Hinduism", "African Traditional & Diasporic", "Agnostic", "Atheist", "Bahai", "Buddhism", "Cao Dai", "Jainism", "Juche", "Judaism", "Neo-Paganism", "Non-religious", "Rastafarianism", "Secular", "Shinto", "Spiritism", "Tenrikyo", "Unitarian-Universalism", "Zoroastrianism", "Primal-indigenous", "Other"], req:true },
+      { id:"hafiz",      label:"Hafiz-e-Quran", type:"select", opts:["Yes","No"], req:true },
+      { id:"bloodGroup", label:"Blood Group", type:"select", opts:["A+ve","A-ve","B+ve","B-ve","O+ve","O-ve","AB+ve","AB-ve"], req:true },
+      { id:"marital",    label:"Marital Status", type:"select", opts:["Single","Married"], req:true },
+      { id:"nationality",label:"Nationality", type:"select", opts:PU_NATIONALITIES, req:true, def:"Pakistani" },
+      { id:"province",   label:"Province", type:"select", opts:["Punjab", "Islamabad Capital Territory", "Sindh", "Balochistan", "Khyber Pakhtunkhwa", "Gilgit Baltistan", "Federally Administered Tribal Areas", "Azad Jammu and Kashmir", "Foreigner"], req:true },
+      { id:"domicile",   label:"Domicile District", type:"text", req:true }
+    ]},
+    { title:"Contact", fields:[
+      { id:"mobile",          label:"Mobile No.", type:"text", req:true },
+      { id:"guardianContact", label:"Guardian Contact No.", type:"text", req:true }
+    ]},
+    { title:"Facilities & University Record", fields:[
+      { id:"hostel", label:"Hostel Required", type:"select", opts:["No","Yes"] },
+      { id:"ncc",    label:"NCC Training", type:"select", opts:["No","Yes"] },
+      { id:"puReg",  label:"PU Registration No. (if any)", type:"text" },
+      { id:"prevAdmGate", label:"I have previously been admitted at Punjab University", type:"gate", fields:[
+        { id:"admDept",    label:"Admitted Department", type:"text" },
+        { id:"admProgram", label:"Admitted Program", type:"text" },
+        { id:"admSession", label:"Admitted Session", type:"text" },
+        { id:"admRoll",    label:"Admitted Roll No.", type:"text" }
+      ]}
+    ]},
+    { title:"Disability (if applicable)", fields:[
+      { id:"disGate", label:"I have a disability", type:"gate", fields:[
+        { id:"disType",   label:"Disability Type", type:"select", opts:["Acid attack victims", "Acquired brain injury", "Autism spectrum disorder", "Blindness", "Cerebral palsy", "Chronic neurological conditions", "Dwarfism", "Hearing impairment (deaf and hard of hearing)", "Hemophilia", "Intellectual disability", "Leprosy-cured persons", "Locomotor disability", "Low vision", "Mental illness", "Multiple disabilities", "Multiple sclerosis", "Muscular dystrophy", "Parkinson disease", "Physical Disability", "Sickle cell disease", "Specific learning disabilities", "Speech and language disability", "Thalassemia", "Vision Impariment", "Handicapped (cannot write)"], greq:true },
+        { id:"disDevice", label:"Supportive Device", type:"select", opts:["Adapted Pencil Grips", "Automatic page turner", "Book holder", "Canes", "Closed Captioning Devices", "Cognitive Device", "Computer Software or Hardware", "Crutches", "Hearing Device", "Orthotic Devices", "Prosthetic devices", "Scooter", "Special Sports & Physical Activity Products", "Walker", "Wheelchair", "NOT USING ANY DEVICE"], greq:true },
+        { id:"disAuth",   label:"Issuing Authority of Disability", type:"text" },
+        { id:"disCertRef",label:"Certificate Reference No.", type:"text" },
+        { id:"disCertDate",label:"Certificate Issuance Date", type:"date" },
+        { id:"pu_cnic_front", label:"CNIC Front (photo/scan)", type:"file" },
+        { id:"pu_discert",    label:"Disability Certificate (photo/scan)", type:"file" }
+      ]}
+    ]},
+    { title:"Declarations", fields:[
+      { id:"researchGate", label:"I have professional research work to declare", type:"gate", fields:[
+        { id:"researchDetails", label:"Professional Research Work Details (max 500 characters)", type:"textarea", max:500, full:true }
+      ]},
+      { id:"specialGate", label:"I have special needs to declare", type:"gate", fields:[
+        { id:"specialDetails", label:"Special Needs Details (max 500 characters)", type:"textarea", max:500, full:true }
+      ]},
+      { id:"expelledGate", label:"I have been expelled / removed from an institution", type:"gate", fields:[
+        { id:"expelledDetails", label:"Expelled / Removed Details (max 250 characters)", type:"textarea", max:250, full:true }
+      ]},
+      { id:"convictedGate", label:"I have been convicted", type:"gate", fields:[
+        { id:"convictedDetails", label:"Convicted Details (max 250 characters)", type:"textarea", max:250, full:true }
+      ]}
+    ]}
+  ];
+
+  var currentAppUni=null;
+
+  function afInput(f){
+    var wrap=document.createElement("div");
+    wrap.className="field"+(f.full?" full":"");
+    var lab=document.createElement("label");
+    lab.htmlFor="pu_"+f.id; lab.textContent=f.label+" ";
+    if(f.req||f.greq){ var st=document.createElement("span"); st.className="req"; st.textContent="*"; lab.appendChild(st); }
+    wrap.appendChild(lab);
+    var el;
+    if(f.type==="select"){
+      el=document.createElement("select");
+      var d0=document.createElement("option"); d0.value=""; d0.textContent="— Select —"; el.appendChild(d0);
+      f.opts.forEach(function(o){ var op=document.createElement("option"); op.value=o; op.textContent=o; el.appendChild(op); });
+      if(f.def) el.value=f.def;
+    } else if(f.type==="textarea"){
+      el=document.createElement("textarea");
+      if(f.max) el.maxLength=f.max;
+    } else {
+      el=document.createElement("input");
+      el.type = (f.type==="date") ? "date" : "text";
+    }
+    el.id="pu_"+f.id;
+    wrap.appendChild(el);
+    return wrap;
+  }
+
+  function afFileRow(f){
+    var row=document.createElement("div");
+    row.className="doc-row full"; row.id="row_pu_"+f.id;
+    var di=document.createElement("span"); di.className="di"; di.innerHTML=fileSVG;
+    var txt=document.createElement("div"); txt.className="doc-txt";
+    var nEl=document.createElement("div"); nEl.className="n"; nEl.textContent=f.label;
+    var mEl=document.createElement("div"); mEl.className="m"; mEl.textContent=t("docNone")+" · "+t("docFmt");
+    txt.appendChild(nEl); txt.appendChild(mEl);
+    var btn=document.createElement("button"); btn.type="button"; btn.className="doc-btn"; btn.textContent=t("docUpload");
+    var input=document.createElement("input"); input.type="file"; input.accept="image/*,application/pdf"; input.hidden=true;
+    btn.onclick=function(){ input.click(); };
+    input.onchange=function(){
+      var file=input.files&&input.files[0]; if(!file) return;
+      readFile(file, function(data,name){
+        name=String(name||"file").slice(0,120);
+        docRef(state.user.uid, f.id).set({ name:name, data:data, uploadedAt: firebase.firestore.FieldValue.serverTimestamp() })
+          .then(function(){
+            row.classList.add("done"); di.innerHTML=tickSVG; mEl.textContent=name; btn.textContent=t("docReplace");
+          })
+          .catch(function(e){ document.getElementById("afErr").textContent=fbMsg(e); });
+      }, function(m){ alert(m); });
+    };
+    row.appendChild(di); row.appendChild(txt); row.appendChild(btn); row.appendChild(input);
+    // reflect an already-uploaded file
+    if(READY && state.user && state.user.uid){
+      docRef(state.user.uid, f.id).get().then(function(snap){
+        if(snap.exists){ row.classList.add("done"); di.innerHTML=tickSVG; mEl.textContent=snap.data().name||""; btn.textContent=t("docReplace"); }
+      }).catch(function(){});
+    }
+    return row;
+  }
+
+  function buildPuForm(existing){
+    var host=document.getElementById("afSections");
+    host.innerHTML="";
+    PU_FORM.forEach(function(sec){
+      var box=document.createElement("div"); box.className="af-section";
+      var h=document.createElement("div"); h.className="af-title"; h.textContent=sec.title;
+      box.appendChild(h);
+      var grid=document.createElement("div"); grid.className="af-grid";
+      sec.fields.forEach(function(f){
+        if(f.type==="gate"){
+          var gate=document.createElement("div"); gate.className="af-gate"; gate.id="gate_pu_"+f.id;
+          var lab=document.createElement("label"); lab.className="check";
+          var cb=document.createElement("input"); cb.type="checkbox"; cb.id="pu_"+f.id;
+          var sp=document.createElement("span"); sp.textContent=f.label;
+          lab.appendChild(cb); lab.appendChild(sp); gate.appendChild(lab);
+          var body=document.createElement("div"); body.className="gbody";
+          var g2=document.createElement("div"); g2.className="af-grid";
+          f.fields.forEach(function(sub){
+            if(sub.type==="file"){ g2.appendChild(afFileRow(sub)); }
+            else g2.appendChild(afInput(sub));
+          });
+          body.appendChild(g2); gate.appendChild(body);
+          cb.onchange=function(){ gate.classList.toggle("on", cb.checked); };
+          grid.appendChild(gate);
+        } else {
+          grid.appendChild(afInput(f));
+        }
+      });
+      box.appendChild(grid);
+      host.appendChild(box);
+    });
+    // restore saved answers
+    if(existing && existing.answers){
+      var a=existing.answers;
+      Object.keys(a).forEach(function(k){
+        var el=document.getElementById("pu_"+k);
+        if(!el) return;
+        if(el.type==="checkbox"){ el.checked=!!a[k]; el.onchange && el.onchange(); var g=document.getElementById("gate_pu_"+k); if(g) g.classList.toggle("on", !!a[k]); }
+        else el.value=a[k];
+      });
+    }
+  }
+
+  function collectPuAnswers(){
+    var answers={}, firstErr="";
+    function need(label){ if(!firstErr) firstErr='"'+label+'" is required.'; }
+    PU_FORM.forEach(function(sec){
+      sec.fields.forEach(function(f){
+        if(f.type==="gate"){
+          var on=document.getElementById("pu_"+f.id).checked;
+          answers[f.id]=on;
+          f.fields.forEach(function(sub){
+            if(sub.type==="file") return;                    // files live in documents subcollection
+            var v=(document.getElementById("pu_"+sub.id).value||"").trim();
+            if(on && sub.greq && !v) need(sub.label);
+            answers[sub.id] = on ? v : "";
+          });
+        } else {
+          var v=(document.getElementById("pu_"+f.id).value||"").trim();
+          if(f.req && !v) need(f.label);
+          answers[f.id]=v;
+        }
+      });
+    });
+    return { answers:answers, error:firstErr };
+  }
+
+  function savePuApplication(status, btn){
+    var errEl=document.getElementById("afErr"); errEl.textContent="";
+    var res=collectPuAnswers();
+    if(status==="submitted" && res.error){ errEl.textContent=res.error; window.scrollTo(0,0); return; }
+    busy(btn,true,t("busySaving"));
+    userDoc(state.user.uid).collection("applications").doc("pu").set({
+      university:"University of the Punjab", city:"Lahore",
+      status:status, answers:res.answers,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge:true })
+    .then(function(){
+      busy(btn,false);
+      if(status==="submitted"){
+        var b=document.getElementById("afBanner");
+        document.getElementById("afBannerText").textContent="Your application to University of the Punjab has been submitted.";
+        b.classList.add("show"); window.scrollTo(0,0);
+      } else {
+        var ok=document.getElementById("afSaved");
+        ok.classList.add("show"); setTimeout(function(){ ok.classList.remove("show"); },1600);
+      }
+    })
+    .catch(function(e){ busy(btn,false); errEl.textContent=fbMsg(e); });
+  }
+
+  document.getElementById("afSaveDraft").onclick=function(){ savePuApplication("draft", this); };
+  document.getElementById("afSubmit").onclick=function(){ savePuApplication("submitted", this); };
+
   function openApplication(idx){
     var uni=UNIS[idx];
-    if(READY && state.user && state.user.uid){
-      userDoc(state.user.uid).collection("applications").doc(uni.slug).set({
-        university:uni.n, city:uni.c, status:"started",
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge:true }).catch(function(){});
-    }
+    currentAppUni=uni;
     var mk=document.getElementById("appUniMk");
     mk.className="uni-mk"; mk.style.setProperty("--c",uni.col); mk.textContent=uni.ab; attachLogo(mk,uni.slug);
     document.getElementById("appUniName").textContent=t("applicationTo")+" "+uni.n;
     document.getElementById("appUniCity").textContent=uni.c;
+
+    var empty=document.getElementById("appEmpty"), formWrap=document.getElementById("appFormWrap");
+    document.getElementById("afBanner").classList.remove("show");
+    document.getElementById("afErr").textContent="";
+
+    if(uni.slug==="pu" && READY && state.user && state.user.uid){
+      empty.style.display="none"; formWrap.style.display="";
+      buildPuForm(null);
+      userDoc(state.user.uid).collection("applications").doc("pu").get()
+        .then(function(snap){
+          if(snap.exists){
+            buildPuForm(snap.data());
+            if(snap.data().status==="submitted"){
+              document.getElementById("afBannerText").textContent="Already submitted — you can update and resubmit.";
+              document.getElementById("afBanner").classList.add("show");
+            }
+          }
+        }).catch(function(){});
+    } else {
+      empty.style.display=""; formWrap.style.display="none";
+      if(READY && state.user && state.user.uid){
+        userDoc(state.user.uid).collection("applications").doc(uni.slug).set({
+          university:uni.n, city:uni.c, status:"started",
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge:true }).catch(function(){});
+      }
+    }
     show("application");
   }
 

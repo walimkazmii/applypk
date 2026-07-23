@@ -191,9 +191,9 @@
   .hub-empty { text-align:center; color:var(--slate); font-size:13.5px; border:1px dashed var(--line-strong); border-radius:var(--r); padding:34px 20px; }
   .admin-status { font-size:13px; color:var(--slate); margin-top:12px; min-height:18px; }
   /* ---- PU admissions console ---- */
-  .staff-entry { margin-top:22px; padding-top:18px; border-top:1px solid var(--line); text-align:center; font-size:13px; color:var(--slate); }
-  .staff-entry a { display:block; margin-top:5px; font-weight:600; color:var(--ink-2); cursor:pointer; }
-  .staff-entry a:hover { color:var(--green); }
+  .cta-staff { margin-top:14px; }
+  .btn-staff { background:var(--green-dark); border-color:var(--green-dark); font-size:13.5px; padding:10px 21px; }
+  .btn-staff:hover { background:#065F46; border-color:#065F46; }
   .staff-badge { display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--slate); border:1px solid var(--line-strong); border-radius:999px; padding:4px 11px; margin:0 auto 12px; }
   body.urdu .staff-badge { letter-spacing:0; text-transform:none; font-size:12px; }
   .adm-head { display:flex; align-items:center; gap:14px; padding:26px 0 16px; border-bottom:1px solid var(--line); margin-bottom:18px; flex-wrap:wrap; }
@@ -288,6 +288,7 @@
     .hero { padding:56px 0 48px; }
     .hero h1 { font-size:clamp(2rem,9vw,2.8rem); }
     .hero .cta .btn { width:100%; padding:16px; font-size:16px; }
+    .hero .cta .btn-staff { width:auto; padding:11px 22px; font-size:14px; }
     .pane { padding:28px 0; }
     .card { border-radius:12px; padding:26px 20px; }
     .field.two { grid-template-columns:1fr; }
@@ -315,7 +316,10 @@
     <div class="hero"><div class="wrap">
       <h1><span class="lead" data-i18n="applyTo">Apply to</span><span class="rotator" id="rotator">Quaid-i-Azam University</span></h1>
       <p class="sub" data-i18n="heroSub">One profile. Every public university that matters.</p>
-      <div class="cta"><button class="btn" data-go="start" data-i18n="startApp">Start your application</button></div>
+      <div class="cta">
+        <button class="btn" data-go="start" data-i18n="startApp">Start your application</button>
+        <div class="cta-staff"><button class="btn btn-staff" id="staffLoginLink" data-i18n="staffLoginLink">University staff login</button></div>
+      </div>
       <noscript><p class="sub" style="color:#b91c1c;">This application needs JavaScript. Please open it in Safari or Chrome.</p></noscript>
     </div></div>
   </section>
@@ -356,10 +360,6 @@
       <div class="err" id="authErr"></div>
       <button class="btn btn-block" id="authSubmit">Create account</button>
       <div class="foot" id="authSwitch"></div>
-      <div class="staff-entry" id="staffEntry">
-        <span data-i18n="staffPrompt">Applying on behalf of a university?</span>
-        <a id="staffLoginLink" data-i18n="staffLoginLink">University staff login</a>
-      </div>
     </div></div></div>
   </section>
 
@@ -984,21 +984,21 @@
     mode=which; authErr.textContent="";
     document.getElementById("fbWarn").style.display = READY ? "none" : "block";
     var staffFields=document.getElementById("staffFields");
-    var staffEntry=document.getElementById("staffEntry");
+    var staffEntry=document.getElementById("staffEntry");   // optional: entry point now lives on the landing page
     var staffBadge=document.getElementById("staffBadgeWrap");
     var pwm=document.getElementById("pwMeter");
 
     if(which==="signup"){
       authTitle.textContent=t("createAccount"); authLede.textContent=t("createLede");
       signupFields.style.display=""; loginFields.style.display="none"; staffFields.style.display="none";
-      staffEntry.style.display=""; staffBadge.style.display="none";
+      if(staffEntry) staffEntry.style.display=""; staffBadge.style.display="none";
       authSubmit.textContent=t("createAccountBtn");
       authSwitch.innerHTML=t("haveAccount")+' <a id="toLogin">'+t("login")+'</a>';
       document.getElementById("toLogin").onclick=function(){ openAuth("login"); };
     } else if(which==="staff"){
       authTitle.textContent=t("staffTitle"); authLede.textContent=t("staffLede");
       signupFields.style.display="none"; loginFields.style.display="none"; staffFields.style.display="";
-      staffEntry.style.display="none"; staffBadge.style.display="";
+      if(staffEntry) staffEntry.style.display="none"; staffBadge.style.display="";
       if(pwm) pwm.style.display="none";
       authSubmit.textContent=t("staffSignIn");
       authSwitch.innerHTML='<a id="toStudent">'+t("staffBackStudent")+'</a>';
@@ -1006,7 +1006,7 @@
     } else {
       authTitle.textContent=t("welcomeBack"); authLede.textContent=t("loginLede");
       signupFields.style.display="none"; loginFields.style.display=""; staffFields.style.display="none";
-      staffEntry.style.display=""; staffBadge.style.display="none";
+      if(staffEntry) staffEntry.style.display=""; staffBadge.style.display="none";
       authSubmit.textContent=t("loginBtn");
       authSwitch.innerHTML=t("newHere")+' <a id="toSignup">'+t("createOne")+'</a>';
       document.getElementById("toSignup").onclick=function(){ openAuth("signup"); };

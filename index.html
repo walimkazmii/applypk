@@ -10,6 +10,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root {
     --ink:#111827; --ink-2:#374151; --green:#059669; --green-dark:#047857;
@@ -191,6 +193,14 @@
   .hub-empty { text-align:center; color:var(--slate); font-size:13.5px; border:1px dashed var(--line-strong); border-radius:var(--r); padding:34px 20px; }
   .admin-status { font-size:13px; color:var(--slate); margin-top:12px; min-height:18px; }
   /* ---- PU admissions console ---- */
+  .modal-back { display:none; position:fixed; inset:0; background:rgba(17,24,39,.55); z-index:120; align-items:center; justify-content:center; padding:20px; }
+  .modal-back.show { display:flex; }
+  .modal { background:#fff; border:1px solid var(--line-strong); border-radius:var(--r); max-width:430px; width:100%; padding:26px 24px; box-shadow:0 12px 40px rgba(0,0,0,.18); }
+  .modal .m-title { font-family:var(--font-serif); font-size:1.22rem; font-weight:700; margin-bottom:9px; }
+  .modal .m-body { font-size:14px; color:var(--ink-2); line-height:1.6; margin-bottom:20px; }
+  .modal .m-actions { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+  body[dir="rtl"] .modal .m-actions { justify-content:flex-start; }
+  @media (max-width:520px){ .modal .m-actions .btn { flex:1; } }
   .cta-staff { margin-top:14px; }
   .btn-staff { background:var(--green-dark); border-color:var(--green-dark); font-size:13.5px; padding:10px 21px; }
   .btn-staff:hover { background:#065F46; border-color:#065F46; }
@@ -524,6 +534,17 @@
   </section>
 </main>
 
+<div class="modal-back" id="confirmBack">
+  <div class="modal">
+    <div class="m-title" id="confirmTitle"></div>
+    <p class="m-body" id="confirmBody"></p>
+    <div class="m-actions">
+      <button class="btn btn-line" id="confirmCancel"></button>
+      <button class="btn" id="confirmOk"></button>
+    </div>
+  </div>
+</div>
+
 <div id="printDoc" class="print-doc"></div>
 
 <footer>
@@ -598,6 +619,23 @@
       staffPrompt:"Applying on behalf of a university?", staffBadge:"University staff",
       admConsole:"PU Admissions", errNotStaff:"This account is not registered as an admissions account.",
       uniInfoLink:"About this university ↗",
+      confirmYes:"Confirm", confirmCancel:"Cancel",
+      confirmAcceptT:"Accept this application?",
+      confirmRejectT:"Reject this application?",
+      confirmAcceptB:"You are about to accept {name} to the University of the Punjab. They will be notified by email and will see the decision on their Apply.pk dashboard.",
+      confirmRejectB:"You are about to reject {name}'s application to the University of the Punjab. They will be notified by email and will see the decision on their Apply.pk dashboard.",
+      confirmChanging:"This replaces the previous decision ({prev}), and the change will be recorded in the decision history.",
+      confirmAcceptOk:"Yes, accept", confirmRejectOk:"Yes, reject",
+      emailSentT:"{decision} recorded",
+      emailSentB:"The decision has been saved and a notification email queued for {name}.",
+      emailOpen:"Open email now", emailLater:"Later",
+      busySending:"Sending email…", confirmDone:"Done", confirmClose:"Close",
+      emailOkT:"{decision} — applicant notified",
+      emailOkB:"The decision has been saved and an email sent to {name} at {email}.",
+      emailFailT:"{decision} recorded — email not sent",
+      emailFailB:"The decision was saved successfully, but the notification email could not be sent ({err}). You can open it in your mail app and send it manually.",
+      errFileType:"That file doesn't look like a JPG, PNG or PDF. Please upload a photo, scan or PDF of the document.",
+      errPhotoType:"Please upload a photo in JPG or PNG format.",
       alreadySubmitted:"Already submitted — you can update and resubmit.",
       decMsgAccepted:"Congratulations — the University of the Punjab has accepted your application. Check your email for the link to complete your enrolment with the university.",
       decMsgRejected:"The University of the Punjab has completed its review and your application was not successful this time. Check your email for details.",
@@ -660,6 +698,23 @@
       staffPrompt:"کسی یونیورسٹی کی جانب سے آ رہے ہیں؟", staffBadge:"یونیورسٹی اسٹاف",
       admConsole:"پی یو داخلے", errNotStaff:"یہ اکاؤنٹ داخلہ اکاؤنٹ کے طور پر رجسٹرڈ نہیں ہے۔",
       uniInfoLink:"یونیورسٹی کے بارے میں ↗",
+      confirmYes:"تصدیق کریں", confirmCancel:"منسوخ کریں",
+      confirmAcceptT:"کیا یہ درخواست منظور کریں؟",
+      confirmRejectT:"کیا یہ درخواست مسترد کریں؟",
+      confirmAcceptB:"آپ {name} کو پنجاب یونیورسٹی کے لیے منظور کرنے جا رہے ہیں۔ انہیں ای میل کے ذریعے اطلاع دی جائے گی اور فیصلہ اُن کے Apply.pk ڈیش بورڈ پر نظر آئے گا۔",
+      confirmRejectB:"آپ {name} کی پنجاب یونیورسٹی کی درخواست مسترد کرنے جا رہے ہیں۔ انہیں ای میل کے ذریعے اطلاع دی جائے گی اور فیصلہ اُن کے Apply.pk ڈیش بورڈ پر نظر آئے گا۔",
+      confirmChanging:"یہ پچھلے فیصلے ({prev}) کی جگہ لے گا، اور یہ تبدیلی فیصلوں کی تاریخ میں محفوظ ہو جائے گی۔",
+      confirmAcceptOk:"جی ہاں، منظور کریں", confirmRejectOk:"جی ہاں، مسترد کریں",
+      emailSentT:"{decision} محفوظ ہو گیا",
+      emailSentB:"فیصلہ محفوظ کر لیا گیا ہے اور {name} کے لیے اطلاعی ای میل قطار میں شامل کر دی گئی ہے۔",
+      emailOpen:"ای میل ابھی کھولیں", emailLater:"بعد میں",
+      busySending:"ای میل بھیجی جا رہی ہے…", confirmDone:"مکمل", confirmClose:"بند کریں",
+      emailOkT:"{decision} — درخواست گزار کو اطلاع دے دی گئی",
+      emailOkB:"فیصلہ محفوظ کر لیا گیا اور {name} کو {email} پر ای میل بھیج دی گئی ہے۔",
+      emailFailT:"{decision} محفوظ — ای میل نہیں بھیجی جا سکی",
+      emailFailB:"فیصلہ کامیابی سے محفوظ ہو گیا، لیکن اطلاعی ای میل نہیں بھیجی جا سکی ({err})۔ آپ اسے اپنی میل ایپ میں کھول کر خود بھیج سکتے ہیں۔",
+      errFileType:"یہ فائل JPG، PNG یا PDF نہیں لگتی۔ براہِ کرم دستاویز کی تصویر، اسکین یا PDF اپلوڈ کریں۔",
+      errPhotoType:"براہِ کرم JPG یا PNG فارمیٹ میں تصویر اپلوڈ کریں۔",
       alreadySubmitted:"پہلے جمع کروا دی گئی ہے — آپ تبدیلی کر کے دوبارہ جمع کروا سکتے ہیں۔",
       decMsgAccepted:"مبارک ہو — پنجاب یونیورسٹی نے آپ کی درخواست منظور کر لی ہے۔ داخلہ مکمل کرنے کے لنک کے لیے اپنی ای میل دیکھیں۔",
       decMsgRejected:"پنجاب یونیورسٹی نے جائزہ مکمل کر لیا ہے؛ اس بار آپ کی درخواست کامیاب نہیں ہو سکی۔ تفصیل کے لیے اپنی ای میل دیکھیں۔",
@@ -682,7 +737,20 @@
 
   var READY=false, auth=null, db=null;
   try {
-    if(window.firebase){ firebase.initializeApp(firebaseConfig); auth=firebase.auth(); db=firebase.firestore(); READY=true; }
+    if(window.firebase){
+      firebase.initializeApp(firebaseConfig);
+      /* --- Firebase App Check (bot / abuse protection) -----------------
+         1. Firebase Console > App Check > register this web app with
+            reCAPTCHA v3, then paste the SITE KEY below.
+         2. Only switch on *enforcement* in the console after confirming
+            the app still works with the key in place.
+         Left blank, App Check stays inactive and nothing changes.      */
+      var RECAPTCHA_SITE_KEY = "";
+      if(RECAPTCHA_SITE_KEY){
+        try { firebase.appCheck().activate(RECAPTCHA_SITE_KEY, true); } catch(e){}
+      }
+      auth=firebase.auth(); db=firebase.firestore(); READY=true;
+    }
   } catch(e){ READY=false; }
 
   function userDoc(uid){ return db.collection("applicants").doc(uid); }
@@ -711,7 +779,16 @@
   function isPuAdmin(){ return !!(state.user && state.user.uid && PU_ADMIN_UIDS.indexOf(state.user.uid) >= 0); }
   function isAdminUser(){ return isPuAdmin(); }
 
-  function csvEscape(v){ v=(v==null?"":String(v)); return /[",\n\r]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
+  function csvEscape(v){
+    if(v==null) return "";
+    v=String(v);
+    // Neutralise spreadsheet formula injection: a leading =, +, -, @, tab or
+    // CR makes Excel/Sheets treat the cell as a formula and execute it on the
+    // admissions officer's machine. Prefixing an apostrophe forces plain text.
+    var lead=v.replace(/^[\s\u0000-\u001F]+/,"");
+    if(lead.length && /^[=+\-@\t\r]/.test(lead)) v="'"+v;
+    return /[",\n\r]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+  }
   function downloadText(filename, text, mime){
     var blob=new Blob([text], { type:(mime||"text/plain")+";charset=utf-8" });
     var url=URL.createObjectURL(blob);
@@ -769,13 +846,38 @@
   function val(id){ return document.getElementById(id).value.trim(); }
   function setv(id,v){ document.getElementById(id).value = v || ""; }
 
+  /* Inspect the first bytes of a file rather than trusting its extension or
+     the browser-reported MIME type. NOTE: this runs in the browser, so a
+     determined attacker can bypass it — it is defence in depth, not a control.
+     A real guarantee needs a server-side check (Cloud Functions / Blaze). */
+  function checkSignature(file, ok, bad){
+    var fr=new FileReader();
+    fr.onload=function(e){
+      var b=new Uint8Array(e.target.result);
+      var isJPEG = b[0]===0xFF && b[1]===0xD8 && b[2]===0xFF;
+      var isPNG  = b[0]===0x89 && b[1]===0x50 && b[2]===0x4E && b[3]===0x47;
+      var isPDF  = b[0]===0x25 && b[1]===0x50 && b[2]===0x44 && b[3]===0x46;
+      if(isJPEG || isPNG) ok("image");
+      else if(isPDF) ok("pdf");
+      else bad();
+    };
+    fr.onerror=bad;
+    try { fr.readAsArrayBuffer(file.slice(0,8)); } catch(e){ bad(); }
+  }
+
   function readFile(file,cb,errCb){
     if(file.size > 5*1024*1024){ errCb && errCb(t("errFileBig")); return; }
-    // PDFs aren't compressed, and the database caps records at ~1 MB (base64 adds ~33%)
-    if(file.type.indexOf("image")!==0 && file.size > 650*1024){ errCb && errCb(t("errPdfBig")); return; }
+    checkSignature(file, function(kind){
+      // PDFs aren't compressed, and the database caps records at ~1 MB (base64 adds ~33%)
+      if(kind==="pdf" && file.size > 650*1024){ errCb && errCb(t("errPdfBig")); return; }
+      readFileBody(file, kind, cb, errCb);
+    }, function(){ errCb && errCb(t("errFileType")); });
+  }
+
+  function readFileBody(file,kind,cb,errCb){
     var r=new FileReader();
     r.onload=function(e){
-      if(file.type.indexOf("image")!==0){ cb(e.target.result,file.name); return; }
+      if(kind!=="image"){ cb(e.target.result,file.name); return; }
       var img=new Image();
       img.onload=function(){
         var max=1400,w=img.width,h=img.height;
@@ -791,6 +893,12 @@
   }
   function readPhoto(file,cb,errCb){
     if(file.size > 5*1024*1024){ errCb && errCb(t("errFileBig")); return; }
+    checkSignature(file, function(kind){
+      if(kind!=="image"){ errCb && errCb(t("errPhotoType")); return; }
+      readPhotoBody(file,cb,errCb);
+    }, function(){ errCb && errCb(t("errPhotoType")); });
+  }
+  function readPhotoBody(file,cb,errCb){
     var r=new FileReader();
     r.onload=function(e){
       var img=new Image();
@@ -1841,8 +1949,43 @@
   }
 
   /* ---- email body (also used by the mailto fallback) ---- */
+  /* ============================================================
+     EMAILJS — sends decision emails directly from the browser.
+     Free tier is ~200 emails/month; past that, sends start failing
+     and the mail-app fallback below is used instead.
+     Dashboard: dashboard.emailjs.com
+     ============================================================ */
+  var EMAILJS_SERVICE  = "service_hx5izdt";
+  var EMAILJS_TEMPLATE = "template_7vqg5cx";
+  var EMAILJS_PUBLIC   = "qBA0lEf3NcbL7Drda";
+  var EMAILJS_READY = false;
+  try {
+    if(window.emailjs){ emailjs.init({ publicKey: EMAILJS_PUBLIC }); EMAILJS_READY = true; }
+  } catch(e){ EMAILJS_READY = false; }
+
+  function sendDecisionEmail(r, em){
+    if(!EMAILJS_READY) return Promise.reject(new Error("email service unavailable"));
+    if(!r.profile.email) return Promise.reject(new Error("no email address on file"));
+    return emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+      to_email: r.profile.email,
+      to_name:  r.profile.name || "Applicant",
+      subject:  em.subject,
+      message:  em.text
+    });
+  }
+  function mailtoFallback(r, em){
+    window.location.href = "mailto:"+encodeURIComponent(r.profile.email||"")
+      +"?subject="+encodeURIComponent(em.subject)+"&body="+encodeURIComponent(em.text);
+  }
+
+  function escapeHtmlEmail(text){
+    if(!text) return "";
+    return String(text).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+                       .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
   function decisionEmail(r, decision){
-    var name=r.profile.name||"Applicant";
+    // strip any markup an applicant may have typed into their own name
+    var name=String(r.profile.name||"Applicant").replace(/[<>]/g,"").slice(0,120);
     var accepted=(decision==="accepted");
     var subject = accepted
       ? "University of the Punjab — Offer of admission"
@@ -1867,12 +2010,43 @@
         +"Office of Admissions\nUniversity of the Punjab, Lahore\n"
         +"Received through Apply.pk\n\n"
         +"This message was sent automatically. Please do not reply to this email.");
-    var html = body.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\n/g,"<br>")
-                   .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1">$1</a>');
+    var html = escapeHtmlEmail(body).replace(/\n/g,"<br>")
+                   .replace(/(https?:\/\/[^\s&<]+)/g, '<a href="$1">$1</a>');
     return { subject:subject, text:body, html:html };
   }
 
+  /* ---- reusable confirmation dialog (replaces browser confirm/prompt) ---- */
+  function askConfirm(opts){
+    var back=document.getElementById("confirmBack");
+    document.getElementById("confirmTitle").textContent=opts.title||"";
+    document.getElementById("confirmBody").textContent=opts.body||"";
+    var ok=document.getElementById("confirmOk"), cancel=document.getElementById("confirmCancel");
+    ok.textContent=opts.okLabel||t("confirmYes");
+    cancel.textContent=opts.cancelLabel||t("confirmCancel");
+    ok.className="btn"+(opts.danger?" btn-reject":"");
+    function close(){ back.classList.remove("show"); ok.onclick=null; cancel.onclick=null; back.onclick=null; }
+    ok.onclick=function(){ close(); if(opts.onConfirm) opts.onConfirm(); };
+    cancel.onclick=close;
+    back.onclick=function(e){ if(e.target===back) close(); };
+    back.classList.add("show");
+  }
+
   function setDecision(decision){
+    if(!admCurrent || !isPuAdmin()) return;
+    var who=admCurrent.profile.name||"this applicant";
+    var prev=decisionOf(admCurrent.app);
+    var changing=(prev!=="undecided" && prev!==decision);
+    askConfirm({
+      title: (decision==="accepted" ? t("confirmAcceptT") : t("confirmRejectT")),
+      body: (decision==="accepted" ? t("confirmAcceptB") : t("confirmRejectB")).replace("{name}", who)
+            + (changing ? (" "+t("confirmChanging").replace("{prev}", decLabel(prev))) : ""),
+      okLabel: (decision==="accepted" ? t("confirmAcceptOk") : t("confirmRejectOk")),
+      danger: (decision==="rejected"),
+      onConfirm: function(){ commitDecision(decision); }
+    });
+  }
+
+  function commitDecision(decision){
     if(!admCurrent || !isPuAdmin()) return;
     var r=admCurrent, btn=document.getElementById(decision==="accepted"?"admAccept":"admReject");
     var appRef=db.collection("applicants").doc(r.uid).collection("applications").doc("pu");
@@ -1902,16 +2076,32 @@
       }).catch(function(){});   // never block the decision on the mail queue
     })
     .then(function(){
-      busy(btn,false);
+      // decision is safely recorded; now notify the applicant
       r.app.decision=decision;
       refreshDecBar();
       var logEl=document.querySelector("#admDetail .adm-log");
       if(logEl) loadDecisionLog(r, logEl);
+      busy(btn,true,t("busySending"));
       var em=decisionEmail(r, decision);
-      if(confirm(decLabel(decision)+" recorded for "+(r.profile.name||"applicant")+".\n\nOpen the notification email in your mail app now?")){
-        window.location.href = "mailto:"+encodeURIComponent(r.profile.email||"")
-          +"?subject="+encodeURIComponent(em.subject)+"&body="+encodeURIComponent(em.text);
-      }
+      return sendDecisionEmail(r, em).then(function(){
+        busy(btn,false);
+        askConfirm({
+          title: t("emailOkT").replace("{decision}", decLabel(decision)),
+          body:  t("emailOkB").replace("{name}", r.profile.name||"the applicant")
+                              .replace("{email}", r.profile.email||""),
+          okLabel: t("confirmDone"), cancelLabel: t("confirmClose"),
+          onConfirm: function(){}
+        });
+      }, function(err){
+        // the decision stands even if the email fails — offer the manual route
+        busy(btn,false);
+        askConfirm({
+          title: t("emailFailT").replace("{decision}", decLabel(decision)),
+          body:  t("emailFailB").replace("{err}", (err && err.text) ? err.text : (err && err.message) ? err.message : "unknown error"),
+          okLabel: t("emailOpen"), cancelLabel: t("emailLater"),
+          onConfirm: function(){ mailtoFallback(r, em); }
+        });
+      });
     })
     .catch(function(e){ busy(btn,false); alert(fbMsg(e)); });
   }

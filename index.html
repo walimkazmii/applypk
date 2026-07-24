@@ -193,6 +193,24 @@
   .hub-empty { text-align:center; color:var(--slate); font-size:13.5px; border:1px dashed var(--line-strong); border-radius:var(--r); padding:34px 20px; }
   .admin-status { font-size:13px; color:var(--slate); margin-top:12px; min-height:18px; }
   /* ---- PU admissions console ---- */
+  .modal-lg { max-width:580px; max-height:86vh; overflow-y:auto; }
+  .rec-list { margin-bottom:12px; }
+  .rec { border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:13px 15px; margin-bottom:10px; background:#fff; display:flex; gap:12px; align-items:flex-start; }
+  .rec .rb { min-width:0; flex:1; }
+  .rec .rt { font-size:14px; font-weight:600; }
+  .rec .rs { font-size:12.5px; color:var(--slate); margin-top:3px; white-space:pre-wrap; }
+  .rec .ra { display:flex; gap:8px; flex:none; }
+  .rec .ra button { font-size:12px; font-weight:600; background:none; border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:6px 11px; cursor:pointer; font-family:inherit; color:var(--ink-2); }
+  .rec .ra button:hover { border-color:var(--green); color:var(--green); }
+  .rec .ra button.del:hover { border-color:#B91C1C; color:#B91C1C; }
+  .rec-empty { border:1px dashed var(--line-strong); border-radius:var(--r-sm); padding:20px; text-align:center; color:var(--slate); font-size:13px; margin-bottom:12px; }
+  .ps-count { font-size:12px; color:var(--slate); text-align:right; margin-top:5px; }
+  .ps-count.over { color:#B91C1C; font-weight:600; }
+  .policy { font-size:13.5px; line-height:1.7; color:var(--ink-2); }
+  .policy h4 { font-family:var(--font-serif); font-size:1rem; margin:16px 0 6px; color:var(--ink); }
+  .policy p { margin-bottom:9px; }
+  .policy .draft-warn { background:#FEF3C7; border:1px solid #FDE68A; color:#92400E; border-radius:var(--r-sm); padding:11px 13px; font-size:13px; font-weight:600; margin-bottom:14px; }
+  .consent-link { color:var(--green); font-weight:600; cursor:pointer; text-decoration:underline; }
   .modal-back { display:none; position:fixed; inset:0; background:rgba(17,24,39,.55); z-index:120; align-items:center; justify-content:center; padding:20px; }
   .modal-back.show { display:flex; }
   .modal { background:#fff; border:1px solid var(--line-strong); border-radius:var(--r); max-width:430px; width:100%; padding:26px 24px; box-shadow:0 12px 40px rgba(0,0,0,.18); }
@@ -354,6 +372,15 @@
           <div class="s" data-i18n="docsSub">Optional now — you can also add these later from your profile.</div>
         </div>
         <div id="suDocs"></div>
+
+        <div class="docs-head">
+          <div class="t" data-i18n="consentTitle">Privacy &amp; consent</div>
+        </div>
+        <label class="check"><input type="checkbox" id="su-c-data" /> <span data-i18n="consentData">I agree to Apply.pk storing and processing my personal data so my applications can be sent to universities.</span></label>
+        <label class="check"><input type="checkbox" id="su-c-marketing" /> <span data-i18n="consentMarketing">Optional: send me updates about deadlines, scholarships and new universities.</span></label>
+        <p style="font-size:12.5px;color:var(--slate);margin:-4px 0 4px;">
+          <a class="consent-link" id="suPolicyLink" data-i18n="readPolicy">Read the Terms of Service &amp; Privacy Policy</a>
+        </p>
       </div>
 
       <div id="loginFields" style="display:none;">
@@ -440,6 +467,40 @@
           <div class="s" data-i18n="docsSubProfile">Attach or replace your documents at any time.</div>
         </div>
         <div id="pfDocs"></div>
+
+        <div class="docs-head" style="margin-top:30px;">
+          <div class="t" data-i18n="eduTitle">Education</div>
+          <div class="s" data-i18n="eduSub">Your schools, colleges and qualifications. Entered once, used for every application.</div>
+        </div>
+        <div class="rec-list" id="eduList"></div>
+        <button class="btn btn-line btn-sm" id="eduAdd" data-i18n="eduAdd">+ Add qualification</button>
+
+        <div class="docs-head" style="margin-top:30px;">
+          <div class="t" data-i18n="psTitle">Personal statement</div>
+          <div class="s" data-i18n="psSub">One statement, reused across every application. Universities may also ask for their own essay inside their form.</div>
+        </div>
+        <div class="field">
+          <textarea id="pf-ps" rows="9" maxlength="5000"></textarea>
+          <div class="ps-count" id="psCount"></div>
+        </div>
+
+        <div class="docs-head" style="margin-top:30px;">
+          <div class="t" data-i18n="actTitle">Activities &amp; experience</div>
+          <div class="s" data-i18n="actSub">Optional. Sports, volunteering, work, societies and leadership roles.</div>
+        </div>
+        <div class="rec-list" id="actList"></div>
+        <button class="btn btn-line btn-sm" id="actAdd" data-i18n="actAdd">+ Add activity</button>
+
+        <div class="docs-head" style="margin-top:30px;">
+          <div class="t" data-i18n="consentTitle">Privacy &amp; consent</div>
+          <div class="s" data-i18n="consentSub">You can review or change these at any time.</div>
+        </div>
+        <label class="check"><input type="checkbox" id="pf-c-data" /> <span data-i18n="consentData">I agree to Apply.pk storing and processing my personal data so my applications can be sent to universities.</span></label>
+        <label class="check"><input type="checkbox" id="pf-c-retain" /> <span data-i18n="consentRetain">I understand my data is kept until I ask for it to be deleted.</span></label>
+        <label class="check"><input type="checkbox" id="pf-c-marketing" /> <span data-i18n="consentMarketing">Optional: send me updates about deadlines, scholarships and new universities.</span></label>
+        <p style="font-size:12.5px;color:var(--slate);margin:-4px 0 8px;">
+          <a class="consent-link" id="pfPolicyLink" data-i18n="readPolicy">Read the Terms of Service &amp; Privacy Policy</a>
+        </p>
 
         <div class="err" id="pfErr"></div>
         <div class="row-actions" style="align-items:center;">
@@ -534,6 +595,26 @@
   </section>
 </main>
 
+<div class="modal-back" id="formBack">
+  <div class="modal modal-lg">
+    <div class="m-title" id="formTitle"></div>
+    <div id="formFields"></div>
+    <div class="err" id="formErr"></div>
+    <div class="m-actions">
+      <button class="btn btn-line" id="formCancel"></button>
+      <button class="btn" id="formSave"></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-back" id="policyBack">
+  <div class="modal modal-lg">
+    <div class="m-title" data-i18n="policyTitle">Terms of Service &amp; Privacy Policy</div>
+    <div class="policy" id="policyBody"></div>
+    <div class="m-actions"><button class="btn" id="policyClose" data-i18n="confirmClose">Close</button></div>
+  </div>
+</div>
+
 <div class="modal-back" id="confirmBack">
   <div class="modal">
     <div class="m-title" id="confirmTitle"></div>
@@ -619,6 +700,23 @@
       staffPrompt:"Applying on behalf of a university?", staffBadge:"University staff",
       admConsole:"PU Admissions", errNotStaff:"This account is not registered as an admissions account.",
       uniInfoLink:"About this university ↗",
+      eduTitle:"Education", eduSub:"Your schools, colleges and qualifications. Entered once, used for every application.",
+      eduAdd:"+ Add qualification", eduEmpty:"No qualifications added yet.",
+      eduAddT:"Add a qualification", eduEditT:"Edit qualification", eduDelT:"Delete this qualification?",
+      psTitle:"Personal statement", psSub:"One statement, reused across every application. Universities may also ask for their own essay inside their form.",
+      words:"words", suppEssay:"Statement for this university",
+      actTitle:"Activities & experience", actSub:"Optional. Sports, volunteering, work, societies and leadership roles.",
+      actAdd:"+ Add activity", actEmpty:"No activities added yet.",
+      actAddT:"Add an activity", actEditT:"Edit activity", actDelT:"Delete this activity?",
+      consentTitle:"Privacy & consent", consentSub:"You can review or change these at any time.",
+      consentData:"I agree to Apply.pk storing and processing my personal data so my applications can be sent to universities.",
+      consentRetain:"I understand my data is kept until I ask for it to be deleted.",
+      consentMarketing:"Optional: send me updates about deadlines, scholarships and new universities.",
+      readPolicy:"Read the Terms of Service & Privacy Policy", policyTitle:"Terms of Service & Privacy Policy",
+      editBtn:"Edit", deleteBtn:"Delete", isRequired:"is required.", ongoing:"ongoing", hrsWeek:"hrs/week", hostelReq:"Hostel required",
+      errYearOrder:"End year cannot be before start year.", errYearRange:"Please enter a realistic year.",
+      errMarks:"Obtained marks cannot be more than total marks.", errDateOrder:"End date cannot be before start date.",
+      errConsent:"Please agree to the Terms of Service & Privacy Policy to create an account.",
       confirmYes:"Confirm", confirmCancel:"Cancel",
       confirmAcceptT:"Accept this application?",
       confirmRejectT:"Reject this application?",
@@ -698,6 +796,23 @@
       staffPrompt:"کسی یونیورسٹی کی جانب سے آ رہے ہیں؟", staffBadge:"یونیورسٹی اسٹاف",
       admConsole:"پی یو داخلے", errNotStaff:"یہ اکاؤنٹ داخلہ اکاؤنٹ کے طور پر رجسٹرڈ نہیں ہے۔",
       uniInfoLink:"یونیورسٹی کے بارے میں ↗",
+      eduTitle:"تعلیم", eduSub:"آپ کے اسکول، کالج اور اسناد۔ ایک بار درج کریں، ہر درخواست میں استعمال ہوں گی۔",
+      eduAdd:"+ سند شامل کریں", eduEmpty:"ابھی کوئی سند شامل نہیں کی گئی۔",
+      eduAddT:"سند شامل کریں", eduEditT:"سند میں تبدیلی", eduDelT:"کیا یہ سند حذف کریں؟",
+      psTitle:"ذاتی بیان", psSub:"ایک بیان، ہر درخواست میں استعمال۔ یونیورسٹیاں اپنے فارم میں الگ مضمون بھی مانگ سکتی ہیں۔",
+      words:"الفاظ", suppEssay:"اس یونیورسٹی کے لیے بیان",
+      actTitle:"سرگرمیاں اور تجربہ", actSub:"اختیاری۔ کھیل، رضاکارانہ کام، ملازمت، سوسائٹیز اور قیادت کے کردار۔",
+      actAdd:"+ سرگرمی شامل کریں", actEmpty:"ابھی کوئی سرگرمی شامل نہیں کی گئی۔",
+      actAddT:"سرگرمی شامل کریں", actEditT:"سرگرمی میں تبدیلی", actDelT:"کیا یہ سرگرمی حذف کریں؟",
+      consentTitle:"رازداری اور رضامندی", consentSub:"آپ انہیں کسی بھی وقت دیکھ یا تبدیل کر سکتے ہیں۔",
+      consentData:"میں اجازت دیتا/دیتی ہوں کہ Apply.pk میرا ذاتی ڈیٹا محفوظ کرے تاکہ میری درخواستیں یونیورسٹیوں کو بھیجی جا سکیں۔",
+      consentRetain:"میں سمجھتا/سمجھتی ہوں کہ میرا ڈیٹا اُس وقت تک محفوظ رہے گا جب تک میں حذف کرنے کو نہ کہوں۔",
+      consentMarketing:"اختیاری: مجھے آخری تاریخوں، وظائف اور نئی یونیورسٹیوں کی اطلاعات بھیجیں۔",
+      readPolicy:"شرائط و ضوابط اور رازداری کی پالیسی پڑھیں", policyTitle:"شرائط و ضوابط اور رازداری کی پالیسی",
+      editBtn:"تبدیل کریں", deleteBtn:"حذف کریں", isRequired:"لازمی ہے۔", ongoing:"جاری", hrsWeek:"گھنٹے/ہفتہ", hostelReq:"ہاسٹل درکار",
+      errYearOrder:"اختتامی سال آغاز کے سال سے پہلے نہیں ہو سکتا۔", errYearRange:"براہِ کرم درست سال درج کریں۔",
+      errMarks:"حاصل کردہ نمبر کل نمبروں سے زیادہ نہیں ہو سکتے۔", errDateOrder:"اختتامی تاریخ آغاز سے پہلے نہیں ہو سکتی۔",
+      errConsent:"اکاؤنٹ بنانے کے لیے براہِ کرم شرائط و ضوابط اور رازداری کی پالیسی سے اتفاق کریں۔",
       confirmYes:"تصدیق کریں", confirmCancel:"منسوخ کریں",
       confirmAcceptT:"کیا یہ درخواست منظور کریں؟",
       confirmRejectT:"کیا یہ درخواست مسترد کریں؟",
@@ -1192,6 +1307,7 @@
       if(!isEmail(email)){ authErr.textContent=t("errEmail"); return; }
       if(!isCnicOrPassport(cnic)){ authErr.textContent=t("errCnic"); return; }
       if(pass.length<6){ authErr.textContent=t("errPass"); return; }
+      if(!document.getElementById("su-c-data").checked){ authErr.textContent=t("errConsent"); return; }
 
       busy(authSubmit,true,t("busyCreating"));
       var newUid=null;
@@ -1200,6 +1316,9 @@
           newUid=cred.user.uid;
           var profile={ uid:newUid, name:name, email:email, cnic:cnic, onboarded:false, photo:null,
                         dob:"", resAddr:"", postAddr:"", sameAddr:false, docs:docNames(),
+                        consents:{ dataProcessing:true, retention:true,
+                                   marketing:document.getElementById("su-c-marketing").checked,
+                                   agreedAt:new Date().toISOString() },
                         createdAt: firebase.firestore.FieldValue.serverTimestamp() };
           return userDoc(newUid).set(profile).then(function(){ return uploadPendingDocs(newUid); });
         })
@@ -1430,6 +1549,9 @@
         { id:"pu_cnic_front", label:"CNIC Front (photo/scan)", type:"file" },
         { id:"pu_discert",    label:"Disability Certificate (photo/scan)", type:"file" }
       ]}
+    ]},
+    { title:"Personal statement for this university", fields:[
+      { id:"supplementalEssay", label:"Why do you want to study at this university? (max 2000 characters)", type:"textarea", max:2000, full:true }
     ]},
     { title:"Declarations", fields:[
       { id:"researchGate", label:"I have professional research work to declare", type:"gate", fields:[
@@ -2167,6 +2289,7 @@
     var em=document.getElementById("pf-email"); em.disabled=true; em.style.background="#F3F4F6";
     document.getElementById("pfErr").textContent="";
     document.getElementById("pfSaved").classList.remove("show");
+    fillPhase1(u);
     renderDocs(); loadHub(); renderNav();
   }
   try { document.getElementById("pf-dob").max=new Date().toISOString().split("T")[0]; } catch(e){}
@@ -2192,10 +2315,14 @@
 
     var btn=document.getElementById("pfSave"), okNote=document.getElementById("pfSaved");
     busy(btn,true,t("busySaving"));
+    var p1=phase1SaveData();
+    state.user.personalStatement=p1.personalStatement;
+    state.user.consents=p1.consents;
     userDoc(state.user.uid).set({
       name:state.user.name, cnic:state.user.cnic, dob:state.user.dob,
       resAddr:state.user.resAddr, postAddr:state.user.postAddr, sameAddr:state.user.sameAddr,
       photo:state.user.photo||null, docs:state.user.docs||{},
+      personalStatement:p1.personalStatement, consents:p1.consents,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge:true })
     .then(function(){
@@ -2230,48 +2357,86 @@
 
   function loadHub(){
     var pUni=document.getElementById("hub-unis"), pEss=document.getElementById("hub-essays"),
-        pCo=document.getElementById("hub-cocurr"), pAc=document.getElementById("hub-accom"), pRe=document.getElementById("hub-resume");
+        pCo=document.getElementById("hub-cocurr"), pAc=document.getElementById("hub-accom"),
+        pRe=document.getElementById("hub-resume");
     [pUni,pEss,pCo,pAc,pRe].forEach(function(x){ x.innerHTML=""; });
+    if(!(READY && state.user && state.user.uid)) return;
 
-    // Resume tab = uploaded documents from the profile
-    var docLabels={ olevel:t("docOlevel"), fsc:t("docFsc"), minority:t("docMinority"),
-                    pu_cnic_front:"CNIC Front (Punjab University)", pu_discert:"Disability Certificate (Punjab University)" };
-    if(READY && state.user && state.user.uid){
-      userDoc(state.user.uid).collection("documents").get().then(function(qs){
-        if(qs.empty){ hubEmpty(pRe, t("hubNoResume")); return; }
-        qs.forEach(function(dS){
-          pRe.appendChild(hubItem("PDF","#0E7490", docLabels[dS.id]||dS.id, dS.data().name||""));
-        });
-      }).catch(function(){ hubEmpty(pRe, t("hubNoResume")); });
+    var uid=state.user.uid;
+    var DOC_LABELS={ olevel:t("docOlevel"), fsc:t("docFsc"), minority:t("docMinority"),
+                     pu_cnic_front:"CNIC front (Punjab University)",
+                     pu_discert:"Disability certificate (Punjab University)" };
+    function safe(q){ return q.catch(function(){ return { forEach:function(){} }; }); }
 
-      userDoc(state.user.uid).collection("applications").get().then(function(qs){
-        var anyUni=false, anyEss=false, anyCo=false, anyAc=false;
-        qs.forEach(function(aS){
-          var d=aS.data(), uni=uniBySlug(aS.id), col=(uni?uni.col:"#334155"), ab=(uni?uni.ab:"?");
-          var status=(d.status==="submitted")?"Submitted":(d.status==="draft"?"Draft":"Started");
-          if(d.decision==="accepted") status+=" · Accepted";
-          else if(d.decision==="rejected") status+=" · Not successful";
-          // My Universities
-          pUni.appendChild(hubItem(ab,col,(d.university||aS.id),status)); anyUni=true;
-          var a=d.answers||{};
-          // My Essays (long declaration/statement answers)
-          ["researchDetails","specialDetails","expelledDetails","convictedDetails"].forEach(function(k){
-            if(a[k]){ pEss.appendChild(hubItem(ab,col,(d.university||"")+" — "+k.replace("Details",""), a[k])); anyEss=true; }
-          });
-          // My Co-Curriculars (research work)
-          if(a.researchGate && a.researchDetails){ pCo.appendChild(hubItem(ab,col,(d.university||"")+" — Research work", a.researchDetails)); anyCo=true; }
-          // Accommodation (hostel)
-          if(a.hostel){ pAc.appendChild(hubItem(ab,col,(d.university||"")+" — Hostel", "Hostel required: "+a.hostel)); anyAc=true; }
+    Promise.all([
+      safe(userDoc(uid).collection("applications").get()),
+      safe(userDoc(uid).collection("documents").get()),
+      safe(userDoc(uid).collection("education").get()),
+      safe(userDoc(uid).collection("activities").get())
+    ]).then(function(res){
+      var apps=[], docs=[], edus=[], acts=[];
+      res[0].forEach(function(d){ apps.push({ id:d.id, data:d.data()||{} }); });
+      res[1].forEach(function(d){ docs.push({ id:d.id, data:d.data()||{} }); });
+      res[2].forEach(function(d){ edus.push(d.data()||{}); });
+      res[3].forEach(function(d){ acts.push(d.data()||{}); });
+
+      var nU=0,nE=0,nC=0,nA=0,nR=0;
+
+      apps.forEach(function(a){
+        var d=a.data, uni=uniBySlug(a.id), col=(uni?uni.col:"#334155"), ab=(uni?uni.ab:"?");
+        var status=(d.status==="submitted")?t("stSubmitted"):(d.status==="draft"?t("stDraft"):"Started");
+        if(d.decision==="accepted") status+=" · "+t("decAccepted");
+        else if(d.decision==="rejected") status+=" · "+t("decRejected");
+        pUni.appendChild(hubItem(ab,col,(d.university||a.id),status)); nU++;
+
+        var ans=d.answers||{};
+        if(ans.supplementalEssay){
+          pEss.appendChild(hubItem(ab,col,(d.university||"")+" — "+t("suppEssay"), ans.supplementalEssay)); nE++;
+        }
+        ["researchDetails","specialDetails","expelledDetails","convictedDetails"].forEach(function(k){
+          if(ans[k]){ pEss.appendChild(hubItem(ab,col,(d.university||"")+" — "+k.replace("Details",""), ans[k])); nE++; }
         });
-        if(!anyUni) hubEmpty(pUni, t("hubNoUnis"));
-        if(!anyEss) hubEmpty(pEss, t("hubNoEssays"));
-        if(!anyCo) hubEmpty(pCo, t("hubNoCocurr"));
-        if(!anyAc) hubEmpty(pAc, t("hubNoAccom"));
-      }).catch(function(){
-        hubEmpty(pUni,t("hubNoUnis")); hubEmpty(pEss,t("hubNoEssays"));
-        hubEmpty(pCo,t("hubNoCocurr")); hubEmpty(pAc,t("hubNoAccom"));
+        if(ans.researchGate && ans.researchDetails){
+          pCo.appendChild(hubItem(ab,col,(d.university||"")+" — Research work", ans.researchDetails)); nC++;
+        }
+        if(ans.hostel){
+          pAc.appendChild(hubItem(ab,col,(d.university||"")+" — Hostel", t("hostelReq")+": "+ans.hostel)); nA++;
+        }
       });
-    }
+
+      var ps=(state.user.personalStatement && state.user.personalStatement.text) || "";
+      if(ps.trim()){
+        pEss.insertBefore(hubItem("PS","#0F766E", t("psTitle"), ps), pEss.firstChild); nE++;
+      }
+
+      acts.sort(function(a,b){ return String(b.startDate||"").localeCompare(String(a.startDate||"")); });
+      acts.forEach(function(d){
+        var when=[d.startDate, d.endDate||(d.startDate?t("ongoing"):"")].filter(Boolean).join(" – ");
+        var sub=[d.type,[d.role,d.organisation].filter(Boolean).join(", "),when,
+                 (d.hoursPerWeek? d.hoursPerWeek+" "+t("hrsWeek"):"")].filter(Boolean).join(" · ");
+        pCo.appendChild(hubItem(String(d.type||"?").slice(0,3).toUpperCase(), "#6D28D9",
+          d.title||"(untitled)", sub + (d.description?("\n"+d.description):""))); nC++;
+      });
+
+      edus.sort(function(a,b){ return (Number(b.endYear)||0)-(Number(a.endYear)||0); });
+      edus.forEach(function(d){
+        var sub=[[d.institution,d.city].filter(Boolean).join(", "),
+                 [d.startYear,d.endYear].filter(Boolean).join("–"),
+                 (d.obtainedMarks && d.totalMarks) ? (d.obtainedMarks+" / "+d.totalMarks) : (d.grade||"")
+                ].filter(Boolean).join(" · ");
+        pRe.appendChild(hubItem("EDU","#15803D",
+          [d.qualification,d.fieldOfStudy].filter(Boolean).join(" — "), sub)); nR++;
+      });
+      docs.forEach(function(d){
+        pRe.appendChild(hubItem("DOC","#0E7490", DOC_LABELS[d.id]||d.id, d.data.name||"")); nR++;
+      });
+
+      if(!nU) hubEmpty(pUni,t("hubNoUnis"));
+      if(!nE) hubEmpty(pEss,t("hubNoEssays"));
+      if(!nC) hubEmpty(pCo,t("hubNoCocurr"));
+      if(!nA) hubEmpty(pAc,t("hubNoAccom"));
+      if(!nR) hubEmpty(pRe,t("hubNoResume"));
+    });
   }
 
   document.querySelectorAll(".hub-tab").forEach(function(tab){
@@ -2367,6 +2532,270 @@
       }).catch(function(){ renderNav(); });
     });
   }
+
+  /* ============================================================
+     PHASE 1 — APPLICANT PROFILE FEATURES
+       1. Academic history        applicants/{uid}/education
+       2. Personal statement      applicants/{uid}.personalStatement
+       3. Activities & experience applicants/{uid}/activities
+       7. Consent                 applicants/{uid}.consents
+     File attachments are deliberately NOT included: Cloud Storage
+     needs the paid plan, and base64 uploads would eat the free
+     1 GiB Firestore quota quickly.
+     ============================================================ */
+
+  var EDU_FIELDS = [
+    { id:"institution",   label:"Institution", type:"text", req:true, full:true },
+    { id:"city",          label:"City", type:"text" },
+    { id:"country",       label:"Country", type:"text", def:"Pakistan" },
+    { id:"qualification", label:"Qualification", type:"select", req:true,
+      opts:["Matric / SSC","O-Level","Intermediate / HSSC","A-Level","Diploma","Bachelor's","Master's","Other"] },
+    { id:"fieldOfStudy",  label:"Field of study", type:"text" },
+    { id:"startYear",     label:"Start year", type:"number", req:true },
+    { id:"endYear",       label:"End year (or expected)", type:"number", req:true },
+    { id:"gradingScheme", label:"Grading scheme", type:"select", req:true,
+      opts:["Marks","Percentage","GPA","Grade only"] },
+    { id:"totalMarks",    label:"Total marks / max GPA", type:"number" },
+    { id:"obtainedMarks", label:"Obtained marks / GPA", type:"number" },
+    { id:"grade",         label:"Grade (optional)", type:"text" }
+  ];
+
+  var ACT_FIELDS = [
+    { id:"type",         label:"Type", type:"select", req:true,
+      opts:["Sports","Volunteering","Work experience","Club / society","Leadership","Arts","Competition","Other"] },
+    { id:"title",        label:"Title", type:"text", req:true, full:true },
+    { id:"organisation", label:"Organisation", type:"text" },
+    { id:"role",         label:"Your role", type:"text" },
+    { id:"startDate",    label:"Start (month)", type:"month" },
+    { id:"endDate",      label:"End (blank if ongoing)", type:"month" },
+    { id:"hoursPerWeek", label:"Hours per week", type:"number" },
+    { id:"description",  label:"Description (max 500 characters)", type:"textarea", max:500, full:true }
+  ];
+
+  /* ---- generic form modal ---- */
+  function formModal(opts){
+    var back=document.getElementById("formBack");
+    document.getElementById("formTitle").textContent=opts.title||"";
+    document.getElementById("formErr").textContent="";
+    var host=document.getElementById("formFields"); host.innerHTML="";
+    var grid=document.createElement("div"); grid.className="af-grid"; host.appendChild(grid);
+
+    opts.fields.forEach(function(f){
+      var wrap=document.createElement("div"); wrap.className="field"+(f.full?" full":"");
+      var lab=document.createElement("label"); lab.htmlFor="fm_"+f.id; lab.textContent=puT(f.label)+" ";
+      if(f.req){ var st=document.createElement("span"); st.className="req"; st.textContent="*"; lab.appendChild(st); }
+      wrap.appendChild(lab);
+      var el;
+      if(f.type==="select"){
+        el=document.createElement("select");
+        var d0=document.createElement("option"); d0.value=""; d0.textContent="— Select —"; el.appendChild(d0);
+        f.opts.forEach(function(o){ var op=document.createElement("option"); op.value=o; op.textContent=o; el.appendChild(op); });
+      } else if(f.type==="textarea"){
+        el=document.createElement("textarea"); if(f.max) el.maxLength=f.max;
+      } else {
+        el=document.createElement("input");
+        el.type = (f.type==="number") ? "number" : (f.type==="month") ? "month" : "text";
+      }
+      el.id="fm_"+f.id;
+      var v=(opts.values && opts.values[f.id]!=null && opts.values[f.id]!=="") ? opts.values[f.id] : (f.def||"");
+      el.value=v;
+      wrap.appendChild(el); grid.appendChild(wrap);
+    });
+
+    var save=document.getElementById("formSave"), cancel=document.getElementById("formCancel");
+    save.textContent=t("saveChanges"); cancel.textContent=t("confirmCancel");
+    function close(){ back.classList.remove("show"); save.onclick=null; cancel.onclick=null; back.onclick=null; }
+    save.onclick=function(){
+      var vals={}, err="";
+      opts.fields.forEach(function(f){
+        var raw=(document.getElementById("fm_"+f.id).value||"").trim();
+        if(f.req && !raw && !err) err='"'+puT(f.label)+'" '+t("isRequired");
+        vals[f.id] = (f.type==="number" && raw!=="") ? Number(raw) : raw;
+      });
+      if(!err && opts.validate) err=opts.validate(vals)||"";
+      if(err){ document.getElementById("formErr").textContent=err; return; }
+      close(); opts.onSave(vals);
+    };
+    cancel.onclick=close;
+    back.onclick=function(e){ if(e.target===back) close(); };
+    back.classList.add("show");
+  }
+
+  /* ---- generic repeatable-record list ---- */
+  function makeRecList(cfg){
+    function host(){ return document.getElementById(cfg.hostId); }
+
+    function draw(items){
+      var h=host(); h.innerHTML="";
+      if(!items.length){
+        var e=document.createElement("div"); e.className="rec-empty"; e.textContent=t(cfg.emptyKey);
+        h.appendChild(e); return;
+      }
+      items.sort(cfg.sort);
+      items.forEach(function(it){
+        var row=document.createElement("div"); row.className="rec";
+        var b=document.createElement("div"); b.className="rb";
+        var tt=document.createElement("div"); tt.className="rt"; tt.textContent=cfg.title(it.data);
+        var ss=document.createElement("div"); ss.className="rs"; ss.textContent=cfg.subtitle(it.data);
+        b.appendChild(tt); b.appendChild(ss);
+        var a=document.createElement("div"); a.className="ra";
+        var ed=document.createElement("button"); ed.type="button"; ed.textContent=t("editBtn");
+        ed.onclick=function(){ openForm(it.id, it.data); };
+        var dl=document.createElement("button"); dl.type="button"; dl.className="del"; dl.textContent=t("deleteBtn");
+        dl.onclick=function(){
+          askConfirm({ title:t(cfg.delTitleKey), body:cfg.title(it.data), danger:true,
+            okLabel:t("deleteBtn"), onConfirm:function(){
+              userDoc(state.user.uid).collection(cfg.coll).doc(it.id).delete()
+                .then(load).catch(function(e){ document.getElementById("pfErr").textContent=fbMsg(e); });
+            }});
+        };
+        a.appendChild(ed); a.appendChild(dl);
+        row.appendChild(b); row.appendChild(a);
+        h.appendChild(row);
+      });
+    }
+
+    function load(){
+      var h=host(); if(!h) return;
+      if(!(READY && state.user && state.user.uid)){ draw([]); return; }
+      userDoc(state.user.uid).collection(cfg.coll).get().then(function(qs){
+        var items=[]; qs.forEach(function(d){ items.push({ id:d.id, data:d.data()||{} }); });
+        draw(items);
+      }).catch(function(){ draw([]); });
+    }
+
+    function openForm(id, values){
+      formModal({
+        title: id ? t(cfg.editTitleKey) : t(cfg.addTitleKey),
+        fields: cfg.fields, values: values||{}, validate: cfg.validate,
+        onSave: function(vals){
+          vals.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+          var coll = userDoc(state.user.uid).collection(cfg.coll);
+          var op = id ? coll.doc(id).set(vals,{merge:true})
+                      : coll.add(vals);
+          op.then(function(){ load(); if(current==="profile") loadHub(); })
+            .catch(function(e){ document.getElementById("pfErr").textContent=fbMsg(e); });
+        }
+      });
+    }
+
+    return { load:load, add:function(){ openForm(null,null); } };
+  }
+
+  var eduList = makeRecList({
+    coll:"education", hostId:"eduList", fields:EDU_FIELDS,
+    emptyKey:"eduEmpty", addTitleKey:"eduAddT", editTitleKey:"eduEditT", delTitleKey:"eduDelT",
+    sort:function(a,b){ return (Number(b.data.endYear)||0)-(Number(a.data.endYear)||0); },
+    title:function(d){ return [d.qualification, d.fieldOfStudy].filter(Boolean).join(" — "); },
+    subtitle:function(d){
+      var yrs=[d.startYear,d.endYear].filter(Boolean).join("–");
+      var res="";
+      if(d.gradingScheme==="Grade only") res=d.grade||"";
+      else if(d.obtainedMarks!=null && d.obtainedMarks!=="" && d.totalMarks) res=d.obtainedMarks+" / "+d.totalMarks;
+      else if(d.grade) res=d.grade;
+      return [ [d.institution,d.city].filter(Boolean).join(", "), yrs, res ].filter(Boolean).join(" · ");
+    },
+    validate:function(v){
+      if(v.startYear && v.endYear && Number(v.endYear) < Number(v.startYear)) return t("errYearOrder");
+      if(v.startYear && (Number(v.startYear)<1950 || Number(v.startYear)>2100)) return t("errYearRange");
+      if(v.totalMarks && v.obtainedMarks && Number(v.obtainedMarks) > Number(v.totalMarks)) return t("errMarks");
+      return "";
+    }
+  });
+
+  var actList = makeRecList({
+    coll:"activities", hostId:"actList", fields:ACT_FIELDS,
+    emptyKey:"actEmpty", addTitleKey:"actAddT", editTitleKey:"actEditT", delTitleKey:"actDelT",
+    sort:function(a,b){ return String(b.data.startDate||"").localeCompare(String(a.data.startDate||"")); },
+    title:function(d){ return d.title||"(untitled)"; },
+    subtitle:function(d){
+      var when=[d.startDate, d.endDate || (d.startDate ? "ongoing" : "")].filter(Boolean).join(" – ");
+      return [ d.type, [d.role,d.organisation].filter(Boolean).join(", "), when,
+               (d.hoursPerWeek? d.hoursPerWeek+" hrs/week":"") ].filter(Boolean).join(" · ")
+             + (d.description ? ("\n"+d.description) : "");
+    },
+    validate:function(v){
+      if(v.startDate && v.endDate && v.endDate < v.startDate) return t("errDateOrder");
+      return "";
+    }
+  });
+
+  document.getElementById("eduAdd").onclick=function(){ eduList.add(); };
+  document.getElementById("actAdd").onclick=function(){ actList.add(); };
+
+  /* ---- personal statement counter ---- */
+  var psBox=document.getElementById("pf-ps"), psCount=document.getElementById("psCount");
+  function updatePsCount(){
+    var txt=(psBox.value||"").trim();
+    var words = txt ? txt.split(/\s+/).length : 0;
+    psCount.textContent = words+" "+t("words")+" · "+(psBox.value||"").length+" / 5000";
+    psCount.className = "ps-count" + ((psBox.value||"").length>=5000 ? " over" : "");
+  }
+  psBox.addEventListener("input", updatePsCount);
+
+  /* ---- policy modal (DRAFT TEXT — not legally reviewed) ---- */
+  var POLICY_HTML =
+    '<div class="draft-warn">'+
+      'DRAFT — this text has not been reviewed by a lawyer. It must be replaced with '+
+      'text approved by qualified counsel before Apply.pk handles real applicant data.'+
+    '</div>'+
+    '<h4>1. Who we are</h4><p>Apply.pk is a unified undergraduate admissions platform for '+
+      'public-sector universities in Pakistan, operated as a project of the Ministry of Planning &amp; Development.</p>'+
+    '<h4>2. What we collect</h4><p>We collect the information you enter: your name, CNIC or passport number, '+
+      'date of birth, addresses, contact details, photograph, academic history, personal statement, '+
+      'activities, uploaded documents, and the answers you give in each university application.</p>'+
+    '<h4>3. Why we collect it</h4><p>Solely to prepare and transmit your applications to the universities you '+
+      'choose, and to tell you the outcome. We do not sell your data.</p>'+
+    '<h4>4. Who sees it</h4><p>Only you, and the admissions staff of universities you actually apply to. '+
+      'Applying to one university does not expose your data to any other.</p>'+
+    '<h4>5. How long we keep it</h4><p>Until you ask us to delete it. You may request deletion at any time '+
+      'and we will remove your profile, applications and documents.</p>'+
+    '<h4>6. Applicants under 18</h4><p>Many applicants are minors. If you are under 18, you should review '+
+      'this with a parent or guardian before consenting.</p>'+
+    '<h4>7. Your rights</h4><p>You may view, correct, export or delete your data at any time from your profile, '+
+      'or by contacting us. Withdrawing consent means we can no longer submit applications on your behalf.</p>'+
+    '<h4>8. Security</h4><p>Your record is readable only by you and by universities you apply to, enforced at '+
+      'the database level. Passwords are never stored by Apply.pk.</p>'+
+    '<h4>9. Changes</h4><p>If these terms change materially we will ask you to review them again.</p>';
+
+  function openPolicy(){
+    document.getElementById("policyBody").innerHTML=POLICY_HTML;
+    document.getElementById("policyBack").classList.add("show");
+  }
+  function closePolicy(){ document.getElementById("policyBack").classList.remove("show"); }
+  document.getElementById("policyClose").onclick=closePolicy;
+  document.getElementById("policyBack").onclick=function(e){ if(e.target===this) closePolicy(); };
+  document.getElementById("pfPolicyLink").onclick=openPolicy;
+  document.getElementById("suPolicyLink").onclick=openPolicy;
+
+  /* ---- fill / save the new profile fields ---- */
+  function fillPhase1(u){
+    psBox.value = (u.personalStatement && u.personalStatement.text) || "";
+    updatePsCount();
+    var c=u.consents||{};
+    document.getElementById("pf-c-data").checked      = !!c.dataProcessing;
+    document.getElementById("pf-c-retain").checked    = !!c.retention;
+    document.getElementById("pf-c-marketing").checked = !!c.marketing;
+    eduList.load(); actList.load();
+  }
+  function phase1SaveData(){
+    var txt=psBox.value||"";
+    var trimmed=txt.trim();
+    return {
+      personalStatement: {
+        text: txt,
+        wordCount: trimmed ? trimmed.split(/\s+/).length : 0,
+        updatedAt: new Date().toISOString()
+      },
+      consents: {
+        dataProcessing: document.getElementById("pf-c-data").checked,
+        retention:      document.getElementById("pf-c-retain").checked,
+        marketing:      document.getElementById("pf-c-marketing").checked,
+        agreedAt:       new Date().toISOString()
+      }
+    };
+  }
+
 })();
 </script>
 

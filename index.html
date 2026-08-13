@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com/recaptcha/ https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.emailjs.com https://*.firebase.com; frame-src https://*.firebaseapp.com https://www.google.com https://recaptcha.google.com; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Apply.pk — Apply to Pakistan's public universities</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js" integrity="sha384-rGbwvB6k85I5jkhcy5vYOSdABhBKcD9CHXb0RJIIuxMYVZatT6uul1faR/C5QI1U" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-auth-compat.js" integrity="sha384-FlKYNHBedwGFdcKg5PNKA38dWBcbf9RzKO4qBmxO3DaDw5yuYP0DXikg/fgj4xID" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore-compat.js" integrity="sha384-6upXKkpfHZptLf7KdeFvgQvLWC/yJWKR/2i5YrQPi4BJCPchQZ6wra0WC7paXDVI" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-check-compat.js" integrity="sha384-Wk0iwuilPzzwT9RlIyJaHQSGF7M9C3JkPUDLQ3kVfeDUWu3oPS+ILg7EKycCypBz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous"></script>
 <style>
   :root {
     --ink:#111827; --ink-2:#374151; --green:#059669; --green-dark:#047857;
@@ -957,7 +958,8 @@
   var fileSVG='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>';
   var tickSVG='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>';
 
-  function paintAvatar(el,photo,fb){ if(photo){ el.innerHTML='<img alt="" src="'+photo+'">'; } else if(fb){ el.textContent=fb; } else { el.innerHTML=camSVG; } }
+  function setImg(el,src){ el.textContent=""; var im=document.createElement("img"); im.alt=""; im.src=src; el.appendChild(im); }
+  function paintAvatar(el,photo,fb){ if(photo){ setImg(el,photo); } else if(fb){ el.textContent=fb; } else { el.innerHTML=camSVG; } }
   function val(id){ return document.getElementById(id).value.trim(); }
   function setv(id,v){ document.getElementById(id).value = v || ""; }
 
@@ -1421,7 +1423,7 @@
   var uniList=document.getElementById("uniList"), dashWho=document.getElementById("dashWho"), dashAv=document.getElementById("dashAv");
   function attachLogo(el,slug){
     var img=new Image();
-    img.onload=function(){ el.classList.add("has-img"); el.innerHTML='<img alt="" src="'+img.src+'">'; };
+    img.onload=function(){ el.classList.add("has-img"); setImg(el, img.src); };
     img.onerror=function(){};
     img.src="images/unis/"+slug+".png";
   }
@@ -1434,7 +1436,7 @@
       var row=document.createElement("div"); row.className="uni-row";
       var mk=document.createElement("span"); mk.className="uni-mk"; mk.style.setProperty("--c",uni.col); mk.textContent=uni.ab;
       var info=document.createElement("div"); info.className="uni-info";
-      info.innerHTML='<div class="n">'+uni.n+'</div><div class="c">'+uni.c+'</div>';
+      info.innerHTML='<div class="n">'+escapeHtml(uni.n)+'</div><div class="c">'+escapeHtml(uni.c)+'</div>';
       var sp=document.createElement("span"); sp.className="spacer";
       var btn=document.createElement("button"); btn.className="btn btn-sm"; btn.textContent=t("apply");
       btn.onclick=function(){ openApplication(idx); };
@@ -1813,7 +1815,7 @@
     var u=state.user||{}, H=[];
     H.push('<div class="pd-head"><div><div class="pd-title">'+escapeHtml(uni.n)+'</div>'+
            '<div class="pd-sub">Undergraduate Application &middot; via Apply.pk</div></div>');
-    if(u.photo) H.push('<img class="pd-photo" alt="" src="'+u.photo+'">');
+    if(u.photo) H.push('<img class="pd-photo" alt="" src="'+escapeHtml(u.photo)+'">');
     H.push('</div>');
     H.push('<div class="pd-section-title">Applicant</div><table class="pd-table"><tbody>');
     [["Full name",u.name],["CNIC / Passport",u.cnic],["Date of birth",u.dob],
@@ -2024,7 +2026,7 @@
         box.appendChild(lab);
         if(String(dd.data||"").indexOf("data:image")===0){
           var im=document.createElement("img"); im.alt=""; im.src=dd.data;
-          im.onclick=function(){ var w=window.open(); if(w) w.document.write('<img src="'+dd.data+'" style="max-width:100%">'); };
+          im.onclick=function(){ var w=window.open(); if(w){ var wi=w.document.createElement("img"); wi.style.maxWidth="100%"; wi.src=dd.data; w.document.body.appendChild(wi); } };
           box.appendChild(im);
         }
         var a=document.createElement("a"); a.href=dd.data||"#"; a.download=dd.name||d.id;

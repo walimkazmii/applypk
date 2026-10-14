@@ -4,52 +4,83 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com/recaptcha/ https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.emailjs.com https://*.firebase.com; frame-src https://*.firebaseapp.com https://www.google.com https://recaptcha.google.com; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Apply.pk — Apply to Pakistan's public universities</title>
+<title>apply.pk — Apply to Pakistan's public universities</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
-<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js" integrity="sha384-rGbwvB6k85I5jkhcy5vYOSdABhBKcD9CHXb0RJIIuxMYVZatT6uul1faR/C5QI1U" crossorigin="anonymous"></script>
-<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-auth-compat.js" integrity="sha384-FlKYNHBedwGFdcKg5PNKA38dWBcbf9RzKO4qBmxO3DaDw5yuYP0DXikg/fgj4xID" crossorigin="anonymous"></script>
-<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore-compat.js" integrity="sha384-6upXKkpfHZptLf7KdeFvgQvLWC/yJWKR/2i5YrQPi4BJCPchQZ6wra0WC7paXDVI" crossorigin="anonymous"></script>
-<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-check-compat.js" integrity="sha384-Wk0iwuilPzzwT9RlIyJaHQSGF7M9C3JkPUDLQ3kVfeDUWu3oPS+ILg7EKycCypBz" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-check-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
 <style>
   :root {
-    --ink:#111827; --ink-2:#374151; --green:#059669; --green-dark:#047857;
-    --paper:#FAFAFA; --white:#fff; --slate:#6B7280; --line:#E5E7EB; --line-strong:#D1D5DB;
-    --ok:#047857; --r-sm:6px; --r:8px;
-    --font-serif:"Source Serif 4",Georgia,serif;
+    /* brand green, refined into a scale */
+    --green:#059669; --green-600:#047d57; --green-700:#036a4a; --green-900:#063f2f;
+    --green-50:#ECFDF5; --green-100:#D1FAE5; --green-tint:#F0FAF5;
+    --accent:#F2B340; --accent-soft:#FEF6E6;
+    /* ink + neutrals */
+    --ink:#0F1F18; --ink-2:#3C4A43; --slate:#6B7A72; --paper:#F5F8F6; --white:#fff;
+    --line:#E6EBE8; --line-strong:#D2DAD5;
+    --ok:#047857;
+    /* shape */
+    --r-sm:10px; --r:16px; --r-lg:22px; --r-pill:999px;
+    --sh-sm:0 1px 2px rgba(15,31,24,.05);
+    --sh:0 10px 28px -10px rgba(15,31,24,.16);
+    --sh-lg:0 26px 60px -20px rgba(15,31,24,.26);
+    --sh-focus:0 0 0 4px rgba(5,150,105,.14);
+    /* type */
+    --font-display:"Plus Jakarta Sans","Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-serif:"Plus Jakarta Sans","Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --font-sans:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --font-urdu:"Noto Nastaliq Urdu","Public Sans",serif;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:var(--font-sans); background:var(--paper); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; min-height:100vh; display:flex; flex-direction:column; }
+  body { font-family:var(--font-sans); background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; min-height:100vh; display:flex; flex-direction:column; }
   a { color:inherit; text-decoration:none; }
-  .wrap { max-width:1120px; margin:0 auto; padding:0 28px; width:100%; }
+  .wrap { max-width:1140px; margin:0 auto; padding:0 28px; width:100%; }
 
   body.urdu { font-family:var(--font-urdu); line-height:2.1; }
   body.urdu .brand, body.urdu input, body.urdu .lang-btn, body.urdu .uni-mk { font-family:var(--font-sans); }
   body.urdu h1, body.urdu h2, body.urdu .page-title { font-family:var(--font-urdu); line-height:1.95; }
   body.urdu .hero h1 { font-size:clamp(1.9rem,4.2vw,3.1rem); }
 
-  .btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; border-radius:var(--r-sm); padding:13px 26px; border:1px solid var(--green); background:var(--green); color:#fff; transition:background .15s, transform .12s; }
-  .btn:hover { background:var(--green-dark); }
-  .btn:active { transform:translateY(1px); }
-  .btn-block { width:100%; }
-  .btn-line { background:transparent; color:var(--ink); border-color:var(--line-strong); }
-  .btn-line:hover { background:#fff; border-color:var(--ink); }
-  .btn-sm { padding:8px 18px; font-size:13.5px; }
+  /* ---------- bylines: hidden, revealed on hover of the heading (desktop only) ---------- */
+  @media (hover:hover){
+    .hero h1 + .sub,
+    .section-top + .ua-lede,
+    .card h2 + .lede{
+      opacity:0; max-height:0; overflow:hidden; margin-top:0; margin-bottom:0;
+      transition:opacity .2s ease, max-height .3s ease, margin .2s ease; pointer-events:none;
+    }
+    .hero h1:hover + .sub, .hero h1 + .sub:hover{ opacity:1; max-height:200px; margin-top:26px; pointer-events:auto; }
+    .section-top:hover + .ua-lede, .section-top + .ua-lede:hover{ opacity:1; max-height:200px; margin:6px 0 18px; pointer-events:auto; }
+    .card h2:hover + .lede, .card h2 + .lede:hover{ opacity:1; max-height:200px; margin:9px 0 26px; pointer-events:auto; }
+  }
 
-  .nav { border-bottom:1px solid var(--line); background:var(--paper); position:sticky; top:0; z-index:40; }
-  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:60px; gap:14px; }
+  /* ---------- buttons ---------- */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; font-family:var(--font-display); font-size:15px; font-weight:700; letter-spacing:-.01em; cursor:pointer; border-radius:var(--r-sm); padding:13px 26px; border:1px solid var(--green); background:var(--green); color:#fff; box-shadow:0 1px 2px rgba(3,106,74,.22); transition:background .15s, transform .12s, box-shadow .15s, border-color .15s; }
+  .btn:hover { background:var(--green-600); box-shadow:0 8px 18px -8px rgba(3,106,74,.5); }
+  .btn:active { transform:translateY(1px); box-shadow:none; }
+  .btn:disabled { opacity:.45; cursor:default; box-shadow:none; }
+  .btn-block { width:100%; }
+  .btn-line { background:#fff; color:var(--ink); border-color:var(--line-strong); box-shadow:none; }
+  .btn-line:hover { background:#fff; border-color:var(--green); color:var(--green-700); box-shadow:0 6px 16px -10px rgba(3,106,74,.4); }
+  .btn-ghost { background:transparent; color:var(--green-700); border-color:transparent; box-shadow:none; }
+  .btn-ghost:hover { background:var(--green-50); border-color:transparent; box-shadow:none; }
+  .btn-sm { padding:8px 16px; font-size:13.5px; }
+
+  /* ---------- nav ---------- */
+  .nav { border-bottom:1px solid var(--line); background:rgba(245,248,246,.86); backdrop-filter:saturate(1.3) blur(8px); position:sticky; top:0; z-index:40; }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:66px; gap:14px; }
   .nav-left { display:flex; align-items:center; gap:12px; }
-  .brand { font-family:var(--font-serif); font-size:21px; font-weight:700; cursor:pointer; white-space:nowrap; }
+  .brand { font-family:var(--font-display); font-size:22px; font-weight:800; letter-spacing:-.025em; cursor:pointer; white-space:nowrap; }
   .brand .pk { color:var(--green); }
-  .lang-btn { display:inline-flex; align-items:center; font-size:12.5px; font-weight:700; cursor:pointer; background:#fff; border:1px solid var(--line-strong); color:var(--ink-2); border-radius:999px; padding:5px 12px; transition:border-color .15s,color .15s; white-space:nowrap; }
-  .lang-btn:hover { border-color:var(--green); color:var(--green); }
-  .nav-desktop { display:flex; align-items:center; gap:20px; }
-  .nav-item { font-size:14px; font-weight:500; color:var(--ink-2); cursor:pointer; background:none; border:0; font-family:inherit; }
-  .nav-item:hover { color:var(--green); }
+  .lang-btn { display:inline-flex; align-items:center; font-size:12.5px; font-weight:700; cursor:pointer; background:#fff; border:1px solid var(--line-strong); color:var(--ink-2); border-radius:var(--r-pill); padding:6px 13px; transition:border-color .15s,color .15s,background .15s; white-space:nowrap; }
+  .lang-btn:hover { border-color:var(--green); color:var(--green-700); background:var(--green-50); }
+  .nav-desktop { display:flex; align-items:center; gap:22px; }
+  .nav-item { font-size:14.5px; font-weight:600; color:var(--ink-2); cursor:pointer; background:none; border:0; font-family:inherit; transition:color .15s; }
+  .nav-item:hover { color:var(--green-700); }
   .nav-item.static { color:var(--slate); cursor:default; }
   .hamburger { display:none; flex-direction:column; gap:5px; background:none; border:0; cursor:pointer; padding:8px; }
   .hamburger span { width:22px; height:2px; background:var(--ink); border-radius:2px; transition:transform .2s, opacity .2s; }
@@ -66,205 +97,219 @@
   .view.active { display:block; }
   #view-landing.active, #view-auth.active, #view-onboard.active { display:flex; flex:1; align-items:center; }
 
-  .hero { text-align:center; padding:100px 0; width:100%; }
-  .hero h1 { font-family:var(--font-serif); font-weight:700; letter-spacing:-.02em; font-size:clamp(2.3rem,5vw,4rem); line-height:1.08; min-height:2.3em; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
-  .hero h1 .lead { font-weight:600; }
+  /* ---------- hero / landing ---------- */
+  #view-landing.active { position:relative; overflow:hidden; background:
+      radial-gradient(60% 70% at 15% 8%, rgba(5,150,105,.10), transparent 60%),
+      radial-gradient(55% 60% at 92% 20%, rgba(242,179,64,.12), transparent 62%),
+      linear-gradient(180deg,#F1F8F4 0%, var(--paper) 58%); }
+  .hero { text-align:center; padding:104px 0 112px; width:100%; position:relative; z-index:1; }
+  .hero h1 { font-family:var(--font-display); font-weight:800; letter-spacing:-.035em; font-size:clamp(2.4rem,5.4vw,4.3rem); line-height:1.05; min-height:2.3em; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+  .hero h1 .lead { font-weight:700; color:var(--ink); }
   .rotator { display:inline-block; color:var(--green); transition:opacity .3s ease, transform .3s ease; }
   .rotator.is-out { opacity:0; transform:translateY(-14px); }
-  .hero .sub { margin-top:24px; font-size:1.05rem; color:var(--slate); font-weight:500; }
-  .hero .cta { margin-top:40px; }
+  .hero .sub { margin-top:26px; font-size:1.14rem; color:var(--ink-2); font-weight:500; max-width:600px; margin-left:auto; margin-right:auto; }
+  .hero .cta { margin-top:42px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .hero .cta .btn { padding:16px 34px; font-size:16.5px; border-radius:var(--r-pill); }
 
-  .pane { width:100%; padding:56px 0; }
-  .card { max-width:460px; margin:0 auto; background:var(--white); border:1px solid var(--line-strong); border-radius:var(--r); padding:38px 34px; }
-  .card.lg { max-width:580px; }
-  .card h2 { font-family:var(--font-serif); font-size:1.6rem; font-weight:700; text-align:center; }
-  .card .lede { text-align:center; color:var(--slate); font-size:14.5px; margin:8px 0 24px; }
-  .field { margin-bottom:16px; }
+  /* ---------- panes / cards / forms ---------- */
+  .pane { width:100%; padding:60px 0; }
+  .card { max-width:472px; margin:0 auto; background:var(--white); border:1px solid var(--line); border-radius:var(--r-lg); padding:40px 36px; box-shadow:var(--sh); }
+  .card.lg { max-width:600px; }
+  .card h2 { font-family:var(--font-display); font-size:1.72rem; font-weight:800; letter-spacing:-.02em; text-align:center; }
+  .card .lede { text-align:center; color:var(--slate); font-size:14.5px; margin:9px 0 26px; }
+  .field { margin-bottom:17px; }
   .field.two { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  .field label { display:block; font-size:13px; font-weight:600; color:var(--ink-2); margin-bottom:6px; }
-  .field input, .field textarea { width:100%; font-family:var(--font-sans); font-size:15px; color:var(--ink); padding:11px 13px; border:1px solid var(--line-strong); border-radius:var(--r-sm); background:#fff; transition:border-color .15s, box-shadow .15s; }
+  .field label { display:block; font-size:13px; font-weight:600; color:var(--ink-2); margin-bottom:7px; }
+  .field input, .field textarea { width:100%; font-family:var(--font-sans); font-size:15px; color:var(--ink); padding:12px 14px; border:1px solid var(--line-strong); border-radius:var(--r-sm); background:#fff; transition:border-color .15s, box-shadow .15s; }
   .field textarea { resize:vertical; min-height:68px; line-height:1.5; }
-  .field input:focus, .field textarea:focus { outline:none; border-color:var(--green); box-shadow:0 0 0 3px rgba(5,150,105,.12); }
-  .check { display:flex; align-items:center; gap:9px; font-size:14px; color:var(--ink-2); cursor:pointer; margin:-2px 0 16px; }
-  .check input { width:16px; height:16px; accent-color:var(--green); flex:none; }
-  .card .foot { text-align:center; font-size:14px; color:var(--slate); margin-top:20px; }
-  .card .foot a { color:var(--green); font-weight:600; cursor:pointer; }
+  .field input:focus, .field textarea:focus { outline:none; border-color:var(--green); box-shadow:var(--sh-focus); }
+  .check { display:flex; align-items:center; gap:10px; font-size:14px; color:var(--ink-2); cursor:pointer; margin:-2px 0 16px; }
+  .check input { width:17px; height:17px; accent-color:var(--green); flex:none; }
+  .card .foot { text-align:center; font-size:14px; color:var(--slate); margin-top:22px; }
+  .card .foot a { color:var(--green-700); font-weight:700; cursor:pointer; }
   .err { color:#b91c1c; font-size:13px; margin-bottom:12px; }
   .warn-box { background:#FEF2F2; border:1px solid #FECACA; color:#991B1B; border-radius:var(--r-sm); padding:12px 14px; font-size:13.5px; margin-bottom:16px; }
   .pw-meter { margin:-8px 0 16px; }
   .pw-bars { display:flex; gap:5px; margin-bottom:6px; }
-  .pw-bars i { height:5px; flex:1; border-radius:999px; background:var(--line); transition:background .2s; }
+  .pw-bars i { height:5px; flex:1; border-radius:var(--r-pill); background:var(--line); transition:background .2s; }
   .pw-meter.s1 .pw-bars i:nth-child(-n+1),
   .pw-meter.s2 .pw-bars i:nth-child(-n+2),
   .pw-meter.s3 .pw-bars i:nth-child(-n+3),
   .pw-meter.s4 .pw-bars i:nth-child(-n+4){ background:var(--pw,#DC2626); }
   .pw-label { font-size:12px; font-weight:600; color:var(--slate); }
 
-  .docs-head { margin:26px 0 12px; padding-top:20px; border-top:1px solid var(--line); }
+  .docs-head { margin:28px 0 12px; padding-top:22px; border-top:1px solid var(--line); }
   .docs-head .t { font-size:14px; font-weight:700; color:var(--ink); }
   .docs-head .s { font-size:12.5px; color:var(--slate); margin-top:3px; }
-  .doc-row { display:flex; align-items:center; gap:12px; border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:11px 13px; margin-bottom:10px; background:#fff; }
-  .doc-row .di { width:32px; height:32px; flex:none; border-radius:6px; background:#F3F4F6; display:grid; place-items:center; color:var(--slate); }
-  .doc-row.done .di { background:#ECFDF5; color:var(--ok); }
+  .doc-row { display:flex; align-items:center; gap:12px; border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:12px 14px; margin-bottom:10px; background:#fff; transition:border-color .15s, box-shadow .15s; }
+  .doc-row:hover { border-color:var(--line-strong); box-shadow:var(--sh-sm); }
+  .doc-row .di { width:34px; height:34px; flex:none; border-radius:9px; background:#F1F4F2; display:grid; place-items:center; color:var(--slate); }
+  .doc-row.done .di { background:var(--green-50); color:var(--ok); }
   .doc-txt { min-width:0; flex:1; }
   .doc-txt .n { font-size:13.5px; font-weight:600; color:var(--ink); }
   .doc-txt .m { font-size:12px; color:var(--slate); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .doc-row.done .doc-txt .m { color:var(--ok); font-weight:600; }
-  .doc-btn { flex:none; font-size:12.5px; font-weight:600; color:var(--green); background:none; border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:7px 13px; cursor:pointer; font-family:inherit; }
-  .doc-btn:hover { border-color:var(--green); }
+  .doc-btn { flex:none; font-size:12.5px; font-weight:700; color:var(--green-700); background:#fff; border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:8px 14px; cursor:pointer; font-family:inherit; transition:border-color .15s,background .15s; }
+  .doc-btn:hover { border-color:var(--green); background:var(--green-50); }
 
-  .prog { display:flex; align-items:center; gap:12px; margin-bottom:22px; }
-  .prog .txt { font-size:12px; font-weight:600; color:var(--slate); white-space:nowrap; }
-  .prog .bar { flex:1; height:5px; background:var(--line); border-radius:999px; overflow:hidden; }
-  .prog .fill { height:100%; background:var(--green); border-radius:999px; transition:width .3s ease; }
+  .prog { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+  .prog .txt { font-size:12px; font-weight:700; color:var(--slate); white-space:nowrap; }
+  .prog .bar { flex:1; height:6px; background:var(--line); border-radius:var(--r-pill); overflow:hidden; }
+  .prog .fill { height:100%; background:linear-gradient(90deg,var(--green),var(--green-600)); border-radius:var(--r-pill); transition:width .3s ease; }
   .photo-up { text-align:center; margin-bottom:24px; }
-  .avatar-lg { width:104px; height:104px; border-radius:50%; border:1px solid var(--line-strong); background:#F3F4F6; margin:4px auto 16px; display:grid; place-items:center; overflow:hidden; }
+  .avatar-lg { width:108px; height:108px; border-radius:50%; border:1px solid var(--line-strong); background:#F1F4F2; margin:4px auto 16px; display:grid; place-items:center; overflow:hidden; }
   .avatar-lg img { width:100%; height:100%; object-fit:cover; }
   .avatar-lg svg { color:var(--slate); }
   .hint { font-size:12.5px; color:var(--slate); margin-top:10px; }
   .ob-actions, .row-actions { display:flex; gap:12px; margin-top:8px; }
   .ob-actions .btn { flex:1; }
 
-  .section-top { display:flex; align-items:center; gap:14px; padding:34px 0 10px; }
-  .back-btn { font-size:14px; font-weight:600; color:var(--slate); background:none; border:0; cursor:pointer; font-family:inherit; }
-  .back-btn:hover { color:var(--green); }
-  .page-title { font-family:var(--font-serif); font-size:1.7rem; font-weight:700; }
-  .prof-photo-row { display:flex; align-items:center; gap:18px; margin-bottom:24px; }
-  .prof-photo-row .avatar-sm { width:72px; height:72px; border-radius:50%; border:1px solid var(--line-strong); background:#F3F4F6; overflow:hidden; display:grid; place-items:center; flex:none; }
+  /* ---------- section headers / profile ---------- */
+  .section-top { display:flex; align-items:center; gap:14px; padding:38px 0 12px; }
+  .back-btn { font-size:14px; font-weight:600; color:var(--slate); background:none; border:0; cursor:pointer; font-family:inherit; transition:color .15s; }
+  .back-btn:hover { color:var(--green-700); }
+  .page-title { font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-.025em; }
+  .prof-photo-row { display:flex; align-items:center; gap:18px; margin-bottom:26px; }
+  .prof-photo-row .avatar-sm { width:74px; height:74px; border-radius:50%; border:1px solid var(--line-strong); background:#F1F4F2; overflow:hidden; display:grid; place-items:center; flex:none; }
   .prof-photo-row .avatar-sm img { width:100%; height:100%; object-fit:cover; }
-  .saved-note { font-size:13px; color:var(--ok); font-weight:600; opacity:0; transition:opacity .2s; }
+  .saved-note { font-size:13px; color:var(--ok); font-weight:700; opacity:0; transition:opacity .2s; }
   .saved-note.show { opacity:1; }
 
-  .dash { padding:34px 0 72px; }
-  .dash-head { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
-  .dash-av { width:46px; height:46px; border-radius:50%; border:1px solid var(--line-strong); background:#F3F4F6; overflow:hidden; flex:none; display:grid; place-items:center; font-weight:700; color:var(--slate); }
+  /* ---------- dashboard ---------- */
+  .dash { padding:38px 0 76px; }
+  .dash-head { display:flex; align-items:center; gap:16px; margin-bottom:6px; }
+  .dash-av { width:52px; height:52px; border-radius:50%; border:1px solid var(--line-strong); background:#F1F4F2; overflow:hidden; flex:none; display:grid; place-items:center; font-weight:800; color:var(--slate); }
   .dash-av img { width:100%; height:100%; object-fit:cover; }
-  .dash-head h2 { font-family:var(--font-serif); font-size:1.7rem; font-weight:700; }
+  .dash-head h2 { font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-.025em; }
   .dash-head .who { color:var(--slate); font-size:13px; margin-top:2px; }
-  .dash-sub { color:var(--slate); font-size:14.5px; margin:14px 0 20px; }
+  .dash-sub { color:var(--ink-2); font-size:14.5px; margin:16px 0 22px; }
 
-  .uni-list { border:1px solid var(--line-strong); border-radius:var(--r); overflow:hidden; background:#fff; }
-  .uni-row { display:flex; align-items:center; gap:14px; padding:13px 16px; border-bottom:1px solid var(--line); }
+  .uni-list { border:1px solid var(--line); border-radius:var(--r); overflow:hidden; background:#fff; box-shadow:var(--sh-sm); }
+  .uni-row { display:flex; align-items:center; gap:14px; padding:15px 18px; border-bottom:1px solid var(--line); transition:background .12s; }
   .uni-row:last-child { border-bottom:none; }
-  .uni-row:hover { background:#FCFCFD; }
-  .uni-mk { width:40px; height:40px; flex:none; border:1px solid var(--line-strong); border-radius:var(--r-sm); display:grid; place-items:center; font-size:10.5px; font-weight:700; color:#fff; background:var(--c,#334155); overflow:hidden; }
+  .uni-row:hover { background:var(--green-tint); }
+  .uni-mk { width:42px; height:42px; flex:none; border:1px solid rgba(0,0,0,.06); border-radius:var(--r-sm); display:grid; place-items:center; font-size:10.5px; font-weight:800; color:#fff; background:var(--c,#334155); overflow:hidden; }
   .uni-mk.has-img { background:#fff; }
   .uni-mk img { width:100%; height:100%; object-fit:contain; padding:3px; }
   .uni-info { min-width:0; }
-  .uni-info .n { font-size:14.5px; font-weight:600; }
+  .uni-info .n { font-size:14.5px; font-weight:700; }
   .uni-info .c { font-size:12.5px; color:var(--slate); }
   .uni-row .spacer { margin-left:auto; }
   body[dir="rtl"] .uni-row .spacer { margin-left:0; margin-right:auto; }
 
-  .appview { padding-bottom:72px; }
-  .app-uni-head { display:flex; align-items:center; gap:14px; padding:8px 0 22px; border-bottom:1px solid var(--line); margin-bottom:26px; }
-  .app-uni-head .uni-mk { width:52px; height:52px; font-size:12px; }
-  .app-uni-head h2 { font-family:var(--font-serif); font-size:1.5rem; font-weight:700; }
+  /* ---------- single-university application (legacy view) ---------- */
+  .appview { padding-bottom:76px; }
+  .app-uni-head { display:flex; align-items:center; gap:16px; padding:8px 0 24px; border-bottom:1px solid var(--line); margin-bottom:28px; }
+  .app-uni-head .uni-mk { width:54px; height:54px; font-size:12px; }
+  .app-uni-head h2 { font-family:var(--font-display); font-size:1.6rem; font-weight:800; letter-spacing:-.02em; }
   .app-uni-head .c { font-size:13px; color:var(--slate); margin-top:2px; }
-  .app-empty { border:1px dashed var(--line-strong); border-radius:var(--r); padding:56px 24px; text-align:center; color:var(--slate); font-size:14.5px; }
+  .app-empty { border:1.5px dashed var(--line-strong); border-radius:var(--r); padding:58px 24px; text-align:center; color:var(--slate); font-size:14.5px; }
   .af-note { font-size:13px; color:var(--slate); margin-bottom:18px; }
-  .af-section { background:#fff; border:1px solid var(--line-strong); border-radius:var(--r); padding:24px 22px; margin-bottom:18px; }
-  .af-section > .af-title { font-family:var(--font-serif); font-size:1.08rem; font-weight:700; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--line); }
-  .af-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px 16px; }
+  .af-section { background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:26px 24px; margin-bottom:18px; box-shadow:var(--sh-sm); }
+  .af-section > .af-title { font-family:var(--font-display); font-size:1.12rem; font-weight:800; letter-spacing:-.01em; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+  .af-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px 18px; }
   .af-grid .field { margin-bottom:0; }
   .af-grid .full { grid-column:1 / -1; }
   .af-gate { grid-column:1 / -1; }
-  .af-gate .gbody { display:none; margin-top:12px; padding:14px; background:var(--paper); border:1px solid var(--line); border-radius:var(--r-sm); }
+  .af-gate .gbody { display:none; margin-top:12px; padding:16px; background:var(--green-tint); border:1px solid var(--line); border-radius:var(--r-sm); }
   .af-gate.on .gbody { display:block; }
   .af-gate .gbody .af-grid { grid-template-columns:1fr 1fr; }
   .req { color:#b91c1c; }
   .af-actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:4px; }
-  .af-banner { display:none; align-items:center; gap:10px; background:#ECFDF5; border:1px solid #A7F3D0; color:var(--ok); border-radius:var(--r); padding:13px 16px; font-size:14px; font-weight:600; margin-bottom:18px; }
+  .af-banner { display:none; align-items:center; gap:10px; background:var(--green-50); border:1px solid #A7F3D0; color:var(--ok); border-radius:var(--r); padding:14px 17px; font-size:14px; font-weight:700; margin-bottom:18px; }
   .af-banner.show { display:flex; }
-  .pill-status { font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+  .pill-status { font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:var(--r-pill); white-space:nowrap; }
   .pill-status.draft { color:#92400E; background:#FEF3C7; border:1px solid #FDE68A; }
-  .pill-status.submitted { color:var(--ok); background:#ECFDF5; border:1px solid #A7F3D0; }
-  .hub { margin-top:14px; }
-  .hub-tabs { display:flex; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--line); margin-bottom:20px; }
-  .hub-tab { font-size:13.5px; font-weight:600; color:var(--slate); background:none; border:0; border-bottom:2px solid transparent; padding:10px 4px; margin-bottom:-1px; cursor:pointer; font-family:inherit; }
+  .pill-status.submitted { color:var(--ok); background:var(--green-50); border:1px solid #A7F3D0; }
+  .hub { margin-top:16px; }
+  .hub-tabs { display:flex; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--line); margin-bottom:22px; }
+  .hub-tab { font-size:13.5px; font-weight:700; color:var(--slate); background:none; border:0; border-bottom:2px solid transparent; padding:11px 5px; margin-bottom:-1px; cursor:pointer; font-family:inherit; transition:color .15s; }
   .hub-tab:hover { color:var(--ink); }
-  .hub-tab.active { color:var(--green); border-bottom-color:var(--green); }
+  .hub-tab.active { color:var(--green-700); border-bottom-color:var(--green); }
   .hub-panel { display:none; }
   .hub-panel.active { display:block; }
-  .hub-item { display:flex; align-items:flex-start; gap:12px; border:1px solid var(--line-strong); border-radius:var(--r); padding:14px 16px; margin-bottom:12px; background:#fff; }
-  .hub-item .hi-mk { width:36px; height:36px; flex:none; border:1px solid var(--line-strong); border-radius:var(--r-sm); display:grid; place-items:center; font-size:10px; font-weight:700; color:#fff; overflow:hidden; }
+  .hub-item { display:flex; align-items:flex-start; gap:12px; border:1px solid var(--line); border-radius:var(--r); padding:15px 17px; margin-bottom:12px; background:#fff; box-shadow:var(--sh-sm); }
+  .hub-item .hi-mk { width:38px; height:38px; flex:none; border:1px solid rgba(0,0,0,.06); border-radius:var(--r-sm); display:grid; place-items:center; font-size:10px; font-weight:800; color:#fff; overflow:hidden; }
   .hub-item .hi-body { min-width:0; flex:1; }
-  .hub-item .hi-t { font-size:14px; font-weight:600; }
+  .hub-item .hi-t { font-size:14px; font-weight:700; }
   .hub-item .hi-s { font-size:12.5px; color:var(--slate); margin-top:3px; white-space:pre-wrap; }
-  .hub-empty { text-align:center; color:var(--slate); font-size:13.5px; border:1px dashed var(--line-strong); border-radius:var(--r); padding:34px 20px; }
+  .hub-empty { text-align:center; color:var(--slate); font-size:13.5px; border:1.5px dashed var(--line-strong); border-radius:var(--r); padding:36px 20px; }
   .admin-status { font-size:13px; color:var(--slate); margin-top:12px; min-height:18px; }
+
   /* ---- PU admissions console ---- */
   .modal-lg { max-width:580px; max-height:86vh; overflow-y:auto; }
   .rec-list { margin-bottom:12px; }
-  .rec { border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:13px 15px; margin-bottom:10px; background:#fff; display:flex; gap:12px; align-items:flex-start; }
+  .rec { border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:14px 16px; margin-bottom:10px; background:#fff; display:flex; gap:12px; align-items:flex-start; }
   .rec .rb { min-width:0; flex:1; }
-  .rec .rt { font-size:14px; font-weight:600; }
+  .rec .rt { font-size:14px; font-weight:700; }
   .rec .rs { font-size:12.5px; color:var(--slate); margin-top:3px; white-space:pre-wrap; }
   .rec .ra { display:flex; gap:8px; flex:none; }
-  .rec .ra button { font-size:12px; font-weight:600; background:none; border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:6px 11px; cursor:pointer; font-family:inherit; color:var(--ink-2); }
-  .rec .ra button:hover { border-color:var(--green); color:var(--green); }
+  .rec .ra button { font-size:12px; font-weight:700; background:#fff; border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:7px 12px; cursor:pointer; font-family:inherit; color:var(--ink-2); transition:border-color .15s,color .15s; }
+  .rec .ra button:hover { border-color:var(--green); color:var(--green-700); }
   .rec .ra button.del:hover { border-color:#B91C1C; color:#B91C1C; }
-  .rec-empty { border:1px dashed var(--line-strong); border-radius:var(--r-sm); padding:20px; text-align:center; color:var(--slate); font-size:13px; margin-bottom:12px; }
+  .rec-empty { border:1.5px dashed var(--line-strong); border-radius:var(--r-sm); padding:22px; text-align:center; color:var(--slate); font-size:13px; margin-bottom:12px; }
   .ps-count { font-size:12px; color:var(--slate); text-align:right; margin-top:5px; }
   .ps-count.over { color:#B91C1C; font-weight:600; }
   .policy { font-size:13.5px; line-height:1.7; color:var(--ink-2); }
-  .policy h4 { font-family:var(--font-serif); font-size:1rem; margin:16px 0 6px; color:var(--ink); }
+  .policy h4 { font-family:var(--font-display); font-size:1rem; font-weight:800; margin:16px 0 6px; color:var(--ink); }
   .policy p { margin-bottom:9px; }
-  .policy .draft-warn { background:#FEF3C7; border:1px solid #FDE68A; color:#92400E; border-radius:var(--r-sm); padding:11px 13px; font-size:13px; font-weight:600; margin-bottom:14px; }
-  .consent-link { color:var(--green); font-weight:600; cursor:pointer; text-decoration:underline; }
-  .modal-back { display:none; position:fixed; inset:0; background:rgba(17,24,39,.55); z-index:120; align-items:center; justify-content:center; padding:20px; }
+  .policy .draft-warn { background:#FEF3C7; border:1px solid #FDE68A; color:#92400E; border-radius:var(--r-sm); padding:12px 14px; font-size:13px; font-weight:600; margin-bottom:14px; }
+  .consent-link { color:var(--green-700); font-weight:700; cursor:pointer; text-decoration:underline; }
+  .modal-back { display:none; position:fixed; inset:0; background:rgba(15,31,24,.55); z-index:120; align-items:center; justify-content:center; padding:20px; }
   .modal-back.show { display:flex; }
-  .modal { background:#fff; border:1px solid var(--line-strong); border-radius:var(--r); max-width:430px; width:100%; padding:26px 24px; box-shadow:0 12px 40px rgba(0,0,0,.18); }
-  .modal .m-title { font-family:var(--font-serif); font-size:1.22rem; font-weight:700; margin-bottom:9px; }
-  .modal .m-body { font-size:14px; color:var(--ink-2); line-height:1.6; margin-bottom:20px; }
+  .modal { background:#fff; border:1px solid var(--line); border-radius:var(--r); max-width:440px; width:100%; padding:28px 26px; box-shadow:var(--sh-lg); }
+  .modal .m-title { font-family:var(--font-display); font-size:1.28rem; font-weight:800; letter-spacing:-.02em; margin-bottom:10px; }
+  .modal .m-body { font-size:14px; color:var(--ink-2); line-height:1.6; margin-bottom:22px; }
   .modal .m-actions { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
   body[dir="rtl"] .modal .m-actions { justify-content:flex-start; }
   @media (max-width:520px){ .modal .m-actions .btn { flex:1; } }
-  .cta-staff { margin-top:14px; }
-  .btn-staff { background:var(--green-dark); border-color:var(--green-dark); font-size:13.5px; padding:10px 21px; }
-  .btn-staff:hover { background:#065F46; border-color:#065F46; }
-  .staff-badge { display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--slate); border:1px solid var(--line-strong); border-radius:999px; padding:4px 11px; margin:0 auto 12px; }
+  .cta-staff { margin-top:16px; }
+  .btn-staff { background:var(--green-700); border-color:var(--green-700); font-size:13.5px; padding:11px 22px; }
+  .btn-staff:hover { background:var(--green-900); border-color:var(--green-900); }
+  .staff-badge { display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--slate); border:1px solid var(--line-strong); border-radius:var(--r-pill); padding:5px 12px; margin:0 auto 12px; }
   body.urdu .staff-badge { letter-spacing:0; text-transform:none; font-size:12px; }
-  .adm-head { display:flex; align-items:center; gap:14px; padding:26px 0 16px; border-bottom:1px solid var(--line); margin-bottom:18px; flex-wrap:wrap; }
-  .adm-head .uni-mk { width:46px; height:46px; font-size:11px; }
-  .adm-head h2 { font-family:var(--font-serif); font-size:1.45rem; font-weight:700; }
+  .adm-head { display:flex; align-items:center; gap:14px; padding:28px 0 18px; border-bottom:1px solid var(--line); margin-bottom:20px; flex-wrap:wrap; }
+  .adm-head .uni-mk { width:48px; height:48px; font-size:11px; }
+  .adm-head h2 { font-family:var(--font-display); font-size:1.5rem; font-weight:800; letter-spacing:-.02em; }
   .adm-head .c { font-size:12.5px; color:var(--slate); margin-top:2px; }
-  .adm-bar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
-  .adm-bar input, .adm-bar select { font-family:var(--font-sans); font-size:14px; padding:9px 12px; border:1px solid var(--line-strong); border-radius:var(--r-sm); background:#fff; color:var(--ink); }
+  .adm-bar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
+  .adm-bar input, .adm-bar select { font-family:var(--font-sans); font-size:14px; padding:10px 13px; border:1px solid var(--line-strong); border-radius:var(--r-sm); background:#fff; color:var(--ink); }
   .adm-bar input { flex:1; min-width:180px; }
-  .adm-bar input:focus, .adm-bar select:focus { outline:none; border-color:var(--green); box-shadow:0 0 0 3px rgba(5,150,105,.12); }
+  .adm-bar input:focus, .adm-bar select:focus { outline:none; border-color:var(--green); box-shadow:var(--sh-focus); }
   .adm-count { font-size:13px; color:var(--slate); margin-left:auto; }
   body[dir="rtl"] .adm-count { margin-left:0; margin-right:auto; }
-  .adm-list { border:1px solid var(--line-strong); border-radius:var(--r); overflow:hidden; background:#fff; }
-  .adm-row { display:flex; align-items:center; gap:13px; padding:12px 15px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .adm-list { border:1px solid var(--line); border-radius:var(--r); overflow:hidden; background:#fff; box-shadow:var(--sh-sm); }
+  .adm-row { display:flex; align-items:center; gap:13px; padding:14px 16px; border-bottom:1px solid var(--line); cursor:pointer; transition:background .12s; }
   .adm-row:last-child { border-bottom:none; }
-  .adm-row:hover { background:#FCFCFD; }
-  .adm-thumb { width:40px; height:40px; flex:none; border-radius:50%; border:1px solid var(--line-strong); background:#F3F4F6; overflow:hidden; display:grid; place-items:center; font-weight:700; font-size:14px; color:var(--slate); }
+  .adm-row:hover { background:var(--green-tint); }
+  .adm-thumb { width:42px; height:42px; flex:none; border-radius:50%; border:1px solid var(--line-strong); background:#F1F4F2; overflow:hidden; display:grid; place-items:center; font-weight:800; font-size:14px; color:var(--slate); }
   .adm-thumb img { width:100%; height:100%; object-fit:cover; }
   .adm-row .who { min-width:0; flex:1; }
-  .adm-row .who .n { font-size:14.5px; font-weight:600; }
+  .adm-row .who .n { font-size:14.5px; font-weight:700; }
   .adm-row .who .m { font-size:12.5px; color:var(--slate); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .dec-pill { font-size:11.5px; font-weight:700; padding:4px 11px; border-radius:999px; white-space:nowrap; flex:none; }
-  .dec-pill.accepted { color:var(--ok); background:#ECFDF5; border:1px solid #A7F3D0; }
+  .dec-pill { font-size:11.5px; font-weight:700; padding:5px 12px; border-radius:var(--r-pill); white-space:nowrap; flex:none; }
+  .dec-pill.accepted { color:var(--ok); background:var(--green-50); border:1px solid #A7F3D0; }
   .dec-pill.rejected { color:#B91C1C; background:#FEF2F2; border:1px solid #FECACA; }
   .dec-pill.undecided { color:#92400E; background:#FEF3C7; border:1px solid #FDE68A; }
   .adm-detail { padding-bottom:110px; }
-  .adm-card { background:#fff; border:1px solid var(--line-strong); border-radius:var(--r); padding:22px; margin-bottom:16px; }
-  .adm-card > .t { font-family:var(--font-serif); font-size:1.05rem; font-weight:700; margin-bottom:14px; padding-bottom:9px; border-bottom:1px solid var(--line); }
+  .adm-card { background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:24px; margin-bottom:16px; box-shadow:var(--sh-sm); }
+  .adm-card > .t { font-family:var(--font-display); font-size:1.08rem; font-weight:800; letter-spacing:-.01em; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--line); }
   .adm-kv { display:grid; grid-template-columns:minmax(160px,34%) 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden; font-size:13.5px; }
-  .adm-kv .k { background:#FAFAFA; padding:8px 11px; font-weight:600; color:var(--ink-2); }
-  .adm-kv .v { background:#fff; padding:8px 11px; white-space:pre-wrap; word-break:break-word; }
+  .adm-kv .k { background:#FAFCFB; padding:9px 12px; font-weight:600; color:var(--ink-2); }
+  .adm-kv .v { background:#fff; padding:9px 12px; white-space:pre-wrap; word-break:break-word; }
   .adm-kv .k.sub { padding-left:26px; font-weight:500; color:var(--slate); }
   .adm-docs { display:flex; flex-wrap:wrap; gap:14px; }
-  .adm-doc { border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:10px; width:190px; }
-  .adm-doc .dl { font-size:12px; font-weight:600; margin-bottom:7px; }
-  .adm-doc img { width:100%; height:130px; object-fit:cover; border-radius:4px; border:1px solid var(--line); cursor:zoom-in; }
-  .adm-doc a { display:inline-block; font-size:12.5px; font-weight:600; color:var(--green); margin-top:5px; }
+  .adm-doc { border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:11px; width:190px; }
+  .adm-doc .dl { font-size:12px; font-weight:700; margin-bottom:7px; }
+  .adm-doc-sensitive { border-color:#B45309; background:#FFFBEB; }
+  .adm-doc-sensitive .dl { color:#92400E; }
+  .adm-doc img { width:100%; height:130px; object-fit:cover; border-radius:6px; border:1px solid var(--line); cursor:zoom-in; }
+  .adm-doc a { display:inline-block; font-size:12.5px; font-weight:700; color:var(--green-700); margin-top:5px; }
   .adm-photo-lg { width:120px; height:144px; object-fit:cover; border:1px solid var(--line-strong); border-radius:var(--r-sm); }
   .adm-log { font-size:12.5px; color:var(--slate); }
   .adm-log div { padding:6px 0; border-bottom:1px dashed var(--line); }
   .adm-log div:last-child { border-bottom:none; }
-  .adm-decbar { position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line-strong); box-shadow:0 -3px 14px rgba(0,0,0,.06); padding:13px 0; z-index:60; display:none; }
+  .adm-decbar { position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line-strong); box-shadow:0 -4px 18px rgba(15,31,24,.08); padding:14px 0; z-index:60; display:none; }
   .adm-decbar.show { display:block; }
   .adm-decbar .inner { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
   .adm-decbar .cur { font-size:13px; color:var(--slate); }
@@ -272,10 +317,11 @@
   body[dir="rtl"] .adm-decbar .spacer { margin-left:0; margin-right:auto; }
   .btn-accept { background:var(--green); border-color:var(--green); }
   .btn-reject { background:#B91C1C; border-color:#B91C1C; }
-  .btn-reject:hover { background:#991B1B; }
+  .btn-reject:hover { background:#991B1B; border-color:#991B1B; }
   @media (max-width:640px){ .adm-kv { grid-template-columns:1fr; } .adm-kv .k { padding-top:10px; } .adm-decbar .spacer { display:none; } .adm-decbar .btn { flex:1; } }
-  .admin-status.ok { color:var(--ok); font-weight:600; }
-  /* --- Tier 1 print document --- */
+  .admin-status.ok { color:var(--ok); font-weight:700; }
+
+  /* --- print document --- */
   .print-doc { display:none; }
   @media print {
     body * { visibility:hidden; }
@@ -295,43 +341,195 @@
   .print-doc .pd-foot { margin-top:16px; font-size:10px; color:#666; border-top:1px solid #ccc; padding-top:6px; }
   @media (max-width:640px){ .af-grid, .af-gate .gbody .af-grid { grid-template-columns:1fr; } }
 
+  /* ---------- footer ---------- */
   footer { border-top:1px solid var(--line); background:var(--paper); }
-  .gov { padding:30px 0 22px; text-align:center; }
-  .gov .eyebrow { font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--slate); margin-bottom:14px; }
+  .gov { padding:34px 0 24px; text-align:center; }
+  .gov .eyebrow { font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--slate); margin-bottom:16px; }
   body.urdu .gov .eyebrow { letter-spacing:0; text-transform:none; font-size:13px; }
   .logo-carousel { position:relative; height:112px; max-width:340px; margin:0 auto; }
   .lc-item { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; opacity:0; transition:opacity .6s ease; pointer-events:none; }
   .lc-item.active { opacity:1; }
   .lc-item img { height:58px; width:auto; display:block; }
   .lc-item figcaption { font-size:11.5px; font-weight:600; color:var(--slate); }
-  .foot-base { border-top:1px solid var(--line); padding:16px 0; text-align:center; font-size:12.5px; color:var(--slate); }
+  .foot-base { border-top:1px solid var(--line); padding:18px 0; text-align:center; font-size:12.5px; color:var(--slate); }
 
   @media (max-width:760px) {
     .wrap { padding:0 18px; }
-    .nav-inner { height:56px; }
+    .nav-inner { height:58px; }
     .nav-desktop { display:none; }
     header.multi .hamburger { display:flex; }
     header:not(.multi) .nav-desktop { display:flex; }
     header.multi.menu-open .mobile-menu { display:block; }
-    .brand { font-size:19px; }
-    .hero { padding:56px 0 48px; }
-    .hero h1 { font-size:clamp(2rem,9vw,2.8rem); }
+    .brand { font-size:20px; }
+    .hero { padding:60px 0 56px; }
+    .hero h1 { font-size:clamp(2.1rem,9vw,2.9rem); }
+    .hero .sub { font-size:1.05rem; margin-top:20px; }
+    .hero .cta { margin-top:34px; }
     .hero .cta .btn { width:100%; padding:16px; font-size:16px; }
-    .hero .cta .btn-staff { width:auto; padding:11px 22px; font-size:14px; }
-    .pane { padding:28px 0; }
-    .card { border-radius:12px; padding:26px 20px; }
+    .hero .cta .btn-staff { width:auto; padding:12px 22px; font-size:14px; }
+    .pane { padding:30px 0; }
+    .card { border-radius:var(--r); padding:28px 22px; }
     .field.two { grid-template-columns:1fr; }
-    .dash { padding:22px 0 56px; }
+    .dash { padding:24px 0 60px; }
     .uni-row { padding:14px; gap:12px; }
+    .page-title { font-size:1.55rem; }
   }
-</style>
+
+  /* ===== Unified application — wizard ===== */
+  .ua-lede{ color:var(--ink-2); font-size:14.5px; line-height:1.6; margin:6px 0 18px; max-width:720px; }
+  .ua-search{ width:100%; padding:13px 16px; border:1px solid var(--line-strong); border-radius:var(--r-sm); font-size:15px; margin-bottom:16px; box-sizing:border-box; font-family:var(--font-sans); transition:border-color .15s, box-shadow .15s; }
+  .ua-search:focus{ outline:none; border-color:var(--green); box-shadow:var(--sh-focus); }
+  .ua-picklist{ display:flex; flex-direction:column; gap:10px; }
+  /* one collapsible dropdown per province */
+  .ua-provgroup{ border:1px solid var(--line); border-radius:var(--r); background:#fff; box-shadow:var(--sh-sm); overflow:hidden; }
+  .ua-provgroup > summary.ua-provsum{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; cursor:pointer; list-style:none; }
+  .ua-provgroup > summary::-webkit-details-marker{ display:none; }
+  .ua-provsum .pn{ display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:800; font-size:14.5px; letter-spacing:-.01em; color:var(--ink); }
+  .ua-provsum .pn::before{ content:"\203A"; font-weight:800; color:var(--slate); transition:transform .15s; }
+  .ua-provgroup[open] > summary .pn::before{ transform:rotate(90deg); }
+  .ua-provsum .pm{ font-size:12.5px; font-weight:600; color:var(--slate); white-space:nowrap; }
+  .ua-provgroup[open] > summary .pm{ color:var(--green-700); }
+  .ua-provbody{ border-top:1px solid var(--line); padding:6px 8px 8px; }
+  .ua-provrow{ display:flex; align-items:center; gap:12px; padding:11px 10px; border-radius:var(--r-sm); cursor:pointer; }
+  .ua-provrow:hover{ background:var(--green-tint); }
+  .ua-provrow.on{ background:var(--green-tint); }
+  .ua-provrow input{ width:18px; height:18px; accent-color:var(--green); flex:none; }
+  /* logo tile in the picker — neutral until a real logo file exists, white when it loads */
+  .ua-provrow .uni-mk{ background:#EEF2F0; color:var(--ink-2); border:1px solid var(--line-strong); font-weight:700; }
+  .ua-provrow .uni-mk.has-img{ background:#fff; }
+  .ua-provrow-info .n{ font-weight:600; font-size:14px; color:var(--ink); }
+  .ua-provrow-info .c{ color:var(--slate); font-size:12.5px; }
+  /* academic history — equivalent-qualification toggle */
+  .ua-seg{ display:inline-flex; border:1px solid var(--line-strong); border-radius:var(--r-sm); overflow:hidden; margin-bottom:14px; }
+  .ua-seg-btn{ background:#fff; border:0; border-right:1px solid var(--line-strong); padding:9px 17px; font-family:var(--font-display); font-weight:700; font-size:13.5px; color:var(--ink-2); cursor:pointer; transition:background .12s,color .12s; }
+  .ua-seg-btn:last-child{ border-right:0; }
+  .ua-seg-btn:hover{ background:var(--green-tint); }
+  .ua-seg-btn.on{ background:var(--green); color:#fff; }
+  .ua-seg-btn.on:hover{ background:var(--green-600); }
+  .ua-acad-body{ margin-top:2px; }
+  .ua-none{ color:var(--slate); padding:20px 2px; }
+  .ua-pickbar{ position:sticky; bottom:0; display:flex; align-items:center; gap:12px; background:rgba(245,248,246,.92); backdrop-filter:blur(8px); border-top:1px solid var(--line); padding:16px 2px; margin-top:18px; }
+  .ua-pickbar #uaPickCount{ font-weight:700; font-size:14px; }
+
+  /* your-universities summary (plain list, no pills) */
+  .ua-summary{ background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:16px 18px; margin-bottom:20px; box-shadow:var(--sh-sm); }
+  .ua-sum-h{ font-family:var(--font-display); font-weight:800; font-size:14px; letter-spacing:-.01em; margin-bottom:8px; color:var(--ink); }
+  .ua-ulist{ list-style:none; margin:0 0 10px; padding:0; }
+  .ua-uitem{ display:flex; align-items:baseline; justify-content:space-between; gap:14px; padding:9px 0; border-top:1px solid var(--line); }
+  .ua-uitem:first-child{ border-top:none; }
+  .ua-uitem .n{ font-weight:600; font-size:14px; color:var(--ink); }
+  .ua-uitem .c{ font-size:12.5px; color:var(--slate); white-space:nowrap; }
+  .ua-textlink{ background:none; border:0; padding:0; font-family:inherit; font-size:13.5px; font-weight:600; color:var(--green-700); cursor:pointer; text-decoration:underline; text-underline-offset:2px; }
+  .ua-textlink:hover{ color:var(--green-900); }
+
+  /* stepper */
+  .ua-stepper{ display:flex; align-items:flex-start; gap:0; margin:4px 0 22px; }
+  .ua-st{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; cursor:pointer; min-width:0; }
+  .ua-st .num{ width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:13.5px; background:#fff; color:var(--slate); border:2px solid var(--line-strong); z-index:2; transition:all .2s; font-family:var(--font-display); }
+  .ua-st .lbl{ font-size:11.5px; font-weight:700; color:var(--slate); text-align:center; line-height:1.25; max-width:98px; transition:color .2s; }
+  .ua-st::before, .ua-st::after{ content:""; position:absolute; top:17px; height:2px; background:var(--line-strong); z-index:1; }
+  .ua-st::before{ left:0; right:50%; }
+  .ua-st::after{ left:50%; right:0; }
+  .ua-st:first-child::before{ display:none; }
+  .ua-st:last-child::after{ display:none; }
+  .ua-st.done .num{ background:var(--green); border-color:var(--green); color:#fff; }
+  .ua-st.done .lbl{ color:var(--green-700); }
+  .ua-st.active .num{ background:#fff; border-color:var(--green); color:var(--green-700); }
+  .ua-st.active .lbl{ color:var(--ink); }
+  .ua-st.done::before, .ua-st.done::after, .ua-st.active::before{ background:var(--green); }
+  .ua-progm{ display:none; align-items:center; gap:12px; margin:2px 0 20px; }
+  .ua-progm .t{ font-size:12.5px; font-weight:800; color:var(--green-700); white-space:nowrap; }
+  .ua-progm .bar{ flex:1; height:6px; background:var(--line); border-radius:var(--r-pill); overflow:hidden; }
+  .ua-progm .fill{ height:100%; background:linear-gradient(90deg,var(--green),var(--green-600)); border-radius:var(--r-pill); transition:width .3s ease; }
+
+  /* step panels + section cards */
+  .ua-step-panel{ display:none; }
+  .ua-step-panel.active{ display:block; animation:uaFade .25s ease; }
+  @keyframes uaFade{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+  .ua-sec{ border:1px solid var(--line); border-radius:var(--r); padding:22px 22px 24px; margin-bottom:16px; background:#fff; box-shadow:var(--sh-sm); }
+  .ua-sec-h{ font-family:var(--font-display); font-weight:800; font-size:1.12rem; letter-spacing:-.01em; margin-bottom:6px; color:var(--ink); }
+  .ua-sec-intro{ color:var(--slate); font-size:13px; margin-bottom:16px; }
+  .ua-specific{ background:#fff; }
+  .ua-specnote{ color:var(--slate); font-size:12.5px; margin:-6px 0 14px; }
+  .ua-grid{ display:grid; grid-template-columns:1fr 1fr; gap:15px 18px; }
+  .ua-f{ display:flex; flex-direction:column; gap:6px; }
+  .ua-f.full{ grid-column:1 / -1; }
+  .ua-f > label{ font-size:13px; font-weight:600; color:var(--ink-2); }
+  .ua-f input, .ua-f select, .ua-f textarea{ padding:11px 13px; border:1px solid var(--line-strong); border-radius:var(--r-sm); font-size:14.5px; font-family:var(--font-sans); box-sizing:border-box; width:100%; color:var(--ink); background:#fff; transition:border-color .15s, box-shadow .15s; }
+  .ua-f input:focus, .ua-f select:focus, .ua-f textarea:focus{ outline:none; border-color:var(--green); box-shadow:var(--sh-focus); }
+  .ua-f textarea{ resize:vertical; min-height:60px; }
+  .ua-f input.ua-locked{ background:#F1F4F2; color:#55635c; }
+  .ua-help{ font-size:12px; color:var(--slate); line-height:1.5; }
+  .ua-f.sensitive > label::after{ content:" (sensitive)"; color:var(--slate); font-weight:500; font-size:11.5px; }
+  /* "which universities require this" — optional disclosure under the field */
+  .ua-reqd{ font-size:12.5px; }
+  .ua-reqd > summary{ cursor:pointer; color:var(--green-700); font-weight:600; list-style:none; display:inline-flex; align-items:center; gap:6px; padding:1px 0; }
+  .ua-reqd > summary::-webkit-details-marker{ display:none; }
+  .ua-reqd > summary::before{ content:"\203A"; display:inline-block; font-weight:800; transition:transform .15s; }
+  .ua-reqd[open] > summary::before{ transform:rotate(90deg); }
+  .ua-reqd > summary:hover{ color:var(--green-900); }
+  .ua-reqd-body{ margin-top:6px; color:var(--ink-2); font-size:12.5px; line-height:1.55; padding-left:14px; }
+  .ua-fromprofile{ font-size:11.5px; color:var(--slate); }
+  .ua-file{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .ua-file-st{ font-size:12.5px; color:var(--slate); }
+  .ua-check{ display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:14px; }
+  .ua-check input{ width:19px; height:19px; accent-color:var(--green); flex:none; margin-top:1px; }
+  .ua-specblk{ border-top:1px solid var(--line); padding-top:16px; margin-top:16px; }
+  .ua-specblk:first-of-type{ border-top:none; padding-top:0; margin-top:0; }
+  .ua-specfor{ font-family:var(--font-display); font-weight:800; font-size:13.5px; letter-spacing:-.01em; color:var(--ink); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--line); }
+
+  /* wizard nav */
+  .ua-wiznav{ display:flex; align-items:center; gap:12px; margin-top:8px; padding-top:4px; flex-wrap:wrap; }
+  .ua-wiznav .sp{ flex:1; }
+
+  /* review step */
+  .ua-rev-sec{ border:1px solid var(--line); border-radius:var(--r); padding:18px 20px; margin-bottom:14px; background:#fff; box-shadow:var(--sh-sm); }
+  .ua-rev-h{ font-family:var(--font-display); font-weight:800; font-size:1.02rem; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .ua-rev-h .edit{ font-size:12.5px; font-weight:700; color:var(--green-700); background:none; border:0; cursor:pointer; font-family:inherit; }
+  .ua-rev-kv{ display:grid; grid-template-columns:minmax(150px,40%) 1fr; gap:6px 16px; font-size:13.5px; }
+  .ua-rev-k{ color:var(--slate); }
+  .ua-rev-k.sens::after{ content:" (sensitive)"; color:var(--slate); font-size:11px; }
+  .ua-rev-v{ color:var(--ink); word-break:break-word; }
+  .ua-rev-route{ border:1px solid var(--line); background:#fff; border-radius:var(--r); padding:16px 18px; margin-bottom:14px; box-shadow:var(--sh-sm); }
+  .ua-rev-route .rh{ font-family:var(--font-display); font-weight:800; font-size:14px; margin-bottom:8px; }
+  .ua-rev-route .rr{ display:flex; align-items:baseline; gap:11px; padding:9px 0; border-top:1px solid var(--line); }
+  .ua-rev-route .rr:first-of-type{ border-top:none; }
+  .ua-rev-route .rr .n{ flex:1; font-weight:600; font-size:13.5px; }
+  .ua-rev-route .rr .ct{ font-size:12.5px; color:var(--slate); white-space:nowrap; }
+
+  /* done */
+  .ua-done-card{ text-align:center; max-width:580px; margin:32px auto; border:1px solid var(--line); border-radius:var(--r-lg); padding:38px 28px; background:#fff; box-shadow:var(--sh); }
+  .ua-done-ic{ width:58px; height:58px; border-radius:50%; background:var(--green-50); color:var(--ok); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+  .ua-done-card h2{ font-family:var(--font-display); font-weight:800; letter-spacing:-.02em; margin:0 0 10px; }
+  .ua-done-card p{ color:var(--ink-2); font-size:14px; line-height:1.6; }
+  .ua-done-list{ display:flex; flex-direction:column; gap:10px; margin-top:20px; text-align:left; }
+  .ua-done-row{ display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:var(--r-sm); padding:12px 14px; background:#fff; }
+  .ua-done-row .n{ font-weight:700; font-size:14px; flex:1; }
+
+  /* dashboard CTA to start unified flow */
+  .ua-dash-cta{ display:flex; align-items:center; gap:16px; background:var(--green-700); color:#fff; border-radius:var(--r); padding:20px 22px; margin-bottom:20px; }
+  .ua-dash-cta .t{ flex:1; }
+  .ua-dash-cta .t .h{ font-family:var(--font-display); font-weight:800; font-size:16.5px; letter-spacing:-.01em; }
+  .ua-dash-cta .t .s{ font-size:13px; opacity:.92; margin-top:3px; }
+  .ua-dash-cta button{ background:#fff; color:var(--green-700); border:none; font-weight:800; }
+  .ua-dash-cta button:hover{ background:#F2FBF7; }
+
+  @media(max-width:640px){
+    .ua-grid{ grid-template-columns:1fr; }
+    .ua-stepper{ display:none; }
+    .ua-progm{ display:flex; }
+    .ua-rev-kv{ grid-template-columns:1fr; gap:2px; }
+    .ua-rev-k{ margin-top:8px; font-weight:600; }
+    .ua-wiznav .btn{ flex:1; }
+  }
+  </style>
 </head>
 <body>
 
 <header class="nav" id="header">
   <div class="wrap nav-inner">
     <div class="nav-left">
-      <span class="brand" data-go="home">Apply<span class="pk">.pk</span></span>
+      <span class="brand" data-go="home">apply<span class="pk">.pk</span></span>
       <button class="lang-btn" id="langBtn">اردو</button>
     </div>
     <nav class="nav-desktop" id="navDesktop"></nav>
@@ -377,7 +575,7 @@
         <div class="docs-head">
           <div class="t" data-i18n="consentTitle">Privacy &amp; consent</div>
         </div>
-        <label class="check"><input type="checkbox" id="su-c-data" /> <span data-i18n="consentData">I agree to Apply.pk storing and processing my personal data so my applications can be sent to universities.</span></label>
+        <label class="check"><input type="checkbox" id="su-c-data" /> <span data-i18n="consentData">I agree to apply.pk storing and processing my personal data so my applications can be sent to universities.</span></label>
         <label class="check"><input type="checkbox" id="su-c-marketing" /> <span data-i18n="consentMarketing">Optional: send me updates about deadlines, scholarships and new universities.</span></label>
         <p style="font-size:12.5px;color:var(--slate);margin:-4px 0 4px;">
           <a class="consent-link" id="suPolicyLink" data-i18n="readPolicy">Read the Terms of Service &amp; Privacy Policy</a>
@@ -437,7 +635,8 @@
         <div class="dash-av" id="dashAv"></div>
         <div><h2 data-i18n="yourApps">Your applications</h2><div class="who" id="dashWho"></div></div>
       </div>
-      <p class="dash-sub" data-i18n="dashSub">Choose a public university and tap Apply to open its application.</p>
+      <p class="dash-sub" data-i18n="dashSub">Apply to any public university through one form. Pick your universities, fill your details once, and we send each the information it needs.</p>
+      <div class="ua-dash-cta"><div class="t"><div class="h">One application, every university</div><div class="s">Select your universities and fill a single form.</div></div><button id="uaStartBtn" class="btn">Start your application →</button></div>
       <div class="uni-list" id="uniList"></div>
     </div>
   </section>
@@ -493,10 +692,22 @@
         <button class="btn btn-line btn-sm" id="actAdd" data-i18n="actAdd">+ Add activity</button>
 
         <div class="docs-head" style="margin-top:30px;">
+          <div class="t" data-i18n="guardianTitle">Parent or guardian</div>
+          <div class="s" data-i18n="guardianSub">Required for all applicants. We may contact your guardian about your application.</div>
+        </div>
+        <div class="af-grid">
+          <div class="field"><label for="pf-g-name" data-i18n="gName">Guardian name</label><input id="pf-g-name" type="text" /></div>
+          <div class="field"><label for="pf-g-rel" data-i18n="gRel">Relationship</label><input id="pf-g-rel" type="text" /></div>
+          <div class="field"><label for="pf-g-phone" data-i18n="gPhone">Guardian phone</label><input id="pf-g-phone" type="tel" /></div>
+        </div>
+
+        <div id="pf-minor-notice" class="draft-warn" style="display:none;margin-top:14px;" data-i18n="minorNotice">You are applying as a minor (under 18). Please review your application with your parent or guardian. Your guardian's details are required above.</div>
+
+        <div class="docs-head" style="margin-top:30px;">
           <div class="t" data-i18n="consentTitle">Privacy &amp; consent</div>
           <div class="s" data-i18n="consentSub">You can review or change these at any time.</div>
         </div>
-        <label class="check"><input type="checkbox" id="pf-c-data" /> <span data-i18n="consentData">I agree to Apply.pk storing and processing my personal data so my applications can be sent to universities.</span></label>
+        <label class="check"><input type="checkbox" id="pf-c-data" /> <span data-i18n="consentData">I agree to apply.pk storing and processing my personal data so my applications can be sent to universities.</span></label>
         <label class="check"><input type="checkbox" id="pf-c-retain" /> <span data-i18n="consentRetain">I understand my data is kept until I ask for it to be deleted.</span></label>
         <label class="check"><input type="checkbox" id="pf-c-marketing" /> <span data-i18n="consentMarketing">Optional: send me updates about deadlines, scholarships and new universities.</span></label>
         <p style="font-size:12.5px;color:var(--slate);margin:-4px 0 8px;">
@@ -541,7 +752,7 @@
       <div class="app-empty" id="appEmpty" data-i18n="comingSoon">This application form is coming soon.</div>
       <div id="appFormWrap" style="display:none;">
         <div class="af-banner" id="afBanner"><span>✓</span><span id="afBannerText"></span></div>
-        <p class="af-note" id="afNote" data-i18n="afNote">Fields marked * are required. Your name, CNIC, photo, date of birth and addresses are taken from your Apply.pk profile automatically.</p>
+        <p class="af-note" id="afNote" data-i18n="afNote">Fields marked * are required. Your name, CNIC, photo, date of birth and addresses are taken from your apply.pk profile automatically.</p>
         <div id="afSections"></div>
         <div class="err" id="afErr"></div>
         <div class="af-actions">
@@ -557,12 +768,52 @@
     </div>
   </section>
 
+  <section id="view-uapply" class="view">
+    <div class="wrap">
+      <!-- PICKER -->
+      <div id="uaPickPanel">
+        <div class="section-top"><button class="back-btn" data-go="dashboard">← Back</button><span class="page-title">Choose your universities</span></div>
+        <p class="ua-lede">Select every university you want to apply to. apply.pk asks for each piece of information only once, then sends it to every university that needs it.</p>
+        <input id="uaSearch" class="ua-search" type="search" placeholder="Search by name, city or province" />
+        <div id="uaPickList" class="ua-picklist"></div>
+        <div id="uaPickBar" class="ua-pickbar">
+          <span id="uaPickCount">No universities selected</span>
+          <span class="spacer" style="flex:1;"></span>
+          <button id="uaPickContinue" class="btn" disabled>Build my application →</button>
+        </div>
+      </div>
+      <!-- FORM -->
+      <div id="uaFormPanel" style="display:none;">
+        <div class="section-top"><button class="back-btn" id="uaBackToPick">← Change universities</button><span class="page-title">Your application</span></div>
+        <p class="ua-lede">Fill each field once. A detail shared by several universities is entered a single time; a detail only one university needs is marked for that university.</p>
+        <div id="uaSections"></div>
+        <div class="err" id="uaErr"></div>
+        <div class="af-actions">
+          <button class="btn btn-line" id="uaSaveDraft">Save draft</button>
+          <button class="btn" id="uaSubmit">Submit application</button>
+          <span class="saved-note" id="uaSaved"></span>
+        </div>
+      </div>
+      <!-- DONE -->
+      <div id="uaDone" style="display:none;">
+        <div class="ua-done-card">
+          <div class="ua-done-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h2>Application submitted</h2>
+          <p>Your information has been sent to each university you selected. Complete any remaining enrolment steps on each university's own portal below. A copy of these links has been emailed to you.</p>
+          <div id="uaDoneList" class="ua-done-list"></div>
+          <button class="btn" data-go="dashboard" style="margin-top:18px;">Back to my applications</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
 <section id="view-admin" class="view">
     <div class="wrap">
       <div class="adm-head">
         <span class="uni-mk" id="admUniMk"></span>
         <div><h2>University of the Punjab</h2><div class="c">Admissions Console &middot; Lahore</div></div>
         <span class="spacer" style="margin-left:auto;"></span>
+        <button class="btn btn-line btn-sm" id="adminIncidentBtn" style="margin-right:8px;">Report data incident</button>
         <button class="btn btn-line btn-sm" id="adminCsvBtn">Export CSV</button>
       </div>
 
@@ -613,6 +864,33 @@
     <div class="m-title" data-i18n="policyTitle">Terms of Service &amp; Privacy Policy</div>
     <div class="policy" id="policyBody"></div>
     <div class="m-actions"><button class="btn" id="policyClose" data-i18n="confirmClose">Close</button></div>
+  </div>
+</div>
+
+<div class="modal-back" id="incidentBack">
+  <div class="modal modal-lg">
+    <div class="m-title" data-i18n="incTitle">Report a data incident</div>
+    <p class="m-body" data-i18n="incIntro">Use this if applicant data may have been exposed, leaked, or accessed without authorisation. Submitting this records the incident and flags it for HEC. This is a response record, not automatic detection.</p>
+    <div class="field"><label for="inc-type" data-i18n="incType">Type of incident</label>
+      <select id="inc-type">
+        <option value="unauthorised_access">Unauthorised access</option>
+        <option value="data_leak">Data leak or exposure</option>
+        <option value="lost_device">Lost or stolen device</option>
+        <option value="phishing">Phishing or account compromise</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="field"><label for="inc-desc" data-i18n="incDesc">What happened</label>
+      <textarea id="inc-desc" rows="5" maxlength="2000"></textarea>
+    </div>
+    <div class="field"><label for="inc-scope" data-i18n="incScope">Roughly how many applicants may be affected</label>
+      <input id="inc-scope" type="text" />
+    </div>
+    <div class="err" id="incErr"></div>
+    <div class="m-actions">
+      <button class="btn btn-line" id="incCancel" data-i18n="confirmCancel">Cancel</button>
+      <button class="btn btn-reject" id="incSubmit" data-i18n="incSubmit">Log and flag to HEC</button>
+    </div>
   </div>
 </div>
 
@@ -710,7 +988,7 @@
       actAdd:"+ Add activity", actEmpty:"No activities added yet.",
       actAddT:"Add an activity", actEditT:"Edit activity", actDelT:"Delete this activity?",
       consentTitle:"Privacy & consent", consentSub:"You can review or change these at any time.",
-      consentData:"I agree to Apply.pk storing and processing my personal data so my applications can be sent to universities.",
+      consentData:"I agree to apply.pk storing and processing my personal data so my applications can be sent to universities.",
       consentRetain:"I understand my data is kept until I ask for it to be deleted.",
       consentMarketing:"Optional: send me updates about deadlines, scholarships and new universities.",
       readPolicy:"Read the Terms of Service & Privacy Policy", policyTitle:"Terms of Service & Privacy Policy",
@@ -718,11 +996,19 @@
       errYearOrder:"End year cannot be before start year.", errYearRange:"Please enter a realistic year.",
       errMarks:"Obtained marks cannot be more than total marks.", errDateOrder:"End date cannot be before start date.",
       errConsent:"Please agree to the Terms of Service & Privacy Policy to create an account.",
+      guardianTitle:"Parent or guardian", guardianSub:"Required for all applicants. We may contact your guardian about your application.",
+      gName:"Guardian name", gRel:"Relationship", gPhone:"Guardian phone",
+      errGuardian:"Please provide your guardian's name, relationship and phone number.",
+      incTitle:"Report a data incident", incType:"Type of incident", incDesc:"What happened", incScope:"Roughly how many applicants may be affected",
+      incSubmit:"Log and flag to HEC", incNeedDesc:"Please describe what happened.",
+      incIntro:"Use this if applicant data may have been exposed, leaked, or accessed without authorisation. Submitting this records the incident and flags it for HEC. This is a response record, not automatic detection.",
+      incLoggedT:"Incident logged", incLoggedB:"The incident has been recorded and flagged for HEC review. Follow the written breach-response procedure for next steps.",
+      minorNotice:"You are applying as a minor (under 18). Please review your application with your parent or guardian. Your guardian's details are required above.",
       confirmYes:"Confirm", confirmCancel:"Cancel",
       confirmAcceptT:"Accept this application?",
       confirmRejectT:"Reject this application?",
-      confirmAcceptB:"You are about to accept {name} to the University of the Punjab. They will be notified by email and will see the decision on their Apply.pk dashboard.",
-      confirmRejectB:"You are about to reject {name}'s application to the University of the Punjab. They will be notified by email and will see the decision on their Apply.pk dashboard.",
+      confirmAcceptB:"You are about to accept {name} to the University of the Punjab. They will be notified by email and will see the decision on their apply.pk dashboard.",
+      confirmRejectB:"You are about to reject {name}'s application to the University of the Punjab. They will be notified by email and will see the decision on their apply.pk dashboard.",
       confirmChanging:"This replaces the previous decision ({prev}), and the change will be recorded in the decision history.",
       confirmAcceptOk:"Yes, accept", confirmRejectOk:"Yes, reject",
       emailSentT:"{decision} recorded",
@@ -738,7 +1024,7 @@
       alreadySubmitted:"Already submitted — you can update and resubmit.",
       decMsgAccepted:"Congratulations — the University of the Punjab has accepted your application. Check your email for the link to complete your enrolment with the university.",
       decMsgRejected:"The University of the Punjab has completed its review and your application was not successful this time. Check your email for details.",
-      afNote:"Fields marked * are required. Your name, CNIC, photo, date of birth and addresses are taken from your Apply.pk profile automatically."
+      afNote:"Fields marked * are required. Your name, CNIC, photo, date of birth and addresses are taken from your apply.pk profile automatically."
     },
     ur: {
       applyTo:"درخواست دیں", heroSub:"ایک پروفائل۔ ہر اہم سرکاری یونیورسٹی۔", startApp:"اپنی درخواست شروع کریں",
@@ -806,7 +1092,7 @@
       actAdd:"+ سرگرمی شامل کریں", actEmpty:"ابھی کوئی سرگرمی شامل نہیں کی گئی۔",
       actAddT:"سرگرمی شامل کریں", actEditT:"سرگرمی میں تبدیلی", actDelT:"کیا یہ سرگرمی حذف کریں؟",
       consentTitle:"رازداری اور رضامندی", consentSub:"آپ انہیں کسی بھی وقت دیکھ یا تبدیل کر سکتے ہیں۔",
-      consentData:"میں اجازت دیتا/دیتی ہوں کہ Apply.pk میرا ذاتی ڈیٹا محفوظ کرے تاکہ میری درخواستیں یونیورسٹیوں کو بھیجی جا سکیں۔",
+      consentData:"میں اجازت دیتا/دیتی ہوں کہ apply.pk میرا ذاتی ڈیٹا محفوظ کرے تاکہ میری درخواستیں یونیورسٹیوں کو بھیجی جا سکیں۔",
       consentRetain:"میں سمجھتا/سمجھتی ہوں کہ میرا ڈیٹا اُس وقت تک محفوظ رہے گا جب تک میں حذف کرنے کو نہ کہوں۔",
       consentMarketing:"اختیاری: مجھے آخری تاریخوں، وظائف اور نئی یونیورسٹیوں کی اطلاعات بھیجیں۔",
       readPolicy:"شرائط و ضوابط اور رازداری کی پالیسی پڑھیں", policyTitle:"شرائط و ضوابط اور رازداری کی پالیسی",
@@ -814,11 +1100,19 @@
       errYearOrder:"اختتامی سال آغاز کے سال سے پہلے نہیں ہو سکتا۔", errYearRange:"براہِ کرم درست سال درج کریں۔",
       errMarks:"حاصل کردہ نمبر کل نمبروں سے زیادہ نہیں ہو سکتے۔", errDateOrder:"اختتامی تاریخ آغاز سے پہلے نہیں ہو سکتی۔",
       errConsent:"اکاؤنٹ بنانے کے لیے براہِ کرم شرائط و ضوابط اور رازداری کی پالیسی سے اتفاق کریں۔",
+      guardianTitle:"والد یا سرپرست", guardianSub:"تمام درخواست گزاروں کے لیے لازمی۔ ہم آپ کی درخواست کے بارے میں آپ کے سرپرست سے رابطہ کر سکتے ہیں۔",
+      gName:"سرپرست کا نام", gRel:"رشتہ", gPhone:"سرپرست کا فون نمبر",
+      errGuardian:"براہِ کرم اپنے سرپرست کا نام، رشتہ اور فون نمبر درج کریں۔",
+      incTitle:"ڈیٹا واقعہ رپورٹ کریں", incType:"واقعے کی قسم", incDesc:"کیا ہوا", incScope:"تقریباً کتنے درخواست گزار متاثر ہو سکتے ہیں",
+      incSubmit:"محفوظ کریں اور HEC کو مطلع کریں", incNeedDesc:"براہِ کرم بتائیں کہ کیا ہوا۔",
+      incIntro:"اگر درخواست گزاروں کا ڈیٹا ظاہر یا لیک ہو تو یہ استعمال کریں۔ یہ خودکار شناخت نہیں، ردعمل کا ریکارڈ ہے۔",
+      incLoggedT:"واقعہ محفوظ ہو گیا", incLoggedB:"واقعہ ریکارڈ کر لیا گیا ہے اور HEC کے جائزے کے لیے فلیگ کر دیا گیا ہے۔",
+      minorNotice:"آپ ایک نابالغ (18 سال سے کم) کے طور پر درخواست دے رہے ہیں۔ براہِ کرم اپنی درخواست اپنے والد یا سرپرست کے ساتھ دیکھیں۔ سرپرست کی تفصیلات اوپر لازمی ہیں۔",
       confirmYes:"تصدیق کریں", confirmCancel:"منسوخ کریں",
       confirmAcceptT:"کیا یہ درخواست منظور کریں؟",
       confirmRejectT:"کیا یہ درخواست مسترد کریں؟",
-      confirmAcceptB:"آپ {name} کو پنجاب یونیورسٹی کے لیے منظور کرنے جا رہے ہیں۔ انہیں ای میل کے ذریعے اطلاع دی جائے گی اور فیصلہ اُن کے Apply.pk ڈیش بورڈ پر نظر آئے گا۔",
-      confirmRejectB:"آپ {name} کی پنجاب یونیورسٹی کی درخواست مسترد کرنے جا رہے ہیں۔ انہیں ای میل کے ذریعے اطلاع دی جائے گی اور فیصلہ اُن کے Apply.pk ڈیش بورڈ پر نظر آئے گا۔",
+      confirmAcceptB:"آپ {name} کو پنجاب یونیورسٹی کے لیے منظور کرنے جا رہے ہیں۔ انہیں ای میل کے ذریعے اطلاع دی جائے گی اور فیصلہ اُن کے apply.pk ڈیش بورڈ پر نظر آئے گا۔",
+      confirmRejectB:"آپ {name} کی پنجاب یونیورسٹی کی درخواست مسترد کرنے جا رہے ہیں۔ انہیں ای میل کے ذریعے اطلاع دی جائے گی اور فیصلہ اُن کے apply.pk ڈیش بورڈ پر نظر آئے گا۔",
       confirmChanging:"یہ پچھلے فیصلے ({prev}) کی جگہ لے گا، اور یہ تبدیلی فیصلوں کی تاریخ میں محفوظ ہو جائے گی۔",
       confirmAcceptOk:"جی ہاں، منظور کریں", confirmRejectOk:"جی ہاں، مسترد کریں",
       emailSentT:"{decision} محفوظ ہو گیا",
@@ -834,7 +1128,7 @@
       alreadySubmitted:"پہلے جمع کروا دی گئی ہے — آپ تبدیلی کر کے دوبارہ جمع کروا سکتے ہیں۔",
       decMsgAccepted:"مبارک ہو — پنجاب یونیورسٹی نے آپ کی درخواست منظور کر لی ہے۔ داخلہ مکمل کرنے کے لنک کے لیے اپنی ای میل دیکھیں۔",
       decMsgRejected:"پنجاب یونیورسٹی نے جائزہ مکمل کر لیا ہے؛ اس بار آپ کی درخواست کامیاب نہیں ہو سکی۔ تفصیل کے لیے اپنی ای میل دیکھیں۔",
-      afNote:"* والے خانے لازمی ہیں۔ آپ کا نام، شناختی کارڈ، تصویر، تاریخِ پیدائش اور پتے آپ کے Apply.pk پروفائل سے خودکار طور پر لیے جاتے ہیں۔"
+      afNote:"* والے خانے لازمی ہیں۔ آپ کا نام، شناختی کارڈ، تصویر، تاریخِ پیدائش اور پتے آپ کے apply.pk پروفائل سے خودکار طور پر لیے جاتے ہیں۔"
     }
   };
 
@@ -861,7 +1155,7 @@
          2. Only switch on *enforcement* in the console after confirming
             the app still works with the key in place.
          Left blank, App Check stays inactive and nothing changes.      */
-      var RECAPTCHA_SITE_KEY = "6LdqyIMtAAAAAN43alhUM360mtNTDeFMnaFVNK7h";
+      var RECAPTCHA_SITE_KEY = "";
       if(RECAPTCHA_SITE_KEY){
         try { firebase.appCheck().activate(RECAPTCHA_SITE_KEY, true); } catch(e){}
       }
@@ -870,7 +1164,8 @@
   } catch(e){ READY=false; }
 
   function userDoc(uid){ return db.collection("applicants").doc(uid); }
-  function docRef(uid,id){ return db.collection("applicants").doc(uid).collection("documents").doc(id); }
+  function docCollName(id){ return isSensitiveDoc(id) ? "sensitive" : "documents"; }
+  function docRef(uid,id){ return db.collection("applicants").doc(uid).collection(docCollName(id)).doc(id); }
 
   /* ============================================================
      TIER 1 EXPORT — admin config + shared helpers
@@ -892,8 +1187,32 @@
      Change this if PU publishes a more specific enrolment page. */
   var PU_ENROL_URL = "https://pu.edu.pk/";
 
+  /* >>> PASTE THE HEC ADMIN'S FIREBASE UID BELOW <<<
+     Create the account in Firebase Console > Authentication, copy its UID,
+     and paste it here AND into isHecAdmin() in firestore.rules. The HEC
+     admin can see sensitive documents that are hidden from universities
+     once a student is admitted. Leave as-is until you have the account. */
+  var HEC_ADMIN_UIDS = [ "PASTE_HEC_ADMIN_UID_HERE" ];
+
   function isPuAdmin(){ return !!(state.user && state.user.uid && PU_ADMIN_UIDS.indexOf(state.user.uid) >= 0); }
-  function isAdminUser(){ return isPuAdmin(); }
+  function isHecAdmin(){ return !!(state.user && state.user.uid && HEC_ADMIN_UIDS.indexOf(state.user.uid) >= 0); }
+  function isAdminUser(){ return isPuAdmin() || isHecAdmin(); }
+
+  /* Documents treated as sensitive: kept separate from the general profile,
+     visible to the reviewing university ONLY until a decision, then moved to
+     an HEC-only view once the applicant is admitted. */
+  var SENSITIVE_DOCS = ["minority","pu_cnic_front","pu_discert"];
+  function isSensitiveDoc(id){ return SENSITIVE_DOCS.indexOf(id) >= 0; }
+
+  /* Age from an ISO date string (yyyy-mm-dd). */
+  function ageFromDob(dob){
+    if(!dob) return null;
+    var d=new Date(dob); if(isNaN(d)) return null;
+    var t=new Date(), a=t.getFullYear()-d.getFullYear();
+    var m=t.getMonth()-d.getMonth();
+    if(m<0 || (m===0 && t.getDate()<d.getDate())) a--;
+    return a;
+  }
 
   function csvEscape(v){
     if(v==null) return "";
@@ -927,23 +1246,872 @@
     return (err&&err.message) ? err.message : t("errNetwork");
   }
 
-  var UNIS = [
-    { n:"Quaid-i-Azam University", c:"Islamabad", slug:"qau", ab:"QAU", col:"#0F766E" },
-    { n:"University of the Punjab", c:"Lahore", slug:"pu", ab:"PU", col:"#7C2D12", web:"https://pu.edu.pk/" },
-    { n:"NUST", c:"Islamabad", slug:"nust", ab:"NUST", col:"#1D4ED8" },
-    { n:"UET Lahore", c:"Lahore", slug:"uet", ab:"UET", col:"#B91C1C" },
-    { n:"University of Karachi", c:"Karachi", slug:"ku", ab:"KU", col:"#0369A1" },
-    { n:"University of Peshawar", c:"Peshawar", slug:"uop", ab:"UoP", col:"#4D7C0F" },
-    { n:"GCU Lahore", c:"Lahore", slug:"gcu", ab:"GCU", col:"#6D28D9" },
-    { n:"Bahauddin Zakariya University", c:"Multan", slug:"bzu", ab:"BZU", col:"#A16207" },
-    { n:"University of Sindh", c:"Jamshoro", slug:"uos", ab:"UoS", col:"#BE123C" },
-    { n:"NED University", c:"Karachi", slug:"ned", ab:"NED", col:"#0E7490" },
-    { n:"University of Agriculture, Faisalabad", c:"Faisalabad", slug:"uaf", ab:"UAF", col:"#15803D" },
-    { n:"Islamia University Bahawalpur", c:"Bahawalpur", slug:"iub", ab:"IUB", col:"#9333EA" },
-    { n:"Abdul Wali Khan University", c:"Mardan", slug:"awkum", ab:"AWK", col:"#C2410C" },
-    { n:"University of Balochistan", c:"Quetta", slug:"uob", ab:"UoB", col:"#1E40AF" },
-    { n:"King Edward Medical University", c:"Lahore", slug:"kemu", ab:"KEMU", col:"#9F1239" }
-  ];
+/* ===== Unified application data + engine (injected) ===== */
+/* ====== UNIFIED APPLICATION DATA (generated) ====== */
+var SECTION_LABEL = {"personal": "Personal details", "family": "Parents", "guardian": "Guardian", "emergency": "Emergency contact", "employment": "Employment", "academic": "Academic history", "test": "Entrance test", "program": "Programme selection", "documents": "Documents", "declaration": "Declaration"};
+var SECTION_ORDER = ["personal", "family", "guardian", "emergency", "employment", "academic", "test", "program", "documents", "declaration"];
+var UFIELDS = {
+  full_name: {label:"Full legal name", type:"text", section:"personal"},
+  gender: {label:"Gender", type:"select", section:"personal", opts:["Male", "Female", "Other"]},
+  dob: {label:"Date of birth", type:"date", section:"personal"},
+  place_of_birth: {label:"Place of birth", type:"text", section:"personal"},
+  cnic: {label:"CNIC / B-Form number", type:"text", section:"personal", sensitive:true},
+  nationality: {label:"Nationality", type:"text", section:"personal"},
+  domicile_province: {label:"Province of domicile", type:"select", section:"personal", opts:["Punjab", "Sindh", "Khyber Pakhtunkhwa", "Balochistan", "Islamabad Capital Territory", "Gilgit-Baltistan", "Azad Jammu & Kashmir", "Foreigner"]},
+  domicile_district: {label:"District of domicile", type:"text", section:"personal"},
+  religion: {label:"Religion", type:"text", section:"personal", sensitive:true, note:"Sensitive — some universities ask this"},
+  sect: {label:"Sect", type:"text", section:"personal", sensitive:true, note:"Sensitive"},
+  blood_group: {label:"Blood group", type:"select", section:"personal", opts:["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]},
+  marital_status: {label:"Marital status", type:"select", section:"personal", opts:["Single", "Married"]},
+  mother_tongue: {label:"Mother tongue", type:"text", section:"personal"},
+  disability: {label:"Disability (if any)", type:"text", section:"personal", sensitive:true},
+  mobile: {label:"Mobile number", type:"tel", section:"personal"},
+  email: {label:"Email", type:"email", section:"personal"},
+  landline: {label:"Landline number", type:"tel", section:"personal"},
+  current_address: {label:"Current address", type:"textarea", section:"personal"},
+  permanent_address: {label:"Permanent address", type:"textarea", section:"personal"},
+  postal_address: {label:"Postal / mailing address", type:"textarea", section:"personal"},
+  photo: {label:"Passport-size photograph", type:"file", section:"personal"},
+  passport_no: {label:"Passport number (foreign nationals)", type:"text", section:"personal"},
+  father_name: {label:"Father's name", type:"text", section:"family"},
+  father_cnic: {label:"Father's CNIC", type:"text", section:"family", sensitive:true},
+  father_occupation: {label:"Father's occupation", type:"text", section:"family"},
+  father_phone: {label:"Father's mobile", type:"tel", section:"family"},
+  father_email: {label:"Father's email", type:"email", section:"family"},
+  father_income: {label:"Father's monthly income (PKR)", type:"text", section:"family", sensitive:true, note:"Sensitive — financial"},
+  mother_name: {label:"Mother's name", type:"text", section:"family"},
+  mother_cnic: {label:"Mother's CNIC", type:"text", section:"family", sensitive:true},
+  mother_phone: {label:"Mother's mobile", type:"tel", section:"family"},
+  guardian_name: {label:"Guardian's name (if other than father)", type:"text", section:"guardian"},
+  guardian_relationship: {label:"Relationship with guardian", type:"text", section:"guardian"},
+  guardian_cnic: {label:"Guardian's CNIC", type:"text", section:"guardian", sensitive:true},
+  guardian_phone: {label:"Guardian's mobile", type:"tel", section:"guardian"},
+  guardian_email: {label:"Guardian's email", type:"email", section:"guardian"},
+  guardian_occupation: {label:"Guardian's occupation", type:"text", section:"guardian"},
+  guardian_income: {label:"Guardian's monthly income (PKR)", type:"text", section:"guardian", sensitive:true, note:"Sensitive — financial"},
+  emergency_name: {label:"Emergency contact — name", type:"text", section:"emergency"},
+  emergency_relation: {label:"Emergency contact — relationship", type:"text", section:"emergency"},
+  emergency_phone: {label:"Emergency contact — phone", type:"tel", section:"emergency"},
+  applicant_occupation: {label:"Applicant's occupation (if employed)", type:"text", section:"employment"},
+  organization_name: {label:"Name of organization", type:"text", section:"employment"},
+  annual_income: {label:"Annual income (PKR)", type:"text", section:"employment", sensitive:true, note:"Sensitive — financial"},
+  ssc: {label:"Secondary school (SSC / Matric or O-Level)", type:"group", section:"academic"},
+  hssc: {label:"Higher secondary (HSSC / Intermediate or A-Level)", type:"group", section:"academic"},
+  bachelor: {label:"Bachelor's degree", type:"group", section:"academic"},
+  master: {label:"Master's degree", type:"group", section:"academic"},
+  mphil: {label:"MS / MPhil", type:"group", section:"academic"},
+  mdcat: {label:"MDCAT — roll number, test centre, score", type:"group", section:"test"},
+  entry_test: {label:"Entry test (NTS / GAT / USAT / SAT / GRE / university test) — type, score", type:"group", section:"test"},
+  program_1: {label:"Programme — 1st choice", type:"text", section:"program"},
+  program_2: {label:"Programme — 2nd choice", type:"text", section:"program"},
+  program_3: {label:"Programme — 3rd choice", type:"text", section:"program"},
+  doc_ssc: {label:"SSC / O-Level marksheet & certificate", type:"file", section:"documents"},
+  doc_hssc: {label:"HSSC / A-Level marksheet & certificate", type:"file", section:"documents"},
+  doc_bachelor: {label:"Bachelor's degree & transcript", type:"file", section:"documents"},
+  doc_master: {label:"Master's degree & transcript", type:"file", section:"documents"},
+  doc_cnic: {label:"CNIC / B-Form (copy)", type:"file", section:"documents", sensitive:true},
+  doc_domicile: {label:"Domicile certificate", type:"file", section:"documents"},
+  doc_equivalence: {label:"IBCC / HEC equivalence certificate", type:"file", section:"documents"},
+  doc_character: {label:"Character certificate", type:"file", section:"documents"},
+  doc_migration: {label:"Migration certificate", type:"file", section:"documents"},
+  doc_fee: {label:"Fee deposit slip / challan", type:"file", section:"documents"},
+  doc_test: {label:"Entry test / MDCAT score sheet", type:"file", section:"documents"},
+  doc_medical: {label:"Medical / physical fitness certificate", type:"file", section:"documents"},
+  doc_minority: {label:"Minority verification (if applicable)", type:"file", section:"documents", sensitive:true},
+  doc_disability: {label:"Disability certificate (if applicable)", type:"file", section:"documents", sensitive:true},
+  declaration: {label:"I declare the information provided is true and correct", type:"check", section:"declaration"},
+};
+var UNIVERSITIES = [
+  {id:"gwadar", name:"University of Gwadar", city:"Gwadar", province:"Balochistan", sector:"Public", ab:"UGW", col:"#1E40AF", portal:"https://ugwadar.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "domicile_province", "place_of_birth", "guardian_name", "guardian_cnic", "guardian_occupation", "guardian_phone", "emergency_name", "emergency_relation", "emergency_phone", "disability", "program_2", "program_3", "bachelor", "master", "entry_test", "doc_equivalence", "doc_test", "doc_fee", "doc_minority", "doc_disability"], specific:[{"id": "gw_status", "label": "Applicant status", "type": "select", "opts": ["Fresh", "Result Awaiting", "UG Graduate", "UG Employee", "Foreigner", "Transfer"]}, {"id": "gw_transfer", "label": "If transfer: institution, program, CGPA, reason for leaving", "type": "textarea"}]},
+  {id:"darulmadina", name:"Dar-ul-Madina International University", city:"Islamabad", province:"Islamabad Capital Territory", sector:"Private", ab:"DMU", col:"#7C2D12", portal:"https://dmiu.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "guardian_name", "guardian_cnic", "father_cnic", "applicant_occupation", "landline"], specific:[{"id": "dm_seat", "label": "Seat type", "type": "select", "opts": ["Open Merit", "Reserved"]}]},
+  {id:"pifd", name:"Pakistan Institute of Fashion & Design", city:"Lahore", province:"Punjab", sector:"Public", ab:"PIFD", col:"#BE185D", portal:"https://pifd.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "place_of_birth", "religion", "domicile_province", "guardian_name", "guardian_cnic", "program_2", "program_3", "doc_equivalence", "doc_character", "doc_medical", "doc_domicile"], specific:[{"id": "pifd_pref", "label": "Programme preferences (rank your choices)", "type": "textarea"}]},
+  {id:"qau", name:"Quaid-i-Azam University", city:"Islamabad", province:"Islamabad Capital Territory", sector:"Public", ab:"QAU", col:"#0F766E", portal:"https://qau.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "bachelor", "passport_no", "doc_equivalence", "entry_test"], specific:[{"id": "qau_lat", "label": "Law Admission Test (LAT) registration no. (LLB only)", "type": "text"}]},
+  {id:"shifa", name:"Shifa Tameer-e-Millat University", city:"Islamabad", province:"Islamabad Capital Territory", sector:"Private", ab:"STMU", col:"#0369A1", portal:"https://stmu.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "landline", "mother_name", "guardian_occupation", "guardian_email", "guardian_phone", "bachelor", "doc_fee"], specific:[]},
+  {id:"nust", name:"NUST — National University of Sciences & Technology", city:"Islamabad", province:"Islamabad Capital Territory", sector:"Public", ab:"NUST", col:"#1D4ED8", portal:"https://nust.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "domicile_province", "mother_name", "father_occupation", "father_email", "father_income"], specific:[{"id": "nust_prevstud", "label": "Currently a student of NUST or another institution?", "type": "select", "opts": ["Yes", "No"]}]},
+  {id:"nfc", name:"NFC Institute of Engineering & Technology, Multan", city:"Multan", province:"Punjab", sector:"Public", ab:"NFC", col:"#15803D", portal:"https://nfciet.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration"], specific:[{"id": "nfc_pref", "label": "Programme preference (ID / course / category)", "type": "text"}]},
+  {id:"cust", name:"Capital University of Science & Technology", city:"Islamabad", province:"Islamabad Capital Territory", sector:"Private", ab:"CUST", col:"#4338CA", portal:"https://cust.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "place_of_birth", "mother_name", "father_occupation", "father_phone", "father_income", "emergency_name", "emergency_phone"], specific:[{"id": "cust_feepayer", "label": "Fee payer name & CNIC", "type": "text"}, {"id": "cust_nok", "label": "Next of kin — name, mobile, job status", "type": "text"}]},
+  {id:"iisat", name:"International Institute of Science, Arts & Technology, Gujranwala", city:"Gujranwala", province:"Punjab", sector:"Private", ab:"IISAT", col:"#C2410C", portal:"https://iisat.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "guardian_name", "emergency_name", "emergency_phone", "program_2", "doc_character"], specific:[]},
+  {id:"imperial", name:"Imperial College of Business Studies, Lahore", city:"Lahore", province:"Punjab", sector:"Private", ab:"ICBS", col:"#6D28D9", portal:"https://icbslahore.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "place_of_birth", "religion", "passport_no", "guardian_name", "guardian_cnic", "guardian_phone", "postal_address"], specific:[]},
+  {id:"vu", name:"Virtual University of Pakistan", city:"Lahore", province:"Punjab", sector:"Public", ab:"VU", col:"#0E7490", portal:"https://vu.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "mother_tongue", "place_of_birth", "landline", "passport_no", "father_cnic", "father_phone", "father_income", "guardian_name", "guardian_relationship", "postal_address", "bachelor", "doc_equivalence"], specific:[]},
+  {id:"comsats", name:"COMSATS University Islamabad", city:"Islamabad", province:"Islamabad Capital Territory", sector:"Public", ab:"CUI", col:"#1D4ED8", portal:"https://comsats.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "postal_address", "program_2", "program_3", "master"], specific:[]},
+  {id:"giki", name:"GIKI — Ghulam Ishaq Khan Institute", city:"Topi", province:"Khyber Pakhtunkhwa", sector:"Private", ab:"GIKI", col:"#B91C1C", portal:"https://giki.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "mother_tongue", "place_of_birth", "guardian_name", "guardian_occupation", "guardian_phone", "organization_name", "master"], specific:[{"id": "giki_recommender", "label": "Recommender — name, designation, organization, contact, relationship", "type": "textarea"}]},
+  {id:"gandhara", name:"Gandhara University, Peshawar", city:"Peshawar", province:"Khyber Pakhtunkhwa", sector:"Private", ab:"GU", col:"#9F1239", portal:"https://gandhara.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "mother_name", "guardian_name", "guardian_cnic", "guardian_phone", "guardian_email", "postal_address", "mdcat", "doc_test"], specific:[{"id": "gu_research", "label": "Research (postgrad) — title, journal, date", "type": "textarea"}]},
+  {id:"wmiahs", name:"Wazir Muhammad Institute of Allied Health Sciences", city:"Quetta", province:"Balochistan", sector:"Private", ab:"WMIAHS", col:"#A16207", portal:"https://wmiahs.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "domicile_province", "marital_status", "guardian_cnic", "father_cnic", "guardian_phone", "emergency_phone", "applicant_occupation", "organization_name", "bachelor", "master", "doc_domicile", "doc_bachelor"], specific:[{"id": "wm_husband", "label": "Husband's name (if applicable)", "type": "text"}]},
+  {id:"uetp", name:"UET Peshawar", city:"Peshawar", province:"Khyber Pakhtunkhwa", sector:"Public", ab:"UETP", col:"#B91C1C", portal:"https://uetpeshawar.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "father_cnic", "guardian_name", "emergency_name", "emergency_phone", "doc_domicile", "doc_fee"], specific:[]},
+  {id:"uetmardan", name:"UET Mardan", city:"Mardan", province:"Khyber Pakhtunkhwa", sector:"Public", ab:"UETM", col:"#DC2626", portal:"https://uetmardan.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "landline"], specific:[]},
+  {id:"imsci", name:"IMSciences — Institute of Management Sciences, Peshawar", city:"Peshawar", province:"Khyber Pakhtunkhwa", sector:"Public", ab:"IMS", col:"#4D7C0F", portal:"https://imsciences.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "place_of_birth", "father_cnic", "father_phone", "father_occupation", "father_income"], specific:[{"id": "ims_majors", "label": "Major subjects studied in last examination", "type": "text"}]},
+  {id:"lakki", name:"University of Lakki Marwat", city:"Lakki Marwat", province:"Khyber Pakhtunkhwa", sector:"Public", ab:"ULM", col:"#166534", portal:"https://ulm.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "declaration"], specific:[]},
+  {id:"mite", name:"Millennium Institute of Technology & Entrepreneurship", city:"Karachi", province:"Sindh", sector:"Private", ab:"MiTE", col:"#7C3AED", portal:"https://mite.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "guardian_name", "father_occupation"], specific:[]},
+  {id:"kiet", name:"KIET — Karachi Institute of Economics & Technology", city:"Karachi", province:"Sindh", sector:"Private", ab:"KIET", col:"#0E7490", portal:"https://kiet.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration"], specific:[]},
+  {id:"uac", name:"University of Art & Culture, Jamshoro", city:"Jamshoro", province:"Sindh", sector:"Private", ab:"UAC", col:"#BE123C", portal:"https://sindhuniv.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "place_of_birth", "guardian_name", "guardian_cnic", "guardian_phone", "applicant_occupation", "organization_name"], specific:[{"id": "uac_gre", "label": "GRE/GAT qualified (subject/general)?", "type": "text"}]},
+  {id:"emaan", name:"Emaan Institute of Management & Sciences, Karachi", city:"Karachi", province:"Sindh", sector:"Private", ab:"EIMS", col:"#B45309", portal:"https://emaan.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "place_of_birth", "landline", "father_occupation", "organization_name", "doc_character"], specific:[]},
+  {id:"hands", name:"Hands Institute of Development Studies, Karachi", city:"Karachi", province:"Sindh", sector:"Private", ab:"HIDS", col:"#047857", portal:"https://hands.org.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "mother_tongue", "father_occupation", "bachelor"], specific:[{"id": "hands_relig_qual", "label": "Religious qualification (Daraja, year, madrassah, board) — optional", "type": "textarea"}]},
+  {id:"tip", name:"Textile Institute of Pakistan, Karachi", city:"Karachi", province:"Sindh", sector:"Private", ab:"TIP", col:"#9333EA", portal:"https://tip.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "father_cnic", "father_phone", "guardian_name", "guardian_occupation", "guardian_phone", "applicant_occupation"], specific:[]},
+  {id:"kasbit", name:"KASBIT / Shah Bukhari Institute of Technology", city:"Karachi", province:"Sindh", sector:"Private", ab:"KASBIT", col:"#BE185D", portal:"https://kasbit.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "disability", "place_of_birth", "emergency_name", "emergency_phone", "organization_name", "annual_income", "master"], specific:[{"id": "kasbit_transfer", "label": "Credit transfer (if applicable)", "type": "text"}]},
+  {id:"hitms", name:"Hyderabad Institute for Technology & Management Sciences", city:"Hyderabad", province:"Sindh", sector:"Public", ab:"HITMS", col:"#0369A1", portal:"https://hitms.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "father_cnic", "father_phone"], specific:[]},
+  {id:"lumhs", name:"LUMHS — Liaquat University of Medical & Health Sciences", city:"Jamshoro", province:"Sindh", sector:"Public", ab:"LUMHS", col:"#9F1239", portal:"https://lumhs.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "mother_name", "domicile_province", "father_phone", "father_cnic", "guardian_name", "guardian_relationship", "guardian_phone", "emergency_name", "emergency_relation", "emergency_phone", "disability", "mdcat", "bachelor", "master", "doc_domicile", "doc_test", "doc_medical"], specific:[]},
+  {id:"ned", name:"NED University of Engineering & Technology", city:"Karachi", province:"Sindh", sector:"Public", ab:"NED", col:"#0E7490", portal:"https://neduet.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "guardian_name", "guardian_relationship", "father_occupation", "postal_address", "doc_domicile", "doc_fee"], specific:[]},
+  {id:"sirsyed", name:"Sir Syed University of Engineering & Technology", city:"Karachi", province:"Sindh", sector:"Private", ab:"SSUET", col:"#1E40AF", portal:"https://ssuet.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "entry_test", "doc_equivalence"], specific:[]},
+  {id:"sialkot", name:"University of Sialkot", city:"Sialkot", province:"Punjab", sector:"Private", ab:"UoS", col:"#15803D", portal:"https://uskt.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "place_of_birth", "religion", "disability", "landline", "emergency_name", "emergency_relation", "emergency_phone", "guardian_cnic", "guardian_relationship", "guardian_email"], specific:[]},
+  {id:"hitec", name:"HITEC University, Taxila", city:"Taxila", province:"Punjab", sector:"Private", ab:"HITEC", col:"#B91C1C", portal:"https://hitecuni.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "postal_address", "bachelor", "doc_domicile", "doc_bachelor"], specific:[]},
+  {id:"pakaims", name:"Pak-AIMS — Institute of Management Sciences, Lahore", city:"Lahore", province:"Punjab", sector:"Private", ab:"PakAIMS", col:"#6D28D9", portal:"https://pakaims.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "place_of_birth", "father_occupation", "guardian_name", "postal_address", "program_2"], specific:[]},
+  {id:"lgu", name:"Lahore Garrison University", city:"Lahore", province:"Punjab", sector:"Private", ab:"LGU", col:"#166534", portal:"https://lgu.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "sect", "guardian_name", "guardian_relationship", "father_cnic", "emergency_phone"], specific:[{"id": "lgu_parentcat", "label": "Parent's category", "type": "text"}]},
+  {id:"mukabbir", name:"Mukabbir University of Science & Technology, Gujrat", city:"Gujrat", province:"Punjab", sector:"Private", ab:"MUST", col:"#C2410C", portal:"https://mukabbir.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "blood_group", "guardian_name", "guardian_phone", "guardian_cnic", "emergency_name", "emergency_phone", "applicant_occupation", "organization_name"], specific:[]},
+  {id:"uvas", name:"UVAS — University of Veterinary & Animal Sciences, Lahore", city:"Lahore", province:"Punjab", sector:"Public", ab:"UVAS", col:"#15803D", portal:"https://uvas.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "father_email", "domicile_province", "emergency_phone", "program_2", "master"], specific:[{"id": "uvas_quota", "label": "Child of Veterinary/Animal Husbandry staff (quota)?", "type": "select", "opts": ["Yes", "No"]}]},
+  {id:"fjwu", name:"Fatima Jinnah Women University, Rawalpindi", city:"Rawalpindi", province:"Punjab", sector:"Public", ab:"FJWU", col:"#BE185D", portal:"https://fjwu.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "program_2"], specific:[]},
+  {id:"fmu", name:"Faisalabad Medical University", city:"Faisalabad", province:"Punjab", sector:"Public", ab:"FMU", col:"#9F1239", portal:"https://fmu.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "guardian_name", "father_cnic", "mdcat", "doc_domicile", "doc_medical", "doc_fee"], specific:[]},
+  {id:"kohsar", name:"Kohsar University Murree", city:"Murree", province:"Punjab", sector:"Public", ab:"KUM", col:"#166534", portal:"https://kum.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "domicile_province", "father_cnic", "guardian_name", "doc_fee"], specific:[]},
+  {id:"ue", name:"University of Education, Lahore", city:"Lahore", province:"Punjab", sector:"Public", ab:"UE", col:"#0369A1", portal:"https://ue.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "father_cnic", "father_phone"], specific:[]},
+  {id:"uhe", name:"University of Home Economics, Lahore", city:"Lahore", province:"Punjab", sector:"Public", ab:"UHE", col:"#BE185D", portal:"https://uhe.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "blood_group", "domicile_province", "father_cnic", "father_occupation", "father_phone", "bachelor", "doc_bachelor", "doc_domicile"], specific:[]},
+  {id:"mnsua", name:"MNS University of Agriculture, Multan", city:"Multan", province:"Punjab", sector:"Public", ab:"MNSUA", col:"#15803D", portal:"https://mnsuam.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "domicile_province", "passport_no", "father_cnic", "father_email", "father_income", "mother_name", "guardian_name", "guardian_relationship", "guardian_income", "guardian_occupation", "guardian_cnic", "guardian_phone", "disability", "postal_address"], specific:[]},
+  {id:"gcu", name:"GC University Lahore", city:"Lahore", province:"Punjab", sector:"Public", ab:"GCU", col:"#6D28D9", portal:"https://gcu.edu.pk/", fields:["full_name", "gender", "dob", "cnic", "nationality", "domicile_district", "mobile", "email", "current_address", "permanent_address", "photo", "father_name", "ssc", "hssc", "program_1", "doc_ssc", "doc_hssc", "doc_cnic", "declaration", "religion", "father_cnic", "father_phone", "father_occupation", "father_income", "mother_name", "mother_cnic", "mother_phone", "guardian_name", "guardian_cnic", "guardian_phone", "guardian_email", "bachelor", "entry_test"], specific:[{"id": "gcu_research", "label": "Research (PhD) — title, journal, year, page", "type": "textarea"}]},
+];
+
+/* ====== UNIFIED APPLICATION ENGINE ====== */
+/* Profile fields are entered once in the profile and reused everywhere. */
+var UA_PROFILE_MAP = { full_name:"name", cnic:"cnic", dob:"dob", email:"email",
+                       current_address:"resAddr", permanent_address:"postAddr", photo:"photo" };
+
+var uaSelected = [];      // selected university ids
+var uaDraft = {};         // answers keyed by field id (canonical) and specific ids
+
+function uaUni(id){ for(var i=0;i<UNIVERSITIES.length;i++){ if(UNIVERSITIES[i].id===id) return UNIVERSITIES[i]; } return null; }
+
+/* Merge the field requirements of the selected universities.
+   Returns { sections:[{key,label,fields:[{fid,meta,unis:[names],fromProfile}]}], specifics:[{uni,fields}] } */
+function uaMerge(ids){
+  var need = {};      // fid -> [uni names]
+  var order = [];     // fid in first-seen order
+  var specifics = [];
+  ids.forEach(function(id){
+    var u=uaUni(id); if(!u) return;
+    u.fields.forEach(function(fid){
+      if(!UFIELDS[fid]) return;
+      if(!need[fid]){ need[fid]=[]; order.push(fid); }
+      need[fid].push(u.name);
+    });
+    if(u.specific && u.specific.length){
+      specifics.push({ uni:u, fields:u.specific });
+    }
+  });
+  // group canonical fields by section, in SECTION_ORDER
+  var bySection={};
+  order.forEach(function(fid){
+    var meta=UFIELDS[fid], sec=meta.section;
+    (bySection[sec]=bySection[sec]||[]).push({
+      fid:fid, meta:meta, unis:need[fid], fromProfile:!!UA_PROFILE_MAP[fid]
+    });
+  });
+  var sections=[];
+  SECTION_ORDER.forEach(function(key){
+    if(bySection[key]) sections.push({ key:key, label:SECTION_LABEL[key], fields:bySection[key] });
+  });
+  return { sections:sections, specifics:specifics };
+}
+
+/* ---------- PICKER ---------- */
+function uaRenderPicker(){
+  var host=document.getElementById("uaPickList"); if(!host) return;
+  host.innerHTML="";
+  var q=(document.getElementById("uaSearch").value||"").toLowerCase().trim();
+  // group by province
+  var groups={};
+  UNIVERSITIES.forEach(function(u){
+    if(q && (u.name.toLowerCase().indexOf(q)<0 && u.city.toLowerCase().indexOf(q)<0 && u.province.toLowerCase().indexOf(q)<0)) return;
+    (groups[u.province]=groups[u.province]||[]).push(u);
+  });
+  var provs=Object.keys(groups).sort();
+  if(!provs.length){ host.innerHTML='<div class="ua-none">No universities match your search.</div>'; uaUpdateBar(); return; }
+  provs.forEach(function(p){
+    var selInProv=0; groups[p].forEach(function(u){ if(uaSelected.indexOf(u.id)>=0) selInProv++; });
+    var det=document.createElement("details"); det.className="ua-provgroup";
+    if(q || selInProv>0) det.open=true;
+    var sum=document.createElement("summary"); sum.className="ua-provsum";
+    var pn=document.createElement("span"); pn.className="pn"; pn.textContent=p;
+    var pm=document.createElement("span"); pm.className="pm";
+    function provMeta(c){ return c>0 ? (c+" selected") : (groups[p].length+" "+(groups[p].length===1?"university":"universities")); }
+    pm.textContent=provMeta(selInProv);
+    sum.appendChild(pn); sum.appendChild(pm); det.appendChild(sum);
+    var body=document.createElement("div"); body.className="ua-provbody";
+    groups[p].forEach(function(u){
+      var row=document.createElement("label"); row.className="ua-provrow"+(uaSelected.indexOf(u.id)>=0?" on":"");
+      var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=uaSelected.indexOf(u.id)>=0;
+      cb.onchange=function(){
+        var i=uaSelected.indexOf(u.id);
+        if(cb.checked && i<0) uaSelected.push(u.id);
+        else if(!cb.checked && i>=0) uaSelected.splice(i,1);
+        row.classList.toggle("on",cb.checked);
+        var c=0; groups[p].forEach(function(x){ if(uaSelected.indexOf(x.id)>=0) c++; });
+        pm.textContent=provMeta(c);
+        uaUpdateBar();
+      };
+      var mk=document.createElement("span"); mk.className="uni-mk sm"; mk.textContent=u.ab; attachLogo(mk,u.id);
+      var info=document.createElement("div"); info.className="ua-provrow-info";
+      info.innerHTML='<div class="n">'+escapeHtml(u.name)+'</div><div class="c">'+escapeHtml(u.city)+' · '+escapeHtml(u.sector)+'</div>';
+      row.appendChild(cb); row.appendChild(mk); row.appendChild(info); body.appendChild(row);
+    });
+    det.appendChild(body); host.appendChild(det);
+  });
+  uaUpdateBar();
+}
+function uaUpdateBar(){
+  var n=uaSelected.length;
+  var bar=document.getElementById("uaPickBar"), cnt=document.getElementById("uaPickCount"), btn=document.getElementById("uaPickContinue");
+  if(cnt) cnt.textContent = n===0 ? "No universities selected" : (n+" "+(n===1?"university":"universities")+" selected");
+  if(btn) btn.disabled = n===0;
+  if(bar) bar.style.display = n>0 ? "" : "";
+}
+function uaOpenPicker(preselect){
+  uaSelected = (preselect||uaSelected||[]).slice();
+  document.getElementById("uaPickPanel").style.display="";
+  document.getElementById("uaFormPanel").style.display="none";
+  document.getElementById("uaSearch").value="";
+  uaRenderPicker();
+  show("uapply");
+}
+
+/* ---------- UNIFIED FORM ---------- */
+/* Optional disclosure shown UNDER a field: which universities require it. */
+function uaReqDisclosure(item){
+  if(!(item.meta && item.unis && item.unis.length)) return null;
+  var det=document.createElement("details"); det.className="ua-reqd";
+  var sm=document.createElement("summary"); sm.textContent="Which universities require this?";
+  var bd=document.createElement("div"); bd.className="ua-reqd-body"; bd.textContent=item.unis.join(", ")+".";
+  det.appendChild(sm); det.appendChild(bd);
+  return det;
+}
+
+function uaField(item){
+  // item: {fid, meta, unis, fromProfile}  OR a specific field {id,label,type,opts}
+  var isSpecific = !item.meta;
+  var fid = isSpecific ? item.id : item.fid;
+  var meta = isSpecific ? item : item.meta;
+  var label = isSpecific ? item.label : meta.label;
+  var type = meta.type || "text";
+  var wrap=document.createElement("div"); wrap.className="ua-f"+(type==="textarea"||type==="group"||type==="check"?" full":"");
+  if(meta.sensitive) wrap.className+=" sensitive";
+
+  var lab=document.createElement("label"); lab.htmlFor="ua_"+fid; lab.textContent=label;
+  wrap.appendChild(lab);
+
+  // help text + "which universities require this" go UNDER the control
+  function finish(){
+    if(meta.sensitive){
+      var sn=document.createElement("div"); sn.className="ua-help"; sn.textContent="Sensitive. Stored securely and shown only to universities that require it.";
+      wrap.appendChild(sn);
+    }
+    var d=uaReqDisclosure(item); if(d) wrap.appendChild(d);
+    return wrap;
+  }
+
+  var el;
+  var pre = uaDraft[fid];
+  if(!isSpecific && item.fromProfile){
+    var u=state.user||{};
+    var val=u[UA_PROFILE_MAP[fid]];
+    if(fid==="photo"){
+      var ph=document.createElement("div"); ph.className="ua-help";
+      ph.textContent = val ? "Using your profile photo." : "Add a photo in your profile.";
+      wrap.appendChild(ph); return finish();
+    }
+    el=document.createElement("input"); el.type="text"; el.value=val||""; el.readOnly=true; el.className="ua-locked";
+    el.id="ua_"+fid;
+    var note=document.createElement("div"); note.className="ua-help"; note.textContent="From your profile. Edit it there to change it everywhere.";
+    wrap.appendChild(el); wrap.appendChild(note); return finish();
+  }
+
+  if(type==="select"){
+    el=document.createElement("select"); el.id="ua_"+fid;
+    var d0=document.createElement("option"); d0.value=""; d0.textContent="Please select"; el.appendChild(d0);
+    (meta.opts||[]).forEach(function(o){ var op=document.createElement("option"); op.value=o; op.textContent=o; if(pre===o)op.selected=true; el.appendChild(op); });
+  } else if(type==="textarea" || type==="group"){
+    el=document.createElement("textarea"); el.id="ua_"+fid; el.rows=type==="group"?2:3; el.value=pre||"";
+    if(type==="group") el.placeholder="Enter the details listed above";
+  } else if(type==="file"){
+    var fin=document.createElement("div"); fin.className="ua-file";
+    var st=document.createElement("span"); st.className="ua-file-st"; st.id="uafst_"+fid;
+    st.textContent = uaDraft["__file_"+fid] ? uaDraft["__file_"+fid] : "No file chosen";
+    var fb=document.createElement("button"); fb.type="button"; fb.className="btn btn-line btn-sm"; fb.textContent="Choose file";
+    var inp=document.createElement("input"); inp.type="file"; inp.style.display="none";
+    inp.accept="image/*,application/pdf";
+    fb.onclick=function(){ inp.click(); };
+    inp.onchange=function(){ var f=inp.files&&inp.files[0]; if(f){ uaDraft["__file_"+fid]=f.name; st.textContent=f.name; } };
+    fin.appendChild(fb); fin.appendChild(st); fin.appendChild(inp);
+    wrap.appendChild(fin); return finish();
+  } else if(type==="check"){
+    var cw=document.createElement("label"); cw.className="ua-check";
+    var ci=document.createElement("input"); ci.type="checkbox"; ci.id="ua_"+fid; ci.checked=!!pre;
+    var cs=document.createElement("span"); cs.textContent=label;
+    lab.style.display="none";
+    cw.appendChild(ci); cw.appendChild(cs); wrap.appendChild(cw); return finish();
+  } else {
+    el=document.createElement("input"); el.id="ua_"+fid;
+    el.type = type==="email"?"email":(type==="tel"?"tel":(type==="date"?"date":"text"));
+    el.value=pre||"";
+  }
+  wrap.appendChild(el);
+  return finish();
+}
+
+var uaStep=0, uaStepCount=0;
+
+/* ================= Academic history (structured, per-qualification) ================= */
+var ACAD_BOARDS=["Federal Board (FBISE)","Aga Khan Board (AKU-EB)","BISE Lahore","BISE Rawalpindi","BISE Gujranwala","BISE Multan","BISE Faisalabad","BISE Sahiwal","BISE DG Khan","BISE Sargodha","BISE Bahawalpur","Board of Secondary Education Karachi (BSEK)","Board of Intermediate Education Karachi (BIEK)","BISE Hyderabad","BISE Sukkur","BISE Larkana","BISE Mirpurkhas","BISE Shaheed Benazirabad","BISE Peshawar","BISE Mardan","BISE Abbottabad","BISE Bannu","BISE Kohat","BISE Malakand","BISE Swat","BISE DI Khan","BISE Quetta","AJK Board (Mirpur)","Gilgit-Baltistan Board","Other"];
+var ACAD_SSC_GROUPS=["Science","Computer Science","Humanities / Arts","Technical","Other"];
+var ACAD_HSSC_GROUPS=["Pre-Medical","Pre-Engineering","ICS (Computer Science)","I.Com (Commerce)","General Science","Humanities / Arts","Other"];
+var ACAD_BODIES=["Cambridge (CAIE)","Edexcel (Pearson)","Oxford AQA","AQA","Other"];
+var ACAD_HRESULT=["CGPA","Percentage","Marks"];
+var ACAD_HSTATUS=["Completed","Ongoing"];
+function acadYears(){ var now=new Date().getFullYear(), a=[], y; for(y=now+1;y>=1975;y--) a.push(String(y)); return a; }
+
+function acadF(id,label,opts){
+  opts=opts||{};
+  var w=document.createElement("div"); w.className="ua-f"+(opts.full?" full":"");
+  var lab=document.createElement("label"); lab.htmlFor=id; lab.textContent=label; w.appendChild(lab);
+  var el;
+  if(opts.select){
+    el=document.createElement("select"); el.id=id;
+    var d0=document.createElement("option"); d0.value=""; d0.textContent="Please select"; el.appendChild(d0);
+    opts.select.forEach(function(o){ var op=document.createElement("option"); op.value=o; op.textContent=o; if(opts.value===o)op.selected=true; el.appendChild(op); });
+  } else {
+    el=document.createElement("input"); el.id=id; el.type=opts.type||"text";
+    if(opts.value!=null) el.value=opts.value;
+    if(opts.placeholder) el.placeholder=opts.placeholder;
+  }
+  w.appendChild(el); return w;
+}
+function acadSeg(options,current,onchange){
+  var wrap=document.createElement("div"); wrap.className="ua-seg";
+  options.forEach(function(o){
+    var b=document.createElement("button"); b.type="button"; b.className="ua-seg-btn"+(current===o.v?" on":""); b.textContent=o.l;
+    b.onclick=function(){ Array.prototype.forEach.call(wrap.children,function(x){x.classList.remove("on");}); b.classList.add("on"); onchange(o.v); };
+    wrap.appendChild(b);
+  });
+  return wrap;
+}
+
+/* Build the academic step DOM. present = {ssc,hssc,bachelor,master,mphil} booleans */
+function uaAcademicCard(present){
+  uaDraft.academic=uaDraft.academic||{};
+  var A=uaDraft.academic;
+  var host=document.createElement("div");
+
+  /* ---- Secondary (SSC / Matric  <>  O-Level) ---- */
+  if(present.ssc){
+    A.secondary=A.secondary||{type:"ssc"};
+    var c1=document.createElement("div"); c1.className="ua-sec";
+    var h1=document.createElement("div"); h1.className="ua-sec-h"; h1.textContent="Secondary school (Grade 9–10)"; c1.appendChild(h1);
+    var n1=document.createElement("div"); n1.className="ua-help"; n1.textContent="Enter whichever you completed. SSC / Matric and O-Level are treated as equivalent (IBCC)."; c1.appendChild(n1);
+    var body1=document.createElement("div"); body1.className="ua-acad-body";
+    c1.appendChild(acadSeg([{v:"ssc",l:"SSC / Matric"},{v:"olevel",l:"O-Level"}], A.secondary.type||"ssc", function(v){ uaCollectAcademic(); uaDraft.academic.secondary.type=v; drawSec(); }));
+    c1.appendChild(body1);
+    function drawSec(){
+      body1.innerHTML="";
+      var s=uaDraft.academic.secondary||{}; var tp=s.type||"ssc";
+      var g=document.createElement("div"); g.className="ua-grid";
+      if(tp==="ssc"){
+        g.appendChild(acadF("acad_ssc_board","Board",{select:ACAD_BOARDS,value:s.board}));
+        g.appendChild(acadF("acad_ssc_group","Group",{select:ACAD_SSC_GROUPS,value:s.group}));
+        g.appendChild(acadF("acad_ssc_year","Passing year",{select:acadYears(),value:s.year}));
+        g.appendChild(acadF("acad_ssc_roll","Roll number",{value:s.roll}));
+        g.appendChild(acadF("acad_ssc_obt","Marks obtained",{type:"number",value:s.obt}));
+        g.appendChild(acadF("acad_ssc_tot","Total marks",{type:"number",value:s.tot,placeholder:"e.g. 1100"}));
+      } else {
+        g.appendChild(acadF("acad_ol_body","Awarding body",{select:ACAD_BODIES,value:s.body}));
+        g.appendChild(acadF("acad_ol_year","Year completed",{select:acadYears(),value:s.year}));
+        g.appendChild(acadF("acad_ol_cand","Candidate number",{value:s.cand}));
+        g.appendChild(acadF("acad_ol_subs","Number of subjects",{type:"number",value:s.subs}));
+        g.appendChild(acadF("acad_ol_eqo","IBCC equivalence — marks obtained",{type:"number",value:s.eqo}));
+        g.appendChild(acadF("acad_ol_eqt","IBCC equivalence — total marks",{type:"number",value:s.eqt,placeholder:"e.g. 1100"}));
+      }
+      body1.appendChild(g);
+    }
+    drawSec();
+    host.appendChild(c1);
+  }
+
+  /* ---- Higher secondary (HSSC / Intermediate  <>  A-Level) ---- */
+  if(present.hssc){
+    A.higherSec=A.higherSec||{type:"hssc"};
+    var c2=document.createElement("div"); c2.className="ua-sec";
+    var h2=document.createElement("div"); h2.className="ua-sec-h"; h2.textContent="Higher secondary (Grade 11–12)"; c2.appendChild(h2);
+    var n2=document.createElement("div"); n2.className="ua-help"; n2.textContent="Enter whichever you completed. HSSC / Intermediate (FSc / FA / ICS) and A-Level are treated as equivalent (IBCC)."; c2.appendChild(n2);
+    var body2=document.createElement("div"); body2.className="ua-acad-body";
+    c2.appendChild(acadSeg([{v:"hssc",l:"HSSC / Intermediate"},{v:"alevel",l:"A-Level"}], A.higherSec.type||"hssc", function(v){ uaCollectAcademic(); uaDraft.academic.higherSec.type=v; drawHsec(); }));
+    c2.appendChild(body2);
+    function drawHsec(){
+      body2.innerHTML="";
+      var s=uaDraft.academic.higherSec||{}; var tp=s.type||"hssc";
+      var g=document.createElement("div"); g.className="ua-grid";
+      if(tp==="hssc"){
+        g.appendChild(acadF("acad_hssc_board","Board",{select:ACAD_BOARDS,value:s.board}));
+        g.appendChild(acadF("acad_hssc_group","Group",{select:ACAD_HSSC_GROUPS,value:s.group}));
+        g.appendChild(acadF("acad_hssc_year","Passing year",{select:acadYears(),value:s.year}));
+        g.appendChild(acadF("acad_hssc_roll","Roll number",{value:s.roll}));
+        g.appendChild(acadF("acad_hssc_obt","Marks obtained",{type:"number",value:s.obt}));
+        g.appendChild(acadF("acad_hssc_tot","Total marks",{type:"number",value:s.tot,placeholder:"e.g. 1100"}));
+      } else {
+        g.appendChild(acadF("acad_al_body","Awarding body",{select:ACAD_BODIES,value:s.body}));
+        g.appendChild(acadF("acad_al_year","Year completed",{select:acadYears(),value:s.year}));
+        g.appendChild(acadF("acad_al_cand","Candidate number",{value:s.cand}));
+        g.appendChild(acadF("acad_al_subs","Number of subjects",{type:"number",value:s.subs}));
+        g.appendChild(acadF("acad_al_eqo","IBCC equivalence — marks obtained",{type:"number",value:s.eqo}));
+        g.appendChild(acadF("acad_al_eqt","IBCC equivalence — total marks",{type:"number",value:s.eqt,placeholder:"e.g. 1100"}));
+      }
+      body2.appendChild(g);
+    }
+    drawHsec();
+    host.appendChild(c2);
+  }
+
+  /* ---- Higher education (optional): Bachelor / Master / MPhil ---- */
+  function higherBlock(key,label){
+    var h=(uaDraft.academic[key])||{};
+    var c=document.createElement("div"); c.className="ua-sec";
+    var hh=document.createElement("div"); hh.className="ua-sec-h"; hh.textContent=label; c.appendChild(hh);
+    var nn=document.createElement("div"); nn.className="ua-help"; nn.textContent="Optional — only if you have started or completed this."; c.appendChild(nn);
+    var g=document.createElement("div"); g.className="ua-grid";
+    g.appendChild(acadF("acad_"+key+"_inst","Institution / university",{value:h.inst,full:true}));
+    g.appendChild(acadF("acad_"+key+"_prog","Programme / degree title",{value:h.prog}));
+    g.appendChild(acadF("acad_"+key+"_status","Status",{select:ACAD_HSTATUS,value:h.status}));
+    g.appendChild(acadF("acad_"+key+"_start","Start year",{select:acadYears(),value:h.start}));
+    g.appendChild(acadF("acad_"+key+"_end","End year (or expected)",{select:acadYears(),value:h.end}));
+    g.appendChild(acadF("acad_"+key+"_rtype","Result type",{select:ACAD_HRESULT,value:h.rtype}));
+    g.appendChild(acadF("acad_"+key+"_rval","Result (CGPA / % / marks)",{value:h.rval}));
+    c.appendChild(g); return c;
+  }
+  if(present.bachelor) host.appendChild(higherBlock("bachelor","Bachelor's degree"));
+  if(present.master)   host.appendChild(higherBlock("master","Master's degree"));
+  if(present.mphil)    host.appendChild(higherBlock("mphil","MS / MPhil"));
+
+  return host;
+}
+
+/* Read the academic inputs currently in the DOM into uaDraft.academic, and
+   compose human-readable summaries into uaDraft.ssc / hssc / bachelor / ...
+   so the existing per-university routing carries the data unchanged. */
+function uaCollectAcademic(){
+  if(!document.getElementById("acad_ssc_board") && !document.getElementById("acad_ol_body")
+     && !document.getElementById("acad_hssc_board") && !document.getElementById("acad_al_body")) return;
+  uaDraft.academic=uaDraft.academic||{};
+  var A=uaDraft.academic;
+  function g(id){ var e=document.getElementById(id); return e?(e.value||""):undefined; }
+
+  // secondary
+  if(document.getElementById("acad_ssc_board")){
+    A.secondary=A.secondary||{}; A.secondary.type="ssc";
+    A.secondary.board=g("acad_ssc_board"); A.secondary.group=g("acad_ssc_group"); A.secondary.year=g("acad_ssc_year");
+    A.secondary.roll=g("acad_ssc_roll"); A.secondary.obt=g("acad_ssc_obt"); A.secondary.tot=g("acad_ssc_tot");
+  } else if(document.getElementById("acad_ol_body")){
+    A.secondary=A.secondary||{}; A.secondary.type="olevel";
+    A.secondary.body=g("acad_ol_body"); A.secondary.year=g("acad_ol_year"); A.secondary.cand=g("acad_ol_cand");
+    A.secondary.subs=g("acad_ol_subs"); A.secondary.eqo=g("acad_ol_eqo"); A.secondary.eqt=g("acad_ol_eqt");
+  }
+  // higher secondary
+  if(document.getElementById("acad_hssc_board")){
+    A.higherSec=A.higherSec||{}; A.higherSec.type="hssc";
+    A.higherSec.board=g("acad_hssc_board"); A.higherSec.group=g("acad_hssc_group"); A.higherSec.year=g("acad_hssc_year");
+    A.higherSec.roll=g("acad_hssc_roll"); A.higherSec.obt=g("acad_hssc_obt"); A.higherSec.tot=g("acad_hssc_tot");
+  } else if(document.getElementById("acad_al_body")){
+    A.higherSec=A.higherSec||{}; A.higherSec.type="alevel";
+    A.higherSec.body=g("acad_al_body"); A.higherSec.year=g("acad_al_year"); A.higherSec.cand=g("acad_al_cand");
+    A.higherSec.subs=g("acad_al_subs"); A.higherSec.eqo=g("acad_al_eqo"); A.higherSec.eqt=g("acad_al_eqt");
+  }
+  // higher education
+  ["bachelor","master","mphil"].forEach(function(k){
+    if(document.getElementById("acad_"+k+"_inst")){
+      A[k]={ inst:g("acad_"+k+"_inst"), prog:g("acad_"+k+"_prog"), status:g("acad_"+k+"_status"),
+             start:g("acad_"+k+"_start"), end:g("acad_"+k+"_end"), rtype:g("acad_"+k+"_rtype"), rval:g("acad_"+k+"_rval") };
+    }
+  });
+
+  // compose summaries for routing
+  uaDraft.ssc  = acadSecSummary(A.secondary);
+  uaDraft.hssc = acadHsecSummary(A.higherSec);
+  uaDraft.bachelor = acadHigherSummary(A.bachelor);
+  uaDraft.master   = acadHigherSummary(A.master);
+  uaDraft.mphil    = acadHigherSummary(A.mphil);
+}
+function acadJoin(parts){ return parts.filter(function(x){return x!=null && x!=="";}).join(", "); }
+function acadSecSummary(s){
+  if(!s) return "";
+  if(s.type==="olevel") return acadJoin(["O-Level", s.body, s.year?("completed "+s.year):"", s.cand?("candidate "+s.cand):"", s.subs?(s.subs+" subjects"):"", (s.eqo&&s.eqt)?("IBCC "+s.eqo+"/"+s.eqt):""]);
+  return acadJoin(["SSC / Matric", s.board, s.group, s.year?("passed "+s.year):"", s.roll?("roll "+s.roll):"", (s.obt&&s.tot)?(s.obt+"/"+s.tot):""]);
+}
+function acadHsecSummary(s){
+  if(!s) return "";
+  if(s.type==="alevel") return acadJoin(["A-Level", s.body, s.year?("completed "+s.year):"", s.cand?("candidate "+s.cand):"", s.subs?(s.subs+" subjects"):"", (s.eqo&&s.eqt)?("IBCC "+s.eqo+"/"+s.eqt):""]);
+  return acadJoin(["HSSC / Intermediate", s.board, s.group, s.year?("passed "+s.year):"", s.roll?("roll "+s.roll):"", (s.obt&&s.tot)?(s.obt+"/"+s.tot):""]);
+}
+function acadHigherSummary(h){
+  if(!h || !(h.inst||h.prog)) return "";
+  return acadJoin([h.prog, h.inst, h.status, (h.start||h.end)?((h.start||"?")+"–"+(h.end||"?")):"", (h.rtype&&h.rval)?(h.rtype+" "+h.rval):""]);
+}
+
+
+function uaBuildForm(){
+  var merged=uaMerge(uaSelected);
+  var host=document.getElementById("uaSections"); host.innerHTML="";
+
+  // persistent "your universities" summary (plain list)
+  var sum=document.createElement("div"); sum.className="ua-summary";
+  var sh=document.createElement("div"); sh.className="ua-sum-h"; sh.textContent="Your universities ("+uaSelected.length+")"; sum.appendChild(sh);
+  var list=document.createElement("ul"); list.className="ua-ulist";
+  uaSelected.forEach(function(id){ var u=uaUni(id); if(!u)return;
+    var li=document.createElement("li"); li.className="ua-uitem";
+    var nm=document.createElement("span"); nm.className="n"; nm.textContent=u.name;
+    var ct=document.createElement("span"); ct.className="c"; ct.textContent=u.city;
+    li.appendChild(nm); li.appendChild(ct); list.appendChild(li);
+  });
+  sum.appendChild(list);
+  var edit=document.createElement("button"); edit.className="ua-textlink"; edit.textContent="Change universities";
+  edit.onclick=function(){ uaOpenPicker(uaSelected); };
+  sum.appendChild(edit);
+  host.appendChild(sum);
+
+  // step plan: one step per merged section, + university-specific (if any), + review
+  var steps=[];
+  merged.sections.forEach(function(sec){ steps.push({kind:"section", label:sec.label, sec:sec}); });
+  if(merged.specifics.length) steps.push({kind:"specific", label:"University questions", specifics:merged.specifics});
+  steps.push({kind:"review", label:"Review & submit"});
+  uaStepCount=steps.length;
+
+  // stepper (desktop)
+  var stepper=document.createElement("div"); stepper.className="ua-stepper"; stepper.id="uaStepper";
+  steps.forEach(function(s,i){
+    var st=document.createElement("div"); st.className="ua-st"; st.setAttribute("data-step",i);
+    var num=document.createElement("div"); num.className="num"; num.textContent=(i+1);
+    var lbl=document.createElement("div"); lbl.className="lbl"; lbl.textContent=s.label;
+    st.appendChild(num); st.appendChild(lbl);
+    st.onclick=(function(idx){ return function(){ uaCollect(); uaShowStep(idx); }; })(i);
+    stepper.appendChild(st);
+  });
+  host.appendChild(stepper);
+
+  // progress (mobile)
+  var pm=document.createElement("div"); pm.className="ua-progm"; pm.id="uaProgM";
+  pm.innerHTML='<span class="t" id="uaProgT"></span><span class="bar"><span class="fill" id="uaProgF"></span></span>';
+  host.appendChild(pm);
+
+  // step panels
+  var panels=document.createElement("div"); panels.id="uaPanels";
+  steps.forEach(function(s,i){
+    var panel=document.createElement("div"); panel.className="ua-step-panel"; panel.setAttribute("data-step",i);
+    if(s.kind==="section"){
+      if(s.sec.key==="academic"){
+        var present={}; s.sec.fields.forEach(function(it){ present[it.fid]=true; });
+        panel.appendChild(uaAcademicCard(present));
+      } else {
+        var card=document.createElement("div"); card.className="ua-sec";
+        var h=document.createElement("div"); h.className="ua-sec-h"; h.textContent=s.sec.label; card.appendChild(h);
+        var grid=document.createElement("div"); grid.className="ua-grid";
+        s.sec.fields.forEach(function(it){ grid.appendChild(uaField(it)); });
+        card.appendChild(grid); panel.appendChild(card);
+      }
+    } else if(s.kind==="specific"){
+      var sc=document.createElement("div"); sc.className="ua-sec ua-specific";
+      var sh=document.createElement("div"); sh.className="ua-sec-h"; sh.textContent="University-specific questions"; sc.appendChild(sh);
+      var sn=document.createElement("div"); sn.className="ua-specnote"; sn.textContent="These are asked by one university each.";
+      sc.appendChild(sn);
+      s.specifics.forEach(function(blk){
+        var ub=document.createElement("div"); ub.className="ua-specblk";
+        var ut=document.createElement("div"); ut.className="ua-specfor"; ut.textContent="For "+blk.uni.name; ub.appendChild(ut);
+        var g=document.createElement("div"); g.className="ua-grid";
+        blk.fields.forEach(function(f){ g.appendChild(uaField(f)); });
+        ub.appendChild(g); sc.appendChild(ub);
+      });
+      panel.appendChild(sc);
+    } else {
+      var rb=document.createElement("div"); rb.id="uaReviewBody";
+      panel.appendChild(rb);
+    }
+    panels.appendChild(panel);
+  });
+  host.appendChild(panels);
+
+  // wizard nav (non-review steps)
+  var nav=document.createElement("div"); nav.className="ua-wiznav"; nav.id="uaWizNav";
+  var back=document.createElement("button"); back.className="btn btn-line"; back.id="uaWizBack"; back.textContent="← Back";
+  back.onclick=function(){ uaCollect(); if(uaStep>0) uaShowStep(uaStep-1); };
+  var sp=document.createElement("span"); sp.className="sp";
+  var saveb=document.createElement("button"); saveb.className="btn btn-ghost"; saveb.textContent="Save draft"; saveb.onclick=uaSaveDraft;
+  var cont=document.createElement("button"); cont.className="btn"; cont.id="uaWizNext"; cont.textContent="Continue →";
+  cont.onclick=function(){ uaCollect(); if(uaStep<uaStepCount-1) uaShowStep(uaStep+1); };
+  nav.appendChild(back); nav.appendChild(sp); nav.appendChild(saveb); nav.appendChild(cont);
+  host.appendChild(nav);
+
+  // add a Back button to the static review action row (once)
+  var af=document.querySelector("#uaFormPanel .af-actions");
+  if(af && !document.getElementById("uaRevBack")){
+    var rbk=document.createElement("button"); rbk.className="btn btn-line"; rbk.id="uaRevBack"; rbk.textContent="← Back";
+    rbk.onclick=function(){ if(uaStep>0) uaShowStep(uaStep-1); };
+    af.insertBefore(rbk, af.firstChild);
+  }
+
+  uaShowStep(0);
+}
+
+/* Show one wizard step; toggles panels, stepper, progress, nav vs. submit row. */
+function uaShowStep(i){
+  if(i<0 || i>=uaStepCount) return;
+  uaStep=i;
+  var panels=document.querySelectorAll("#uaPanels .ua-step-panel");
+  for(var k=0;k<panels.length;k++){ panels[k].classList.toggle("active", k===i); }
+  var sts=document.querySelectorAll("#uaStepper .ua-st");
+  for(var j=0;j<sts.length;j++){ sts[j].classList.toggle("active", j===i); sts[j].classList.toggle("done", j<i); }
+  var pt=document.getElementById("uaProgT"), pf=document.getElementById("uaProgF");
+  if(pt) pt.textContent="Step "+(i+1)+" of "+uaStepCount;
+  if(pf) pf.style.width=(((i+1)/uaStepCount)*100)+"%";
+
+  var isReview=(i===uaStepCount-1);
+  var nav=document.getElementById("uaWizNav");
+  var af=document.querySelector("#uaFormPanel .af-actions");
+  var back=document.getElementById("uaWizBack");
+  var next=document.getElementById("uaWizNext");
+  if(back) back.style.visibility=(i===0)?"hidden":"visible";
+  if(next) next.textContent=(i===uaStepCount-2)?"Review application →":"Continue →";
+  if(isReview){
+    uaBuildReview();
+    if(nav) nav.style.display="none";
+    if(af) af.style.display="flex";
+  } else {
+    if(nav) nav.style.display="flex";
+    if(af) af.style.display="none";
+  }
+  window.scrollTo(0,0);
+}
+
+/* Read-only review of all answers + where each university's details go. */
+function uaBuildReview(){
+  uaCollect();
+  var host=document.getElementById("uaReviewBody"); if(!host) return; host.innerHTML="";
+  var merged=uaMerge(uaSelected);
+  var u=state.user||{};
+  var intro=document.createElement("p"); intro.className="ua-specnote";
+  intro.textContent="Check your answers below. Use Back, or the Edit link on any section, to change something before you submit.";
+  host.appendChild(intro);
+
+  var stepIndex=0;
+  merged.sections.forEach(function(sec){
+    var card=document.createElement("div"); card.className="ua-rev-sec";
+    var h=document.createElement("div"); h.className="ua-rev-h";
+    var ht=document.createElement("span"); ht.textContent=sec.label; h.appendChild(ht);
+    (function(si){ var e=document.createElement("button"); e.className="edit"; e.textContent="Edit"; e.onclick=function(){ uaShowStep(si); }; h.appendChild(e); })(stepIndex);
+    card.appendChild(h);
+    var kv=document.createElement("div"); kv.className="ua-rev-kv";
+    sec.fields.forEach(function(it){
+      var val;
+      if(it.fromProfile){
+        var pv=u[UA_PROFILE_MAP[it.fid]];
+        val = (it.fid==="photo") ? (pv?"Provided":"Missing") : (pv||"");
+      } else {
+        var d=uaDraft[it.fid];
+        if(it.meta.type==="check") val = d?"Yes":"No";
+        else if(it.meta.type==="file") val = uaDraft["__file_"+it.fid]||"";
+        else val = d||"";
+      }
+      var k=document.createElement("div"); k.className="ua-rev-k"+(it.meta.sensitive?" sens":""); k.textContent=it.meta.label;
+      var v=document.createElement("div"); v.className="ua-rev-v"; v.textContent=(val===""||val==null)?"—":val;
+      kv.appendChild(k); kv.appendChild(v);
+    });
+    card.appendChild(kv); host.appendChild(card);
+    stepIndex++;
+  });
+
+  if(merged.specifics.length){
+    var card2=document.createElement("div"); card2.className="ua-rev-sec";
+    var h2=document.createElement("div"); h2.className="ua-rev-h";
+    var ht2=document.createElement("span"); ht2.textContent="University-specific questions"; h2.appendChild(ht2);
+    (function(si){ var e=document.createElement("button"); e.className="edit"; e.textContent="Edit"; e.onclick=function(){ uaShowStep(si); }; h2.appendChild(e); })(stepIndex);
+    card2.appendChild(h2);
+    merged.specifics.forEach(function(blk){
+      var tag=document.createElement("div"); tag.className="ua-specfor"; tag.textContent="For "+blk.uni.name; card2.appendChild(tag);
+      var kv2=document.createElement("div"); kv2.className="ua-rev-kv"; kv2.style.marginBottom="6px";
+      blk.fields.forEach(function(fdef){
+        var d=uaDraft[fdef.id];
+        var val=(fdef.type==="check")?(d?"Yes":"No"):(d||"");
+        var k=document.createElement("div"); k.className="ua-rev-k"; k.textContent=fdef.label;
+        var v=document.createElement("div"); v.className="ua-rev-v"; v.textContent=(val===""||val==null)?"—":val;
+        kv2.appendChild(k); kv2.appendChild(v);
+      });
+      card2.appendChild(kv2);
+    });
+    host.appendChild(card2);
+    stepIndex++;
+  }
+
+  var rc=document.createElement("div"); rc.className="ua-rev-route";
+  var rh=document.createElement("div"); rh.className="rh"; rh.textContent="Where your details go"; rc.appendChild(rh);
+  uaSelected.forEach(function(id){
+    var uu=uaUni(id); if(!uu) return;
+    var ans=uaAnswersFor(uu);
+    var n=0; for(var kk in ans){ if(ans.hasOwnProperty(kk) && kk.indexOf("__file_")!==0) n++; }
+    var profCount=uu.fields.filter(function(fid){ return UA_PROFILE_MAP[fid]; }).length;
+    var row=document.createElement("div"); row.className="rr";
+    var nm=document.createElement("span"); nm.className="n"; nm.textContent=uu.name;
+    var ct=document.createElement("span"); ct.className="ct"; ct.textContent=(n+profCount)+" fields";
+    row.appendChild(nm); row.appendChild(ct); rc.appendChild(row);
+  });
+  host.appendChild(rc);
+}
+
+function uaGoForm(){
+  if(!uaSelected.length) return;
+  document.getElementById("uaPickPanel").style.display="none";
+  document.getElementById("uaFormPanel").style.display="";
+  document.getElementById("uaErr").textContent="";
+  uaBuildForm();
+  window.scrollTo(0,0);
+}
+
+/* ---------- COLLECT + SUBMIT ---------- */
+function uaCollect(){
+  var merged=uaMerge(uaSelected);
+  merged.sections.forEach(function(sec){
+    sec.fields.forEach(function(it){
+      if(it.fromProfile) return; // comes from profile
+      var el=document.getElementById("ua_"+it.fid);
+      if(!el) return;
+      if(it.meta.type==="check") uaDraft[it.fid]=el.checked;
+      else uaDraft[it.fid]=el.value;
+    });
+  });
+  merged.specifics.forEach(function(blk){
+    blk.fields.forEach(function(f){
+      var el=document.getElementById("ua_"+f.id);
+      if(el) uaDraft[f.id]= (f.type==="check"?el.checked:el.value);
+    });
+  });
+  uaCollectAcademic();
+  return uaDraft;
+}
+
+/* Build the answer set for one university from the merged draft */
+function uaAnswersFor(u){
+  var ans={};
+  u.fields.forEach(function(fid){
+    if(UA_PROFILE_MAP[fid]) return; // profile data travels on the profile, not the app answers
+    if(uaDraft[fid]!=null && uaDraft[fid]!=="") ans[fid]=uaDraft[fid];
+    if(uaDraft["__file_"+fid]) ans["__file_"+fid]=uaDraft["__file_"+fid];
+  });
+  (u.specific||[]).forEach(function(f){
+    if(uaDraft[f.id]!=null && uaDraft[f.id]!=="") ans[f.id]=uaDraft[f.id];
+  });
+  return ans;
+}
+
+function uaValidate(){
+  // minimum: profile complete + declaration + at least one program/choice where program_1 required
+  var u=state.user||{};
+  if(!u.name||!u.cnic){ return "Please complete your profile (name and CNIC) first."; }
+  if(!u.photo){ return "Please add a photo in your profile first."; }
+  // declaration if present
+  if(UFIELDS.declaration && uaMerge(uaSelected).sections.some(function(s){return s.fields.some(function(f){return f.fid==="declaration";});})){
+    if(!uaDraft.declaration) return "Please tick the declaration to confirm your information is correct.";
+  }
+  // academic history (one qualification per level, SSC/O-Level and HSSC/A-Level equivalents)
+  var acadSec=uaMerge(uaSelected).sections.filter(function(s){return s.key==="academic";})[0];
+  if(acadSec){
+    var pr={}; acadSec.fields.forEach(function(f){ pr[f.fid]=true; });
+    uaCollectAcademic();
+    var a=uaDraft.academic||{}, sc=a.secondary||{}, hs=a.higherSec||{};
+    var scOk = sc.type==="olevel" ? (sc.body&&sc.year) : (sc.board&&sc.year);
+    var hsOk = hs.type==="alevel" ? (hs.body&&hs.year) : (hs.board&&hs.year);
+    if(pr.ssc && !scOk) return "Please complete your secondary school details (SSC / Matric or O-Level).";
+    if(pr.hssc && !hsOk) return "Please complete your higher secondary details (HSSC / Intermediate or A-Level).";
+  }
+  return null;
+}
+
+function uaSaveDraft(){
+  uaCollect();
+  if(!(READY && state.user && state.user.uid)) { uaFlash("Saved on this device."); return; }
+  var payload={ unifiedDraft:uaDraft, unifiedSelected:uaSelected,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+  userDoc(state.user.uid).set(payload,{merge:true}).then(function(){ uaFlash("Draft saved."); }).catch(function(){ uaFlash("Saved on this device."); });
+}
+
+function uaSubmit(){
+  uaCollect();
+  var err=uaValidate();
+  var errEl=document.getElementById("uaErr");
+  if(err){ errEl.textContent=err; window.scrollTo(0,0); return; }
+  errEl.textContent="";
+  var btn=document.getElementById("uaSubmit"); var old=btn.textContent; btn.disabled=true; btn.textContent="Submitting…";
+
+  if(!(READY && state.user && state.user.uid)){ uaAfterSubmit([]); btn.disabled=false; btn.textContent=old; return; }
+
+  var uid=state.user.uid;
+  var jobs=[];
+  // persist the unified draft on the profile
+  jobs.push(userDoc(uid).set({ unifiedDraft:uaDraft, unifiedSelected:uaSelected,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp() },{merge:true}));
+  // write one application per selected university (keeps admin console per-university)
+  uaSelected.forEach(function(id){
+    var u=uaUni(id); if(!u) return;
+    jobs.push(
+      userDoc(uid).collection("applications").doc(u.id).set({
+        university:u.name, city:u.city, portal:u.portal||"",
+        status:"submitted", answers:uaAnswersFor(u),
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      },{merge:true})
+    );
+  });
+  // queue the portal-links email
+  var links=uaSelected.map(function(id){ var u=uaUni(id); return u? (u.name+": "+(u.portal||"(portal link to follow)")) : ""; }).filter(Boolean);
+  var body = "Assalam-o-Alaikum "+(state.user.name||"")+",\n\n"+
+    "Your apply.pk application has been submitted to the following universities:\n\n"+
+    links.join("\n")+"\n\n"+
+    "Each university completes enrolment on its own portal. Use the links above to finish any university-specific steps.\n\n— apply.pk";
+  try{
+    jobs.push(db.collection("mail").add({
+      to: state.user.email,
+      message: { subject:"Your apply.pk application has been submitted", text:body }
+    }));
+  }catch(e){}
+
+  Promise.all(jobs.map(function(p){ return p.catch(function(){}); })).then(function(){
+    btn.disabled=false; btn.textContent=old;
+    uaAfterSubmit(links);
+  });
+}
+
+function uaAfterSubmit(links){
+  document.getElementById("uaFormPanel").style.display="none";
+  var done=document.getElementById("uaDone"); done.style.display="";
+  var list=document.getElementById("uaDoneList"); list.innerHTML="";
+  uaSelected.forEach(function(id){
+    var u=uaUni(id); if(!u) return;
+    var row=document.createElement("div"); row.className="ua-done-row";
+    var nm=document.createElement("div"); nm.className="n"; nm.textContent=u.name;
+    var a=document.createElement("a"); a.href=u.portal||"#"; a.target="_blank"; a.rel="noopener noreferrer";
+    a.className="btn btn-line btn-sm"; a.textContent="Open portal ↗";
+    row.appendChild(nm); row.appendChild(a); list.appendChild(row);
+  });
+  window.scrollTo(0,0);
+}
+
+function uaFlash(msg){
+  var el=document.getElementById("uaSaved"); if(!el) return;
+  el.textContent=msg; el.classList.add("show");
+  setTimeout(function(){ el.classList.remove("show"); },1800);
+}
+
+/* Load any saved unified draft when entering the flow */
+function uaLoadDraft(cb){
+  if(!(READY && state.user && state.user.uid)){ cb&&cb(); return; }
+  userDoc(state.user.uid).get().then(function(s){
+    var d=s.data()||{};
+    if(d.unifiedDraft) uaDraft=d.unifiedDraft;
+    if(d.unifiedSelected && d.unifiedSelected.length) uaSelected=d.unifiedSelected;
+    cb&&cb();
+  }).catch(function(){ cb&&cb(); });
+}
+
+
+  /* compatibility alias so the dashboard tiles keep working */
+  var UNIS = UNIVERSITIES.map(function(u){ return { n:u.name, c:u.city, slug:u.id, ab:u.ab, col:u.col, web:u.portal }; });
   var DOC_TYPES=[{id:"olevel",key:"docOlevel"},{id:"fsc",key:"docFsc"},{id:"minority",key:"docMinority"}];
 
   var state={ user:null };
@@ -1107,7 +2275,7 @@
     return o;
   }
 
-  var views={}; ["landing","auth","onboard","dashboard","profile","application","admin"].forEach(function(k){ views[k]=document.getElementById("view-"+k); });
+  var views={}; ["landing","auth","onboard","dashboard","profile","application","admin","uapply"].forEach(function(k){ views[k]=document.getElementById("view-"+k); });
   var header=document.getElementById("header");
   var current=null;
 
@@ -1434,12 +2602,12 @@
     uniList.innerHTML="";
     UNIS.forEach(function(uni,idx){
       var row=document.createElement("div"); row.className="uni-row";
-      var mk=document.createElement("span"); mk.className="uni-mk"; mk.style.setProperty("--c",uni.col); mk.textContent=uni.ab;
+      var mk=document.createElement("span"); mk.className="uni-mk"; mk.style.setProperty("--c",uni.col); mk.textContent=uni.ab; attachLogo(mk,uni.slug);
       var info=document.createElement("div"); info.className="uni-info";
       info.innerHTML='<div class="n">'+escapeHtml(uni.n)+'</div><div class="c">'+escapeHtml(uni.c)+'</div>';
       var sp=document.createElement("span"); sp.className="spacer";
       var btn=document.createElement("button"); btn.className="btn btn-sm"; btn.textContent=t("apply");
-      btn.onclick=function(){ openApplication(idx); };
+      btn.onclick=function(){ uaLoadDraft(function(){ if(uaSelected.indexOf(uni.slug)<0) uaSelected.push(uni.slug); uaOpenPicker(uaSelected); }); };
       row.appendChild(mk); row.appendChild(info); row.appendChild(sp); row.appendChild(btn);
       row.dataset.slug=uni.slug;
       uniList.appendChild(row);
@@ -1471,7 +2639,7 @@
   /* ============================================================
      PUNJAB UNIVERSITY APPLICATION FORM
      Question set mirrors PU's official online admission form
-     (bio-data fields excluded — taken from the Apply.pk profile).
+     (bio-data fields excluded — taken from the apply.pk profile).
      ============================================================ */
   var PU_UR = {
     // sections
@@ -1814,7 +2982,7 @@
   function buildPrintHTML(uni, ans, docNames){
     var u=state.user||{}, H=[];
     H.push('<div class="pd-head"><div><div class="pd-title">'+escapeHtml(uni.n)+'</div>'+
-           '<div class="pd-sub">Undergraduate Application &middot; via Apply.pk</div></div>');
+           '<div class="pd-sub">Undergraduate Application &middot; via apply.pk</div></div>');
     if(u.photo) H.push('<img class="pd-photo" alt="" src="'+escapeHtml(u.photo)+'">');
     H.push('</div>');
     H.push('<div class="pd-section-title">Applicant</div><table class="pd-table"><tbody>');
@@ -1852,7 +3020,7 @@
       docRows.forEach(function(r){ H.push("<tr><th>"+escapeHtml(r[0])+"</th><td>"+escapeHtml(docNames[r[1]])+"</td></tr>"); });
       H.push("</tbody></table>");
     }
-    H.push('<div class="pd-foot">Generated by Apply.pk on '+escapeHtml(new Date().toLocaleDateString())+
+    H.push('<div class="pd-foot">Generated by apply.pk on '+escapeHtml(new Date().toLocaleDateString())+
            '. This document reproduces the applicant\'s submission for '+escapeHtml(uni.n)+'.</div>');
     return H.join("");
   }
@@ -2017,12 +3185,22 @@
 
     var DOC_LABELS={ olevel:"O-Level / Matric result", fsc:"F.Sc / A-Level result", minority:"Minority verification",
                      pu_cnic_front:"CNIC front", pu_discert:"Disability certificate" };
-    db.collection("applicants").doc(r.uid).collection("documents").get().then(function(qs){
+    var uref=db.collection("applicants").doc(r.uid);
+    Promise.all([
+      uref.collection("documents").get().catch(function(){return {forEach:function(){},empty:true};}),
+      uref.collection("sensitive").get().catch(function(){return {forEach:function(){},empty:true};})
+    ]).then(function(res){
       dwrap.innerHTML="";
-      if(qs.empty){ dwrap.textContent="No documents uploaded."; return; }
-      qs.forEach(function(d){
-        var dd=d.data()||{}, box=document.createElement("div"); box.className="adm-doc";
-        var lab=document.createElement("div"); lab.className="dl"; lab.textContent=DOC_LABELS[d.id]||d.id;
+      var items=[];
+      res[0].forEach(function(d){ items.push({id:d.id,data:d.data()||{},sensitive:false}); });
+      res[1].forEach(function(d){ items.push({id:d.id,data:d.data()||{},sensitive:true}); });
+      // universities cannot see sensitive docs once the applicant is admitted; HEC always can
+      if(!isHecAdmin()) items=items.filter(function(it){ return !(it.sensitive && it.data.admittedHidden); });
+      if(!items.length){ dwrap.textContent="No documents uploaded."; return; }
+      items.forEach(function(d){
+        var dd=d.data||{}, box=document.createElement("div"); box.className="adm-doc"+(d.sensitive?" adm-doc-sensitive":"");
+        var lab=document.createElement("div"); lab.className="dl";
+        lab.textContent=(DOC_LABELS[d.id]||d.id)+(d.sensitive?" \u2022 sensitive":"");
         box.appendChild(lab);
         if(String(dd.data||"").indexOf("data:image")===0){
           var im=document.createElement("img"); im.alt=""; im.src=dd.data;
@@ -2115,24 +3293,24 @@
       ? "University of the Punjab — Offer of admission"
       : "University of the Punjab — Application decision";
     // Accepted applicants are sent to Punjab University's own page to
-    // complete enrolment. Applying itself happened entirely on Apply.pk.
+    // complete enrolment. Applying itself happened entirely on apply.pk.
     var body = accepted
       ? ("Dear "+name+",\n\nCongratulations. Your application to the University of the Punjab has been ACCEPTED.\n\n"
         +"To complete your enrolment, confirm your programme and pay your dues, please visit the University of the Punjab:\n"
         +PU_ENROL_URL+"\n\n"
         +"Please keep your original documents ready for verification, as instructed there.\n\n"
-        +"You can view this decision at any time by signing in to your Apply.pk account.\n\n"
+        +"You can view this decision at any time by signing in to your apply.pk account.\n\n"
         +"Office of Admissions\nUniversity of the Punjab, Lahore\n"
-        +"Received through Apply.pk\n\n"
+        +"Received through apply.pk\n\n"
         +"This message was sent automatically. Please do not reply to this email.")
-      : ("Dear "+name+",\n\nThank you for applying to the University of the Punjab through Apply.pk.\n\n"
+      : ("Dear "+name+",\n\nThank you for applying to the University of the Punjab through apply.pk.\n\n"
         +"After careful consideration, we regret to inform you that your application has NOT been successful on this occasion.\n\n"
-        +"Your Apply.pk profile remains active. You can apply to other universities, or to Punjab University again in a future intake, "
+        +"Your apply.pk profile remains active. You can apply to other universities, or to Punjab University again in a future intake, "
         +"without filling in your details a second time.\n\n"
         +"To learn more about the university and its programmes, visit "+PU_INFO_URL+"\n\n"
         +"We wish you every success in your studies.\n\n"
         +"Office of Admissions\nUniversity of the Punjab, Lahore\n"
-        +"Received through Apply.pk\n\n"
+        +"Received through apply.pk\n\n"
         +"This message was sent automatically. Please do not reply to this email.");
     var html = escapeHtmlEmail(body).replace(/\n/g,"<br>")
                    .replace(/(https?:\/\/[^\s&<]+)/g, '<a href="$1">$1</a>');
@@ -2182,7 +3360,19 @@
       decidedBy: (state.user.email||state.user.uid)
     }, { merge:true })
     .then(function(){
-      // append-only audit entry (rules forbid update/delete)
+      // On admission, move sensitive documents out of university view.
+      // They remain stored and readable by HEC; the university can no longer see them.
+      if(decision==="accepted"){
+        return db.collection("applicants").doc(r.uid).collection("sensitive").get()
+          .then(function(sq){
+            var jobs=[]; sq.forEach(function(d){
+              jobs.push(d.ref.set({ admittedHidden:true }, { merge:true }));
+            });
+            return Promise.all(jobs);
+          }).catch(function(){});
+      }
+    })
+    .then(function(){
       return appRef.collection("decisions").add({
         decision:decision,
         by:(state.user.email||state.user.uid),
@@ -2281,6 +3471,40 @@
   };
   document.getElementById("adminCsvBtn").onclick=function(){ adminExportCSV("pu"); };
 
+  /* ---- Breach / data-incident response (manual procedure + log) ----
+     NOTE: response mechanism, not automatic detection (which needs a paid plan). */
+  function openIncident(){
+    if(!isAdminUser()) return;
+    document.getElementById("incErr").textContent="";
+    document.getElementById("inc-desc").value="";
+    document.getElementById("inc-scope").value="";
+    document.getElementById("incidentBack").classList.add("show");
+  }
+  function closeIncident(){ document.getElementById("incidentBack").classList.remove("show"); }
+  var _incBtn=document.getElementById("adminIncidentBtn");
+  if(_incBtn) _incBtn.onclick=openIncident;
+  document.getElementById("incCancel").onclick=closeIncident;
+  document.getElementById("incidentBack").onclick=function(e){ if(e.target===this) closeIncident(); };
+  document.getElementById("incSubmit").onclick=function(){
+    var err=document.getElementById("incErr"); err.textContent="";
+    var desc=(document.getElementById("inc-desc").value||"").trim();
+    if(!desc){ err.textContent=t("incNeedDesc"); return; }
+    var btn=this; busy(btn,true,t("busySaving"));
+    db.collection("incidents").add({
+      type: document.getElementById("inc-type").value,
+      description: desc,
+      estimatedScope: (document.getElementById("inc-scope").value||"").trim(),
+      reportedBy: (state.user.email||state.user.uid),
+      reportedByUid: state.user.uid,
+      status: "open",
+      flaggedToHec: true,
+      reportedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){
+      busy(btn,false); closeIncident();
+      askConfirm({ title:t("incLoggedT"), body:t("incLoggedB"), okLabel:t("confirmDone"), cancelLabel:t("confirmClose"), onConfirm:function(){} });
+    }).catch(function(e){ busy(btn,false); err.textContent=fbMsg(e); });
+  };
+
   var pfAvatar=document.getElementById("pfAvatar"), pfSame=document.getElementById("pf-same"), pfPostWrap=document.getElementById("pfPostWrap");
   function fillProfile(){
     var u=state.user||{};
@@ -2288,6 +3512,9 @@
     setv("pf-name",u.name); setv("pf-email",u.email); setv("pf-cnic",u.cnic); setv("pf-dob",u.dob);
     setv("pf-res",u.resAddr); setv("pf-post",u.postAddr);
     pfSame.checked=!!u.sameAddr; pfPostWrap.style.display=u.sameAddr?"none":"";
+    var g=u.guardian||{};
+    setv("pf-g-name", g.name); setv("pf-g-rel", g.relationship); setv("pf-g-phone", g.phone);
+    updateMinorNotice();
     var em=document.getElementById("pf-email"); em.disabled=true; em.style.background="#F3F4F6";
     document.getElementById("pfErr").textContent="";
     document.getElementById("pfSaved").classList.remove("show");
@@ -2295,6 +3522,12 @@
     renderDocs(); loadHub(); renderNav();
   }
   try { document.getElementById("pf-dob").max=new Date().toISOString().split("T")[0]; } catch(e){}
+  function updateMinorNotice(){
+    var el=document.getElementById("pf-minor-notice"); if(!el) return;
+    var a=ageFromDob(document.getElementById("pf-dob").value);
+    el.style.display = (a!=null && a<18) ? "" : "none";
+  }
+  document.getElementById("pf-dob").addEventListener("change", updateMinorNotice);
   pfSame.onchange=function(){ pfPostWrap.style.display = pfSame.checked ? "none" : ""; };
   document.getElementById("pfPhotoBtn").onclick=function(){ document.getElementById("pfPhotoInput").click(); };
   document.getElementById("pfPhotoInput").onchange=function(){
@@ -2310,8 +3543,12 @@
     var dErr=dobError(dob); if(dErr){ err.textContent=dErr; return; }
     if(!state.user.photo){ err.textContent=t("errPhoto"); return; }
     if(!val("pf-res")){ err.textContent=t("errRes"); return; }
+    var gName=val("pf-g-name"), gRel=val("pf-g-rel"), gPhone=val("pf-g-phone");
+    if(!gName || !gRel || !gPhone){ err.textContent=t("errGuardian"); return; }
 
     state.user.name=name; state.user.cnic=cnic; state.user.dob=dob;
+    state.user.guardian={ name:gName, relationship:gRel, phone:gPhone };
+    var _age=ageFromDob(dob); state.user.isMinor=(_age!=null && _age<18);
     state.user.resAddr=val("pf-res"); state.user.sameAddr=pfSame.checked;
     state.user.postAddr = pfSame.checked ? val("pf-res") : val("pf-post");
 
@@ -2324,6 +3561,7 @@
       name:state.user.name, cnic:state.user.cnic, dob:state.user.dob,
       resAddr:state.user.resAddr, postAddr:state.user.postAddr, sameAddr:state.user.sameAddr,
       photo:state.user.photo||null, docs:state.user.docs||{},
+      guardian:state.user.guardian, isMinor:!!state.user.isMinor,
       personalStatement:p1.personalStatement, consents:p1.consents,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge:true })
@@ -2460,8 +3698,20 @@
         else if(state.user) startOnboarding();
         else openAuth("signup");
       }
+      else if(g==="uapply"){ uaLoadDraft(function(){ uaOpenPicker(uaSelected); }); }
     });
   });
+
+  /* ---- unified application wiring ---- */
+  (function(){
+    var sb=document.getElementById("uaStartBtn");
+    if(sb) sb.onclick=function(){ uaLoadDraft(function(){ uaOpenPicker(uaSelected); }); };
+    var se=document.getElementById("uaSearch"); if(se) se.addEventListener("input", uaRenderPicker);
+    var cont=document.getElementById("uaPickContinue"); if(cont) cont.onclick=uaGoForm;
+    var back=document.getElementById("uaBackToPick"); if(back) back.onclick=function(){ uaOpenPicker(uaSelected); };
+    var sd=document.getElementById("uaSaveDraft"); if(sd) sd.onclick=uaSaveDraft;
+    var su=document.getElementById("uaSubmit"); if(su) su.onclick=uaSubmit;
+  })();
 
   function applyLang(){
     document.documentElement.lang=lang;
@@ -2739,9 +3989,9 @@
   var POLICY_HTML =
     '<div class="draft-warn">'+
       'DRAFT — this text has not been reviewed by a lawyer. It must be replaced with '+
-      'text approved by qualified counsel before Apply.pk handles real applicant data.'+
+      'text approved by qualified counsel before apply.pk handles real applicant data.'+
     '</div>'+
-    '<h4>1. Who we are</h4><p>Apply.pk is a unified undergraduate admissions platform for '+
+    '<h4>1. Who we are</h4><p>apply.pk is a unified undergraduate admissions platform for '+
       'public-sector universities in Pakistan, operated as a project of the Ministry of Planning &amp; Development.</p>'+
     '<h4>2. What we collect</h4><p>We collect the information you enter: your name, CNIC or passport number, '+
       'date of birth, addresses, contact details, photograph, academic history, personal statement, '+
@@ -2757,7 +4007,7 @@
     '<h4>7. Your rights</h4><p>You may view, correct, export or delete your data at any time from your profile, '+
       'or by contacting us. Withdrawing consent means we can no longer submit applications on your behalf.</p>'+
     '<h4>8. Security</h4><p>Your record is readable only by you and by universities you apply to, enforced at '+
-      'the database level. Passwords are never stored by Apply.pk.</p>'+
+      'the database level. Passwords are never stored by apply.pk.</p>'+
     '<h4>9. Changes</h4><p>If these terms change materially we will ask you to review them again.</p>';
 
   function openPolicy(){

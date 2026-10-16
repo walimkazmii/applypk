@@ -7,7 +7,7 @@
 <title>apply.pk — Apply to Pakistan's public universities</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Cairo:wght@400;600;700&family=Baloo+Bhaijaan+2:wght@700;800&family=Gulzar&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore-compat.js"></script>
@@ -33,17 +33,29 @@
     --font-display:"Plus Jakarta Sans","Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --font-serif:"Plus Jakarta Sans","Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --font-sans:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --font-urdu:"Noto Nastaliq Urdu","Public Sans",serif;
+    --font-urdu:"Gulzar","Noto Nastaliq Urdu","Public Sans",serif;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:var(--font-sans); background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; min-height:100vh; display:flex; flex-direction:column; }
   a { color:inherit; text-decoration:none; }
   .wrap { max-width:1140px; margin:0 auto; padding:0 28px; width:100%; }
 
-  body.urdu { font-family:var(--font-urdu); line-height:2.1; }
+  body.urdu { font-family:var(--font-urdu); line-height:2.2; font-synthesis:none; }
   body.urdu .brand, body.urdu input, body.urdu .lang-btn, body.urdu .uni-mk { font-family:var(--font-sans); }
   body.urdu h1, body.urdu h2, body.urdu .page-title { font-family:var(--font-urdu); line-height:1.95; }
   body.urdu .hero h1 { font-size:clamp(1.9rem,4.2vw,3.1rem); }
+
+  /* ---------- Urdu LANDING-ONLY trial: Cairo body + rounded/bold Baloo Bhaijaan 2 headings ----------
+     Scoped to #view-landing so the rest of the app stays on the current Nastaliq (Gulzar)
+     until we decide whether to roll this type treatment across the whole platform. */
+  body.urdu #view-landing { font-family:"Cairo","Noto Sans Arabic",sans-serif; line-height:1.95; }
+  body.urdu #view-landing h1,
+  body.urdu #view-landing h2,
+  body.urdu #view-landing .page-title { font-family:"Baloo Bhaijaan 2","Cairo",sans-serif; font-weight:800; line-height:1.5; }
+  body.urdu #view-landing .hero h1 { line-height:1.45; }
+  body.urdu #view-landing .sub,
+  body.urdu #view-landing .btn,
+  body.urdu #view-landing p { font-family:"Cairo","Noto Sans Arabic",sans-serif; }
 
   /* ---------- bylines: hidden, revealed on hover of the heading (desktop only) ---------- */
   @media (hover:hover){
@@ -522,7 +534,8 @@
     .ua-rev-k{ margin-top:8px; font-weight:600; }
     .ua-wiznav .btn{ flex:1; }
   }
-  </style>
+
+</style>
 </head>
 <body>
 
@@ -923,52 +936,52 @@
 (function () {
   var T = {
     en: {
-      applyTo:"Apply to", heroSub:"One profile. Every public university that matters.", startApp:"Start your application",
+      applyTo:"Apply to", heroSub:"One profile, multiple applications.", startApp:"Start your application",
       login:"Log in", logout:"Log out", myApps:"My applications", profile:"Profile", signedIn:"Signed in",
-      createAccount:"Create your account", createLede:"Start your application to Pakistan's public universities.",
-      createAccountBtn:"Create account", welcomeBack:"Welcome back", loginLede:"Log in to continue your applications.",
+      createAccount:"Create your account", createLede:"Start your application",
+      createAccountBtn:"Create account", welcomeBack:"Welcome back", loginLede:"Log in to continue",
       loginBtn:"Log in", haveAccount:"Already have an account?", newHere:"New here?", createOne:"Create an account",
       fullName:"Full name", email:"Email", cnic:"CNIC / Passport number", password:"Password",
-      cnicPh:"13-digit CNIC (no dashes) or passport no.", passPh:"At least 6 characters",
-      docsTitle:"Supporting documents", docsSub:"Optional now — you can also add these later from your profile.",
-      docsSubProfile:"Attach or replace your documents at any time.",
+      cnicPh:"CNIC/passport", passPh:"At least 6 characters",
+      docsTitle:"Supporting documents", docsSub:"Optional",
+      docsSubProfile:"Replace/remove your documents at any time.",
       docOlevel:"O-Level / Matric result", docFsc:"F.Sc / A-Level result", docMinority:"Minority verification (CNIC photo)",
       docUpload:"Upload", docReplace:"Replace", docNone:"No file attached", docFmt:"JPG, PNG or PDF",
       step:"Step", addPhoto:"Add your photo", addPhotoLede:"A clear, recent photo of yourself for your application.",
       uploadPhoto:"Upload photo", photoHint:"JPG or PNG, up to 5 MB. Required.", continue:"Continue",
-      yourDetails:"Your details", yourDetailsLede:"Basic information for your application portal.",
+      yourDetails:"Your details", yourDetailsLede:"Personal Information",
       dob:"Date of birth", resAddr:"Residential address", postAddr:"Postal address",
-      sameAddr:"Postal address is the same as residential", back:"Back", continueUnis:"Continue to universities",
-      yourApps:"Your applications", dashSub:"Choose a public university and tap Apply to open its application.",
+      sameAddr:"Postal address is the same as residential", back:"Back", continueUnis:"Continue to application",
+      yourApps:"Your applications", dashSub:"Tap 'apply' to start your application",
       apply:"Apply", yourProfile:"Your profile", backArrow:"← Back", backToApps:"← Back to applications",
       changePhoto:"Change photo", saveChanges:"Save changes", saved:"✓ Saved",
-      comingSoon:"This application form is coming soon. Academics, documents and your personal statement for this university will appear here.",
+      comingSoon:"Application coming soon!",
       initiativeOf:"An initiative of", planningCommission:"Planning Commission of Pakistan",
       uraan:"URAAN Summer Scholars Program", hec:"Higher Education Commission", applicationTo:"Application to",
       fbDown:"Cannot reach the secure login service. Please check your connection and reload — accounts cannot be created offline.",
       errAllFields:"Please fill in all fields.", errEmail:"Please enter a valid email address.",
       errCnic:"Enter a 13-digit CNIC (no dashes) or a valid passport number.",
-      errPass:"Password must be at least 6 characters.", errPhoto:"Please upload a photo of yourself to continue.",
+      errPass:"Password must be at least 6 characters.", errPhoto:"Upload a photo",
       errDobMissing:"Please enter your date of birth.", errDobInvalid:"Please enter a valid date of birth.",
-      errDobFuture:"Date of birth cannot be in the future.", errDobYoung:"You must be at least 14 years old to apply.",
+      errDobFuture:"Date of birth cannot be in the future.", errDobYoung:" ",
       errRes:"Please add your residential address.", errPost:"Please add your postal address (or tick 'same as residential').",
       errCreds:"Please enter your email and password.", errFileBig:"That file is too large. Please use one under 5 MB.",
       errNetwork:"Network error. Please try again.", busySaving:"Saving…", busyCreating:"Creating account…", busyLogin:"Logging in…",
-      errEmailUsed:"An account with this email already exists. Try logging in.",
-      errNoAccount:"No account found with that email. Please create one.",
-      errBadCreds:"Incorrect email or password. Please try again.",
-      errDisabled:"This account has been disabled. Please contact support.",
-      errTooMany:"Too many attempts. Please wait and try again.",
+      errEmailUsed:"An account with this email already exists. Log in instead?",
+      errNoAccount:"No account found with that email.",
+      errBadCreds:"Incorrect email or password.",
+      errDisabled:"This account has been disabled.",
+      errTooMany:"Too many attempts.",
       forgot:"Forgot password?",
-      errResetEmail:"Enter your email above first, then tap 'Forgot password?'.",
-      resetSent:"Password reset email sent. Check your inbox (and spam folder).",
-      errPdfBig:"PDFs must be under 650 KB. Please compress it, or upload a photo/scan (JPG/PNG) instead.",
+      errResetEmail:"Enter your email and then tap 'forgot password?'",
+      resetSent:"Email sent (check inbox and spam).",
+      errPdfBig:"PDFs must be under 650 KB.",
       pw0:"Very weak", pw1:"Weak", pw2:"Fair", pw3:"Good", pw4:"Strong",
-      verifyTitle:"Verify your email", verifyLede:"We've sent a verification link to your email. Please open it, then log in.",
-      verifyBanner:"Please verify your email before continuing. Check your inbox (and spam).",
+      verifyTitle:"Verify your email", verifyLede:"Login using the verification link sent to your email",
+      verifyBanner:"Verify your email before continuing",
       verifyResend:"Resend verification email", verifySent:"Verification email sent again.",
-      verifyNeeded:"Please verify your email first. We just sent you a new link.",
-      hubTitle:"Your portfolio", hubSub:"Everything from your applications, gathered in one place.",
+      verifyNeeded:"Login link sent (check inbox and spam)",
+      hubTitle:"Your portfolio", hubSub:"Your central hub for all applications",
       tabUnis:"My Universities", tabEssays:"My Essays", tabCocurr:"My Co-Curriculars", tabAccom:"Accommodation Applications", tabResume:"My Resume",
       hubNoUnis:"You haven't started any applications yet.", hubNoEssays:"No essays or written statements yet. They'll appear here as you fill in applications.",
       hubNoCocurr:"No co-curricular entries yet.", hubNoAccom:"No accommodation requests yet.", hubNoResume:"No documents uploaded yet.",
@@ -979,13 +992,13 @@
       staffPrompt:"Applying on behalf of a university?", staffBadge:"University staff",
       admConsole:"PU Admissions", errNotStaff:"This account is not registered as an admissions account.",
       uniInfoLink:"About this university ↗",
-      eduTitle:"Education", eduSub:"Your schools, colleges and qualifications. Entered once, used for every application.",
+      eduTitle:"Education", eduSub:" ",
       eduAdd:"+ Add qualification", eduEmpty:"No qualifications added yet.",
       eduAddT:"Add a qualification", eduEditT:"Edit qualification", eduDelT:"Delete this qualification?",
-      psTitle:"Personal statement", psSub:"One statement, reused across every application. Universities may also ask for their own essay inside their form.",
+      psTitle:"Personal statement", psSub:"(Optional) Can be added to applications which may want it",
       words:"words", suppEssay:"Statement for this university",
-      actTitle:"Activities & experience", actSub:"Optional. Sports, volunteering, work, societies and leadership roles.",
-      actAdd:"+ Add activity", actEmpty:"No activities added yet.",
+      actTitle:"Activities & experience", actSub:"(Optional) Sports, volunteering, work, societies and/or leadership roles",
+      actAdd:"+ add activity", actEmpty:"No activities added yet.",
       actAddT:"Add an activity", actEditT:"Edit activity", actDelT:"Delete this activity?",
       consentTitle:"Privacy & consent", consentSub:"You can review or change these at any time.",
       consentData:"I agree to apply.pk storing and processing my personal data so my applications can be sent to universities.",
@@ -995,15 +1008,15 @@
       editBtn:"Edit", deleteBtn:"Delete", isRequired:"is required.", ongoing:"ongoing", hrsWeek:"hrs/week", hostelReq:"Hostel required",
       errYearOrder:"End year cannot be before start year.", errYearRange:"Please enter a realistic year.",
       errMarks:"Obtained marks cannot be more than total marks.", errDateOrder:"End date cannot be before start date.",
-      errConsent:"Please agree to the Terms of Service & Privacy Policy to create an account.",
-      guardianTitle:"Parent or guardian", guardianSub:"Required for all applicants. We may contact your guardian about your application.",
+      errConsent:"Agree to the Terms of Service & Privacy Policy",
+      guardianTitle:"Parent or guardian", guardianSub:"Required for all applicants",
       gName:"Guardian name", gRel:"Relationship", gPhone:"Guardian phone",
-      errGuardian:"Please provide your guardian's name, relationship and phone number.",
+      errGuardian:"Please provide your parent/guardian's details",
       incTitle:"Report a data incident", incType:"Type of incident", incDesc:"What happened", incScope:"Roughly how many applicants may be affected",
       incSubmit:"Log and flag to HEC", incNeedDesc:"Please describe what happened.",
       incIntro:"Use this if applicant data may have been exposed, leaked, or accessed without authorisation. Submitting this records the incident and flags it for HEC. This is a response record, not automatic detection.",
       incLoggedT:"Incident logged", incLoggedB:"The incident has been recorded and flagged for HEC review. Follow the written breach-response procedure for next steps.",
-      minorNotice:"You are applying as a minor (under 18). Please review your application with your parent or guardian. Your guardian's details are required above.",
+      minorNotice:"You are applying as a minor (under 18). Please review your application with your parent/guardian.",
       confirmYes:"Confirm", confirmCancel:"Cancel",
       confirmAcceptT:"Accept this application?",
       confirmRejectT:"Reject this application?",
@@ -1178,6 +1191,15 @@
      The SAME uid must also be pasted into firestore.rules (isPuAdmin).
      Both must match or the console will show a permissions error.        */
   var PU_ADMIN_UIDS = [ "bRv7zlMWybcm0qEcR1yr04xy80z2" ];
+
+  /* >>> DEMO ONLY — REMOVE BEFORE PUBLIC LAUNCH <<<
+     Emails listed here are treated as already email-verified, so a demo
+     account on a fake domain (no real inbox to click a verification link)
+     can log in for technical demonstrations. These are ordinary student
+     accounts and can only read/write their own data. Empty this list to
+     restore the normal "verify your email" gate for everyone. */
+  var DEMO_EMAILS = [ "mansoorgoat@mopdsi.pk" ];
+  function isDemoEmail(e){ return !!e && DEMO_EMAILS.indexOf(String(e).toLowerCase()) >= 0; }
 
   /* General information about the university — shown as a link inside
      the application form. Not an application route. */
@@ -2211,7 +2233,7 @@ function uaLoadDraft(cb){
     if(!s) return t("errDobMissing");
     var d=new Date(s); if(isNaN(d)) return t("errDobInvalid");
     if(d>new Date()) return t("errDobFuture");
-    var a=ageFrom(s); if(a<14) return t("errDobYoung"); if(a>100) return t("errDobInvalid");
+    var a=ageFrom(s); if(a>100) return t("errDobInvalid");
     return "";
   }
 
@@ -2506,7 +2528,7 @@ function uaLoadDraft(cb){
       busy(authSubmit,true,t("busyLogin"));
       auth.signInWithEmailAndPassword(em,pw)
         .then(function(cred){
-          if(!cred.user.emailVerified){
+          if(!cred.user.emailVerified && !isDemoEmail(cred.user.email)){
             var e=cred.user;
             return e.sendEmailVerification().catch(function(){}).then(function(){
               return auth.signOut();
@@ -3770,7 +3792,7 @@ function uaLoadDraft(cb){
         openAdmin();          // already signed in as staff: go straight to the console
         return;
       }
-      if(!u.emailVerified){ state={user:null}; renderNav(); return; }  // unverified: treat as logged out
+      if(!u.emailVerified && !isDemoEmail(u.email)){ state={user:null}; renderNav(); return; }  // unverified: treat as logged out
       userDoc(u.uid).get().then(function(snap){
         state.user = snap.exists ? snap.data()
           : { uid:u.uid, name:(u.email||"").split("@")[0], email:u.email, cnic:"", onboarded:false, photo:null, dob:"", resAddr:"", postAddr:"", sameAddr:false, docs:{} };

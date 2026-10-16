@@ -2602,6 +2602,13 @@ function uaLoadDraft(cb){
     var b=document.getElementById("obNext2");
     busy(b,true,t("busySaving"));
     userDoc(state.user.uid).set({
+      // identity fields are normally written at signup; include them here too
+      // so onboarding also satisfies validProfile() when the profile doc does
+      // not exist yet (e.g. accounts provisioned directly in the console)
+      uid: state.user.uid,
+      name: (state.user.name && state.user.name.length) ? state.user.name : (state.user.email||"").split("@")[0],
+      email: state.user.email || (auth.currentUser && auth.currentUser.email) || "",
+      cnic: state.user.cnic || "",
       dob:dob, resAddr:res, postAddr:post, sameAddr:obSame.checked,
       onboarded:true, photo:state.user.photo||null,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
